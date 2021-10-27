@@ -1,6 +1,6 @@
-[submodule "extern/SDL"]
-	path = extern/SDL
-	url = git@github.com:libsdl-org/SDL.git
 [submodule "extern/assimp"]
 	path = extern/assimp
 	url = git@github.com:assimp/assimp.git
+[submodule "extern/glfw"]
+	path = extern/glfw
+	url = git@github.com:glfw/glfw.git
