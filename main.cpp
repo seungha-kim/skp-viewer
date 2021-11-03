@@ -9,6 +9,7 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
+void loadTexture(unsigned textureId, const char *filename, unsigned glFormat);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -95,25 +96,19 @@ int main()
     // uncomment this call to draw in wireframe polygons.
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    unsigned texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    unsigned texture1;
+    glGenTextures(1, &texture1);
+    loadTexture(texture1, "container.jpeg", GL_RGB);
+
+    unsigned texture2;
+    glGenTextures(1, &texture2);
+    loadTexture(texture2, "awesomeface.png", GL_RGBA);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    int width, height, nrChannels;
-    unsigned char* data = stbi_load("resources/container.jpeg", &width, &height, &nrChannels, 0);
-    std::cout << width << "&" << height << std::endl;
-    if (data) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    } else {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-    stbi_image_free(data);
 
     // render loop
     // -----------
@@ -130,13 +125,20 @@ int main()
 
         // draw our first triangle
         ourShader.use();
+        ourShader.setInt("texture1", 0);
+        ourShader.setInt("texture2", 1);
 
         auto timeValue = (float)glfwGetTime();
         float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
         ourShader.set4f("ourColor", 0.0f, greenValue, 0.0f, 1.0f);
 
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-        glBindTexture(GL_TEXTURE_2D, texture);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture1);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, texture2);
+
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
         // glBindVertexArray(0); // no need to unbind it every time
 
@@ -173,4 +175,20 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // make sure the viewport matches the new window dimensions; note that width and
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
+}
+
+
+void loadTexture(unsigned textureId, const char *filename, unsigned glFormat) {
+    int width, height, nrChannels;
+    std::string path = std::string("resources/") + filename;
+    stbi_set_flip_vertically_on_load(true);
+    unsigned char* data = stbi_load(path.data(), &width, &height, &nrChannels, 0);
+    if (data) {
+        glBindTexture(GL_TEXTURE_2D, textureId);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, glFormat, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    } else {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+    stbi_image_free(data);
 }
