@@ -6,6 +6,8 @@
 #define LEARN_OPENGL_SHADER_H
 
 #include <string>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 class Shader {
 public:
@@ -22,6 +24,7 @@ public:
     void setInt(const std::string &name, int value) const;
     void setFloat(const std::string &name, float value) const;
     void set4f(const std::string& name, float v0, float v1, float v2, float v3);
+    void setMatrix4f(const std::string& name, glm::mat4 m);
 };
 
 

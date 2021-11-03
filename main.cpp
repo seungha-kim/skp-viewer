@@ -4,6 +4,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stb_image.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "Shader.h"
 
@@ -126,12 +128,19 @@ int main()
 
         auto timeValue = (float)glfwGetTime();
         auto ratio = (sin(timeValue) / 2.0f) + 0.5f;
+        glm::mat4 trans = glm::mat4(1.0f);
+        trans = glm::translate(trans, glm::vec3(0.5f, 0.5f, 0.0f));
+        trans = glm::rotate(trans, timeValue, glm::vec3(0.0f, 0.0f, 1.0f));
+        trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 0.0f));
+
 
         // draw our first triangle
         ourShader.use();
         ourShader.setInt("texture1", 0);
         ourShader.setInt("texture2", 1);
         ourShader.setFloat("mixRatio", ratio);
+        ourShader.setMatrix4f("transform", trans);
+
 
         float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
         ourShader.set4f("ourColor", 0.0f, greenValue, 0.0f, 1.0f);

@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include <glad/glad.h>
+#include <glm/gtc/type_ptr.hpp>
 
 static std::string readResourceAsStr(std::string_view name) {
     static const std::string resourceBasePath = "resources/";
@@ -100,3 +101,9 @@ void Shader::setFloat(const std::string &name, float value) const {
 void Shader::set4f(const std::string &name, float v0, float v1, float v2, float v3) {
     glUniform4f(glGetUniformLocation(m_ID, name.c_str()), v0, v1, v2, v3);
 }
+
+void Shader::setMatrix4f(const std::string &name, glm::mat4 m) {
+    unsigned loc = glGetUniformLocation(m_ID, name.c_str());
+    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(m));
+}
+
