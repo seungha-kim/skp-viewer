@@ -7,6 +7,16 @@
 
 #include <glad/glad.h>
 
+static std::string readResourceAsStr(std::string_view name) {
+    static const std::string resourceBasePath = "resources/";
+    std::ifstream ifs;
+    std::ostringstream oss;
+
+    ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+    ifs.open(resourceBasePath + name.data());
+    oss << ifs.rdbuf();
+    return oss.str();
+}
 
 Shader::Shader(const char *vShaderName, const char *fShaderName) {
     std::string resourceBasePath = "resources/";
@@ -18,15 +28,8 @@ Shader::Shader(const char *vShaderName, const char *fShaderName) {
     fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
     try {
-        vShaderFile.open(resourceBasePath + vShaderName);
-        fShaderFile.open(resourceBasePath + fShaderName);
-        std::stringstream vShaderStream, fShaderStream;
-        vShaderStream << vShaderFile.rdbuf();
-        fShaderStream << fShaderFile.rdbuf();
-        vShaderFile.close();
-        fShaderFile.close();
-        vertexCode = vShaderStream.str();
-        fragmentCode = fShaderStream.str();
+        vertexCode = readResourceAsStr(vShaderName);
+        fragmentCode = readResourceAsStr(fShaderName);
     } catch (std::ifstream::failure& e) {
         std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
     }
