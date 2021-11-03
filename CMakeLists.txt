@@ -34,8 +34,11 @@ include_directories(${GLM_INCLUDE_DIRS})
 include_directories(extern/glad/include)
 add_library(glad extern/glad/src/glad.c)
 
+# Extern - stb
+include_directories(extern/stb)
+
 # Targets
-add_executable(learn_opengl main.cpp Shader.cpp Shader.h)
+add_executable(learn_opengl main.cpp Shader.cpp Shader.h lib.cpp)
 target_link_libraries(learn_opengl OpenGL::GL glfw assimp glad)
 target_compile_definitions(learn_opengl PUBLIC GLFW_INCLUDE_NONE)
 
