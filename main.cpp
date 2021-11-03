@@ -109,7 +109,8 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-
+    int fps = 0;
+    float prevTimeValue = 0.0f;
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -149,6 +150,16 @@ int main()
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
         glfwPollEvents();
+
+        // fps
+
+        if (std::floor(timeValue) != std::floor(prevTimeValue)) {
+            std::cout << fps << std::endl;
+            fps = 0;
+        }
+
+        fps++;
+        prevTimeValue = timeValue;
     }
 
     // optional: de-allocate all resources once they've outlived their purpose:
