@@ -123,12 +123,15 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        auto timeValue = (float)glfwGetTime();
+        auto ratio = (sin(timeValue) / 2.0f) + 0.5f;
+
         // draw our first triangle
         ourShader.use();
         ourShader.setInt("texture1", 0);
         ourShader.setInt("texture2", 1);
+        ourShader.setFloat("mixRatio", ratio);
 
-        auto timeValue = (float)glfwGetTime();
         float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
         ourShader.set4f("ourColor", 0.0f, greenValue, 0.0f, 1.0f);
 
