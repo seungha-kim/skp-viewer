@@ -10,3 +10,6 @@
 [submodule "extern/stb"]
 	path = extern/stb
 	url = git@github.com:nothings/stb.git
+[submodule "extern/imgui"]
+	path = extern/imgui
+	url = git@github.com:ocornut/imgui.git

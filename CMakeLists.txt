@@ -37,9 +37,23 @@ add_library(glad extern/glad/src/glad.c)
 # Extern - stb
 include_directories(extern/stb)
 
+# Extern - imgui
+add_library(imgui
+        extern/imgui/imgui.cpp
+        extern/imgui/imgui_demo.cpp
+        extern/imgui/imgui_draw.cpp
+        extern/imgui/imgui_tables.cpp
+        extern/imgui/imgui_widgets.cpp
+        extern/imgui/backends/imgui_impl_glfw.cpp
+        extern/imgui/backends/imgui_impl_opengl3.cpp)
+target_include_directories(imgui
+        PUBLIC
+        extern/imgui
+        extern/imgui/backends)
+
 # Targets
-add_executable(learn_opengl main.cpp Shader.cpp Shader.h lib.cpp)
-target_link_libraries(learn_opengl OpenGL::GL glfw assimp glad)
+add_executable(learn_opengl main.cpp Shader.cpp Shader.h lib.cpp Gui.cpp Gui.h)
+target_link_libraries(learn_opengl OpenGL::GL glfw assimp glad imgui)
 target_compile_definitions(learn_opengl PUBLIC GLFW_INCLUDE_NONE)
 
 # Resources
