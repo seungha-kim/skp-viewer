@@ -9,6 +9,8 @@
 
 #include "Shader.h"
 #include "Gui.h"
+#include "CameraOption.h"
+#include "RenderOption.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -162,6 +164,13 @@ int main()
             glm::vec3(-1.3f,  1.0f, -1.5f)
     };
 
+    CameraOption cameraOption;
+    RenderOption renderOption;
+
+    GuiRenderContext guiCtx {
+        .cameraOption = cameraOption,
+        .renderOption = renderOption,
+    };
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -175,16 +184,18 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        auto timeValue = (float)glfwGetTime();
+        float timeValue = renderOption.manual ? renderOption.playback : glfwGetTime();
         auto ratio = (sin(timeValue) / 2.0f) + 0.5f;
 
-        glm::mat4 view = glm::mat4(1.0f);
-        view = glm::translate(view, glm::vec3(0.0f, 2.0f, 5.0f));
-        view = glm::rotate(view, glm::radians(-15.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        view = glm::inverse(view);
+        glm::mat4 view;
+        const float radius = 10.0f;
+        float camX = sin(timeValue) * radius;
+        float camZ = cos(timeValue) * radius;
+        view = glm::lookAt(glm::vec3(camX, 2.0f, camZ), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
         glm::mat4 projection;
-        projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+        auto& co = cameraOption;
+        projection = glm::perspective(glm::radians(co.fovyDeg), co.aspectWidth / co.aspectHeight, co.zNear, co.zFar);
 
         // draw our first triangle
         ourShader.use();
@@ -215,10 +226,14 @@ int main()
             glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr);
         }
 
-        gui.render();
+        gui.render(guiCtx);
 
         glfwSwapBuffers(window);
-        glfwPollEvents();
+
+        if (renderOption.continuous) {
+            glfwPostEmptyEvent();
+        }
+        glfwWaitEvents();
     }
 
     // optional: de-allocate all resources once they've outlived their purpose:
