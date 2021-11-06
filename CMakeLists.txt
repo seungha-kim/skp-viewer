@@ -52,7 +52,7 @@ target_include_directories(imgui
         extern/imgui/backends)
 
 # Targets
-add_executable(learn_opengl main.cpp Shader.cpp Shader.h lib.cpp Gui.cpp Gui.h CameraOption.h RenderOption.h)
+add_executable(learn_opengl main.cpp Shader.cpp Shader.h lib.cpp Gui.cpp Gui.h CameraOption.h RenderOption.h InputState.h)
 target_link_libraries(learn_opengl OpenGL::GL glfw assimp glad imgui)
 target_compile_definitions(learn_opengl PUBLIC GLFW_INCLUDE_NONE)
 

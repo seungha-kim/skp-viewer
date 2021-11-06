@@ -20,10 +20,15 @@ struct InputContext {
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window, InputContext &ctx);
 void loadTexture(unsigned textureId, const char *filename, unsigned glFormat);
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
+
+float pitch = 0.0f;
+float yaw = -90.0f;
+bool cameraRotateMode = false;
 
 int main()
 {
@@ -49,7 +54,7 @@ int main()
     }
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
+    glfwSetCursorPosCallback(window, mouse_callback);
     // glad: load all OpenGL function pointers
     // ---------------------------------------
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -171,10 +176,12 @@ int main()
 
     CameraOption cameraOption;
     RenderOption renderOption;
+    InputState inputState;
 
     GuiRenderContext guiCtx {
         .cameraOption = cameraOption,
         .renderOption = renderOption,
+        .inputState = inputState,
     };
     // render loop
     // -----------
@@ -191,7 +198,8 @@ int main()
             .deltaTime = deltaTime,
         };
         processInput(window, inputContext);
-
+        cameraOption.pitch = pitch;
+        cameraOption.yaw = yaw;
         // render
         // ------
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -202,7 +210,7 @@ int main()
 
         auto& co = cameraOption;
         glm::mat4 view, projection;
-        view = glm::lookAt(co.pos, co.pos + co.front, co.up);
+        view = glm::lookAt(co.pos, co.pos + co.front(), co.up);
         projection = glm::perspective(glm::radians(co.fovyDeg), co.aspectWidth / co.aspectHeight, co.zNear, co.zFar);
 
         // draw our first triangle
@@ -269,17 +277,29 @@ void processInput(GLFWwindow *window, InputContext &ctx)
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        co.pos += co.front * cameraDelta;
+        co.pos += co.front() * cameraDelta;
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        co.pos -= co.front * cameraDelta;
+        co.pos -= co.front() * cameraDelta;
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        co.pos -= glm::normalize(glm::cross(co.front, co.up)) * cameraDelta;
+        co.pos -= glm::normalize(glm::cross(co.front(), co.up)) * cameraDelta;
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        co.pos += glm::normalize(glm::cross(co.front, co.up)) * cameraDelta;
+        co.pos += glm::normalize(glm::cross(co.front(), co.up)) * cameraDelta;
     if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
         co.pos -= co.up * cameraDelta;
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
         co.pos += co.up * cameraDelta;
+    static int prevSpace = GLFW_RELEASE;
+    int currentSpace = glfwGetKey(window, GLFW_KEY_SPACE);
+    if (prevSpace == GLFW_RELEASE && currentSpace == GLFW_PRESS) {
+        if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED) {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            cameraRotateMode = false;
+        } else {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            cameraRotateMode = true;
+        }
+    }
+    prevSpace = currentSpace;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -305,4 +325,18 @@ void loadTexture(unsigned textureId, const char *filename, unsigned glFormat) {
         std::cout << "Failed to load texture" << std::endl;
     }
     stbi_image_free(data);
+}
+
+void mouse_callback(GLFWwindow* window, double xPosD, double yPosD) {
+    if (!cameraRotateMode) return;
+    auto xPos = (float)xPosD, yPos = (float)yPosD;
+    static float lastX = xPos, lastY = yPos;
+    static float sensitivity = 0.1f;
+    float xOffset = xPos - lastX, yOffset = yPos - lastY;
+
+    yaw += xOffset * sensitivity;
+    pitch -= yOffset * sensitivity;
+
+    lastX = xPos;
+    lastY = yPos;
 }
