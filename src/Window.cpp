@@ -1,9 +1,12 @@
 #include "Window.h"
 #include <iostream>
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+void framebuffer_size_callback(GLFWwindow* glfwWindow, int width, int height)
 {
+    Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
     glViewport(0, 0, width, height);
+    window.m_cameraState.aspectWidth = (float)width;
+    window.m_cameraState.aspectHeight = (float)height;
 }
 
 void mouse_callback(GLFWwindow* glfwWindow, double xPosD, double yPosD) {
