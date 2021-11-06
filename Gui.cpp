@@ -64,10 +64,10 @@ void Gui::drawRenderInfo(GuiRenderContext &ctx) {
     ImGui::Text("%.0f ms", deltaTimeMs);
     ImGui::Text("WantCaptureMouse: %d", ctx.inputState.isMouseOnGui);
     ImGui::PlotHistogram("", histogram, nullptr, 100, 0, nullptr, 0.0f, 100.0f, ImVec2(0, 20));
-    ImGui::Checkbox("Continuous", &ctx.renderOption.continuous);
-    ImGui::Checkbox("Manual playback", &ctx.renderOption.manual);
-    if (ctx.renderOption.manual) {
-        ImGui::SliderFloat("playback", &ctx.renderOption.playback, 0.0f, 10.0f);
+    ImGui::Checkbox("Continuous", &ctx.renderState.continuous);
+    ImGui::Checkbox("Manual playback", &ctx.renderState.manual);
+    if (ctx.renderState.manual) {
+        ImGui::SliderFloat("playback", &ctx.renderState.playback, 0.0f, 10.0f);
     }
     ImGui::Checkbox("Camera Control", &show_camera_control);
     ImGui::Checkbox("Demo Window", &show_demo_window);
@@ -79,9 +79,9 @@ void Gui::drawRenderInfo(GuiRenderContext &ctx) {
 void Gui::drawCameraControl(GuiRenderContext &ctx) {
     if (show_camera_control) {
         ImGui::Begin("Camera Control");
-        ImGui::SliderFloat("fovy", &ctx.cameraOption.fovyDeg, 10.0f, 170.0f);
-        ImGui::SliderFloat("zNear", &ctx.cameraOption.zNear, 0.01f, 10.0f);
-        ImGui::SliderFloat("zFar", &ctx.cameraOption.zFar, 0.1f, 200.0f);
+        ImGui::SliderFloat("fovy", &ctx.cameraState.fovyDeg, 10.0f, 170.0f);
+        ImGui::SliderFloat("zNear", &ctx.cameraState.zNear, 0.01f, 10.0f);
+        ImGui::SliderFloat("zFar", &ctx.cameraState.zFar, 0.1f, 200.0f);
         ImGui::End();
     }
 }

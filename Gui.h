@@ -1,13 +1,13 @@
 #pragma once
 #include <memory>
 #include <GLFW/glfw3.h>
-#include "CameraOption.h"
-#include "RenderOption.h"
+#include "CameraState.h"
+#include "RenderState.h"
 #include "InputState.h"
 
 struct GuiRenderContext {
-    CameraOption& cameraOption;
-    RenderOption& renderOption;
+    CameraState& cameraState;
+    RenderState& renderState;
     InputState& inputState;
 };
 

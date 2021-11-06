@@ -9,11 +9,11 @@
 
 #include "Shader.h"
 #include "Gui.h"
-#include "CameraOption.h"
-#include "RenderOption.h"
+#include "CameraState.h"
+#include "RenderState.h"
 
 struct InputContext {
-    CameraOption& cameraOption;
+    CameraState& cameraState;
     float deltaTime;
 };
 
@@ -174,13 +174,13 @@ int main()
             glm::vec3(-1.3f,  1.0f, -1.5f)
     };
 
-    CameraOption cameraOption;
-    RenderOption renderOption;
+    CameraState cameraState;
+    RenderState renderState;
     InputState inputState;
 
     GuiRenderContext guiCtx {
-        .cameraOption = cameraOption,
-        .renderOption = renderOption,
+        .cameraState = cameraState,
+        .renderState = renderState,
         .inputState = inputState,
     };
     // render loop
@@ -194,21 +194,21 @@ int main()
         // input
         // -----
         InputContext inputContext {
-            .cameraOption = cameraOption,
+            .cameraState = cameraState,
             .deltaTime = deltaTime,
         };
         processInput(window, inputContext);
-        cameraOption.pitch = pitch;
-        cameraOption.yaw = yaw;
+        cameraState.pitch = pitch;
+        cameraState.yaw = yaw;
         // render
         // ------
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        float playbackValue = renderOption.manual ? renderOption.playback : currentTime;
+        float playbackValue = renderState.manual ? renderState.playback : currentTime;
         auto ratio = (sin(playbackValue) / 2.0f) + 0.5f;
 
-        auto& co = cameraOption;
+        auto& co = cameraState;
         glm::mat4 view, projection;
         view = glm::lookAt(co.pos, co.pos + co.front(), co.up);
         projection = glm::perspective(glm::radians(co.fovyDeg), co.aspectWidth / co.aspectHeight, co.zNear, co.zFar);
@@ -246,7 +246,7 @@ int main()
 
         glfwSwapBuffers(window);
 
-        if (renderOption.continuous) {
+        if (renderState.continuous) {
             glfwPostEmptyEvent();
         }
         glfwWaitEvents();
@@ -272,8 +272,8 @@ int main()
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow *window, InputContext &ctx)
 {
-    auto& co = ctx.cameraOption;
-    float cameraDelta = ctx.cameraOption.speed * ctx.deltaTime;
+    auto& co = ctx.cameraState;
+    float cameraDelta = ctx.cameraState.speed * ctx.deltaTime;
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)

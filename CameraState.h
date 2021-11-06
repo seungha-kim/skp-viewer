@@ -1,7 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 
-struct CameraOption {
+struct CameraState {
     float fovyDeg = 45.0f;
     float aspectWidth = 800.0f;
     float aspectHeight = 600.0f;
