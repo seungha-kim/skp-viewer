@@ -23,7 +23,7 @@ int main()
 
         GuiRenderContext guiCtx {
                 .cameraState = window.cameraState(),
-                .renderState = window.renderState(),
+                .playbackState = window.playbackState(),
                 .inputState = window.inputState(),
         };
         gui.render(guiCtx);

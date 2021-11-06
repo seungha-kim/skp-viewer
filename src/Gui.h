@@ -2,13 +2,13 @@
 #include <memory>
 #include <GLFW/glfw3.h>
 #include "CameraState.h"
-#include "RenderState.h"
+#include "PlaybackState.h"
 #include "InputState.h"
 #include "Window.h"
 
 struct GuiRenderContext {
     CameraState& cameraState;
-    RenderState& renderState;
+    PlaybackState& playbackState;
     InputState& inputState;
 };
 

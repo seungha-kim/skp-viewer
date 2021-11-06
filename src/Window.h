@@ -3,7 +3,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "CameraState.h"
-#include "RenderState.h"
+#include "PlaybackState.h"
 #include "InputState.h"
 
 class Window {
@@ -26,7 +26,7 @@ public:
     [[nodiscard]] float deltaTime() const;
     // TODO: 데이터 노출
     CameraState& cameraState();
-    RenderState& renderState();
+    PlaybackState& playbackState();
     InputState& inputState();
 
 private:
@@ -37,6 +37,6 @@ private:
     bool m_cameraRotateMode = false;
 
     CameraState m_cameraState;
-    RenderState m_renderState;
+    PlaybackState m_playbackState;
     InputState m_inputState;
 };

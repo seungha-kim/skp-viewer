@@ -127,7 +127,7 @@ void Window::swapBuffers() {
 }
 
 void Window::waitEvents() {
-    if (m_renderState.continuous) {
+    if (m_playbackState.continuous) {
         glfwPostEmptyEvent();
     }
     glfwWaitEvents();
@@ -135,7 +135,7 @@ void Window::waitEvents() {
 }
 
 float Window::playbackValue() {
-    return m_renderState.manual ? m_renderState.playback : m_currentTime;
+    return m_playbackState.manual ? m_playbackState.playback : m_currentTime;
 }
 
 float Window::deltaTime() const {
@@ -146,8 +146,8 @@ CameraState &Window::cameraState() {
     return m_cameraState;
 }
 
-RenderState &Window::renderState() {
-    return m_renderState;
+PlaybackState &Window::playbackState() {
+    return m_playbackState;
 }
 
 InputState &Window::inputState() {
