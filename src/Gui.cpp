@@ -3,10 +3,9 @@
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
-#include <GLFW/glfw3.h>
 
 
-Gui::Gui(GLFWwindow& window) {
+Gui::Gui(Window& window) {
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -14,11 +13,12 @@ Gui::Gui(GLFWwindow& window) {
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     ImGui::StyleColorsDark();
 
-    ImGui_ImplGlfw_InitForOpenGL(&window, true);
+    ImGui_ImplGlfw_InitForOpenGL(window.glfwWindow(), true);
     ImGui_ImplOpenGL3_Init("#version 330");
 }
 
 void Gui::render(GuiRenderContext& ctx) {
+    // TODO
     ctx.inputState.isGuiFocused = ImGui::GetIO().WantCaptureKeyboard;
 
     ImGui_ImplOpenGL3_NewFrame();

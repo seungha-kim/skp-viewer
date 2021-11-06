@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 struct CameraState {
     float fovyDeg = 45.0f;
@@ -19,6 +20,14 @@ struct CameraState {
         result.y = sin(glm::radians(pitch));
         result.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
         return result;
+    }
+
+    [[nodiscard]] glm::mat4 viewMatrix() const {
+        return glm::lookAt(pos, pos + front(), up);
+    }
+
+    [[nodiscard]] glm::mat4 projectionMatrix() const {
+        return glm::perspective(glm::radians(fovyDeg), aspectWidth / aspectHeight, zNear, zFar);
     }
 };
 

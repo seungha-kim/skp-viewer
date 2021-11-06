@@ -4,6 +4,7 @@
 #include "CameraState.h"
 #include "RenderState.h"
 #include "InputState.h"
+#include "Window.h"
 
 struct GuiRenderContext {
     CameraState& cameraState;
@@ -13,7 +14,7 @@ struct GuiRenderContext {
 
 class Gui {
 public:
-    explicit Gui(GLFWwindow& window);
+    explicit Gui(Window& window);
     ~Gui();
     void render(GuiRenderContext& ctx);
 private:
