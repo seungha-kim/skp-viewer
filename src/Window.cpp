@@ -101,8 +101,7 @@ void Window::processInput() {
         co.pos -= co.up * cameraDelta;
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
         co.pos += co.up * cameraDelta;
-    std::cout << cameraDelta << std::endl;
-    std::cout << co.pos.x << ", "<< co.pos.y << ", "<< co.pos.z << ", " << std::endl;
+    
     // TODO: static
     static int prevSpace = GLFW_RELEASE;
     int currentSpace = glfwGetKey(window, GLFW_KEY_SPACE);
