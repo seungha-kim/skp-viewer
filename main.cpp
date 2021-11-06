@@ -202,7 +202,7 @@ int main()
 
         auto& co = cameraOption;
         glm::mat4 view, projection;
-        view = glm::lookAt(co.cameraPos, co.cameraPos + co.cameraFront, co.cameraUp);
+        view = glm::lookAt(co.pos, co.pos + co.front, co.up);
         projection = glm::perspective(glm::radians(co.fovyDeg), co.aspectWidth / co.aspectHeight, co.zNear, co.zFar);
 
         // draw our first triangle
@@ -265,21 +265,21 @@ int main()
 void processInput(GLFWwindow *window, InputContext &ctx)
 {
     auto& co = ctx.cameraOption;
-    float cameraDelta = ctx.cameraOption.cameraSpeed * ctx.deltaTime;
+    float cameraDelta = ctx.cameraOption.speed * ctx.deltaTime;
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        co.cameraPos += co.cameraFront * cameraDelta;
+        co.pos += co.front * cameraDelta;
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        co.cameraPos -= co.cameraFront * cameraDelta;
+        co.pos -= co.front * cameraDelta;
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        co.cameraPos -= glm::normalize(glm::cross(co.cameraFront, co.cameraUp)) * cameraDelta;
+        co.pos -= glm::normalize(glm::cross(co.front, co.up)) * cameraDelta;
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        co.cameraPos += glm::normalize(glm::cross(co.cameraFront, co.cameraUp)) * cameraDelta;
+        co.pos += glm::normalize(glm::cross(co.front, co.up)) * cameraDelta;
     if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-        co.cameraPos -= co.cameraUp * cameraDelta;
+        co.pos -= co.up * cameraDelta;
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-        co.cameraPos += co.cameraUp * cameraDelta;
+        co.pos += co.up * cameraDelta;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
