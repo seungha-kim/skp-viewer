@@ -92,7 +92,7 @@ void Gui::drawCameraControl(GuiRenderContext &ctx) {
                 cm.setActiveCamera(i);
             }
         }
-        auto& ac = cm.activeCamera();
+        auto& ac = cm.activeCameraMut();
         ImGui::SliderFloat("fovy", &ac.fovyDeg, 10.0f, 170.0f);
         ImGui::SliderFloat("zNear", &ac.zNear, 0.01f, 10.0f);
         ImGui::SliderFloat("zFar", &ac.zFar, 0.1f, 200.0f);

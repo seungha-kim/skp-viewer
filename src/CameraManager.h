@@ -4,8 +4,8 @@
 
 class CameraManager {
 public:
-    // TODO: 데이터 노출
-    CameraState& activeCamera();
+    const CameraState& activeCamera() const;
+    CameraState& activeCameraMut();
     int activeCameraIndex() const;
     bool removeActiveCamera();
     void addCamera();

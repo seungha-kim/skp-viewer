@@ -1,6 +1,10 @@
 #include "CameraManager.h"
 
-CameraState &CameraManager::activeCamera() {
+const CameraState &CameraManager::activeCamera() const {
+    return m_cameras[m_activeCameraIndex];
+}
+
+CameraState &CameraManager::activeCameraMut() {
     return m_cameras[m_activeCameraIndex];
 }
 
