@@ -65,7 +65,7 @@ void Gui::drawRenderInfo(GuiRenderContext &ctx) {
     ImGui::Text("%.0f ms", deltaTimeMs);
 //    ImGui::Text("WantCaptureMouse: %d", ctx.inputState.isGuiFocused);
     ImGui::PlotHistogram("", histogram, nullptr, 100, 0, nullptr, 0.0f, 100.0f, ImVec2(0, 20));
-    ImGui::Checkbox("Continuous", &ctx.playbackState.continuous);
+    ImGui::Checkbox("Continuous", &ctx.playbackState.forceContinuous);
     ImGui::Checkbox("Manual playback", &ctx.playbackState.manual);
     if (ctx.playbackState.manual) {
         ImGui::SliderFloat("playback", &ctx.playbackState.playback, 0.0f, 10.0f);

@@ -4,8 +4,19 @@
 
 void FlyCameraContext::handleKeyboardInput(InputContext &ctx) {
     auto& cam = ctx.cameraManager.activeCameraMut();
+    auto& ps = ctx.playbackState;
     auto* window = ctx.glfwWindow;
-    float cameraDelta = cam.speed * ctx.deltaTime;
+    float cameraDelta = 0.0f;
+    if (ps.continuousRenderSession.has_value()) {
+        cameraDelta = cam.speed * ps.continuousRenderSession.value().deltaTime;
+    }
+    if (m_moveState != 0 && !ps.continuousRenderSession.has_value()) {
+        ps.continuousRenderSession = ContinuousRenderSession();
+    }
+    if (m_moveState == 0 && ps.continuousRenderSession.has_value()) {
+        ps.continuousRenderSession.reset();
+    }
+
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 

@@ -1,7 +1,11 @@
 #pragma once
 
+#include <optional>
+#include "ContinuousRenderSession.h"
+
 struct PlaybackState {
-    bool continuous = true;
-    bool manual = false;
+    bool forceContinuous = false;
+    bool manual = true;
     float playback = 0.0f;
+    std::optional<ContinuousRenderSession> continuousRenderSession;
 };

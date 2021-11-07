@@ -24,16 +24,12 @@ public:
     void swapBuffers();
     void waitEvents();
     float playbackValue();
-    [[nodiscard]] float deltaTime() const;
     PlaybackState& playbackState();
     CameraManager& cameraManager();
     InputController& inputController();
 
 private:
     GLFWwindow* m_glfwWindow = nullptr;
-    float m_currentTime = 0.0f;
-    float m_deltaTime = 0.0f;
-    float m_lastTime = 0.0f;
     CameraManager m_cameraManager;
     InputController m_inputController;
 

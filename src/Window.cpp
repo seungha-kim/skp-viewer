@@ -16,7 +16,6 @@ void mouse_callback(GLFWwindow* glfwWindow, double xPosD, double yPosD) {
         .glfwWindow = glfwWindow,
         .cameraManager = window.m_cameraManager,
         .playbackState = window.m_playbackState,
-        .deltaTime = window.deltaTime(),
         .mouseX = (float)xPosD,
         .mouseY = (float)yPosD,
     };
@@ -76,9 +75,9 @@ bool Window::shouldClose() {
 }
 
 void Window::updateTime() {
-    m_currentTime = (float)glfwGetTime();
-    m_deltaTime = m_currentTime - m_lastTime;
-    m_lastTime = m_currentTime;
+    if (m_playbackState.continuousRenderSession.has_value()) {
+        m_playbackState.continuousRenderSession->updateTime();
+    }
 }
 
 void Window::processKeyboardInput() {
@@ -86,7 +85,6 @@ void Window::processKeyboardInput() {
         .glfwWindow = m_glfwWindow,
         .cameraManager = m_cameraManager,
         .playbackState = m_playbackState,
-        .deltaTime = deltaTime(),
     };
     m_inputController.handleKeyboardInput(ctx);
 }
@@ -96,19 +94,14 @@ void Window::swapBuffers() {
 }
 
 void Window::waitEvents() {
-    if (m_playbackState.continuous || m_inputController.shouldRenderContinuously()) {
+    if (m_playbackState.forceContinuous || m_inputController.shouldRenderContinuously() || m_playbackState.continuousRenderSession.has_value()) {
         glfwPostEmptyEvent();
     }
     glfwWaitEvents();
-
 }
 
 float Window::playbackValue() {
-    return m_playbackState.manual ? m_playbackState.playback : m_currentTime;
-}
-
-float Window::deltaTime() const {
-    return m_deltaTime;
+    return m_playbackState.manual ? m_playbackState.playback : (float)glfwGetTime();
 }
 
 PlaybackState &Window::playbackState() {
