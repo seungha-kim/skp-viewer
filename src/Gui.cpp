@@ -75,10 +75,11 @@ void Gui::drawRenderInfo(GuiRenderContext &ctx) {
 
 void Gui::drawCameraControl(GuiRenderContext &ctx) {
     if (show_camera_control) {
+        auto& ac = ctx.cameraManager.activeCamera();
         ImGui::Begin("Camera Control");
-        ImGui::SliderFloat("fovy", &ctx.cameraState.fovyDeg, 10.0f, 170.0f);
-        ImGui::SliderFloat("zNear", &ctx.cameraState.zNear, 0.01f, 10.0f);
-        ImGui::SliderFloat("zFar", &ctx.cameraState.zFar, 0.1f, 200.0f);
+        ImGui::SliderFloat("fovy", &ac.fovyDeg, 10.0f, 170.0f);
+        ImGui::SliderFloat("zNear", &ac.zNear, 0.01f, 10.0f);
+        ImGui::SliderFloat("zFar", &ac.zFar, 0.1f, 200.0f);
         ImGui::End();
     }
 }

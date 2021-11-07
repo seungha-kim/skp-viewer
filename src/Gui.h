@@ -1,13 +1,13 @@
 #pragma once
 #include <memory>
 #include <GLFW/glfw3.h>
-#include "CameraState.h"
+#include "CameraManager.h"
 #include "PlaybackState.h"
 #include "InputState.h"
 #include "Window.h"
 
 struct GuiRenderContext {
-    CameraState& cameraState;
+    CameraManager& cameraManager;
     PlaybackState& playbackState;
     InputState& inputState;
 };

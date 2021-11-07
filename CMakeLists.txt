@@ -52,7 +52,7 @@ target_include_directories(imgui
         extern/imgui/backends)
 
 # Targets
-add_executable(learn_opengl src/main.cpp src/Shader.cpp src/Shader.h src/lib.cpp src/Gui.cpp src/Gui.h src/CameraState.h src/PlaybackState.h src/InputState.h src/Window.cpp src/Window.h src/Renderer.cpp src/Renderer.h)
+add_executable(learn_opengl src/main.cpp src/Shader.cpp src/Shader.h src/lib.cpp src/Gui.cpp src/Gui.h src/CameraState.h src/PlaybackState.h src/InputState.h src/Window.cpp src/Window.h src/Renderer.cpp src/Renderer.h src/CameraManager.cpp src/CameraManager.h)
 target_link_libraries(learn_opengl OpenGL::GL glfw assimp glad imgui)
 target_compile_definitions(learn_opengl PUBLIC GLFW_INCLUDE_NONE)
 

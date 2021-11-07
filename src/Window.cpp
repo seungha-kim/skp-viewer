@@ -5,8 +5,8 @@ void framebuffer_size_callback(GLFWwindow* glfwWindow, int width, int height)
 {
     Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
     glViewport(0, 0, width, height);
-    window.m_cameraState.aspectWidth = (float)width;
-    window.m_cameraState.aspectHeight = (float)height;
+    window.cameraManager().activeCamera().aspectWidth = (float)width;
+    window.cameraManager().activeCamera().aspectHeight = (float)height;
 }
 
 void mouse_callback(GLFWwindow* glfwWindow, double xPosD, double yPosD) {
@@ -17,7 +17,7 @@ void mouse_callback(GLFWwindow* glfwWindow, double xPosD, double yPosD) {
     static float sensitivity = 0.1f;
     float xOffset = xPos - lastX, yOffset = yPos - lastY;
 
-    auto& cs = window.m_cameraState;
+    auto& cs = window.cameraManager().activeCamera();
     cs.yaw += xOffset * sensitivity;
     cs.pitch -= yOffset * sensitivity;
 
@@ -84,7 +84,7 @@ void Window::updateTime() {
 }
 
 void Window::processInput() {
-    auto& co = m_cameraState;
+    auto& co = m_cameraManager.activeCamera();
     auto* window = m_glfwWindow;
     float cameraDelta = co.speed * m_deltaTime;
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -101,7 +101,7 @@ void Window::processInput() {
         co.pos -= co.up * cameraDelta;
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
         co.pos += co.up * cameraDelta;
-    
+
     // TODO: static
     static int prevSpace = GLFW_RELEASE;
     int currentSpace = glfwGetKey(window, GLFW_KEY_SPACE);
@@ -137,15 +137,15 @@ float Window::deltaTime() const {
     return m_deltaTime;
 }
 
-CameraState &Window::cameraState() {
-    return m_cameraState;
-}
-
 PlaybackState &Window::playbackState() {
     return m_playbackState;
 }
 
 InputState &Window::inputState() {
     return m_inputState;
+}
+
+CameraManager &Window::cameraManager() {
+    return m_cameraManager;
 }
 

@@ -19,10 +19,10 @@ int main()
     {
         window.updateTime();
         window.processInput();
-        renderer.render(window.cameraState(), window.playbackValue());
+        renderer.render(window.cameraManager().activeCamera(), window.playbackValue());
 
         GuiRenderContext guiCtx {
-                .cameraState = window.cameraState(),
+                .cameraManager = window.cameraManager(),
                 .playbackState = window.playbackState(),
                 .inputState = window.inputState(),
         };
