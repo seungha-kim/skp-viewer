@@ -17,9 +17,6 @@ void FlyCameraContext::handleKeyboardInput(InputContext &ctx) {
         ps.continuousRenderSession.reset();
     }
 
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         cam.pos += cam.front() * cameraDelta;
         m_moveState |= (unsigned)CameraMoveState::forward;

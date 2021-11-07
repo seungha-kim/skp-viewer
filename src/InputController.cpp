@@ -8,6 +8,10 @@ void InputController::handleMouseInput(InputContext &ctx) {
 
 void InputController::handleKeyboardInput(InputContext &ctx) {
     auto* window = ctx.glfwWindow;
+
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+
     // TODO: static
     static int prevSpace = GLFW_RELEASE;
     int currentSpace = glfwGetKey(window, GLFW_KEY_SPACE);
