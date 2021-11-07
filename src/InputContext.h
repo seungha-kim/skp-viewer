@@ -2,10 +2,12 @@
 
 #include <GLFW/glfw3.h>
 #include "CameraManager.h"
+#include "PlaybackState.h"
 
 struct InputContext {
     GLFWwindow* glfwWindow;
     CameraManager& cameraManager;
+    PlaybackState& playbackState;
     float deltaTime;
     float mouseX;
     float mouseY;

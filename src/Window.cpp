@@ -14,7 +14,8 @@ void mouse_callback(GLFWwindow* glfwWindow, double xPosD, double yPosD) {
     Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
     InputContext ctx {
         .glfwWindow = glfwWindow,
-        .cameraManager = window.cameraManager(),
+        .cameraManager = window.m_cameraManager,
+        .playbackState = window.m_playbackState,
         .deltaTime = window.deltaTime(),
         .mouseX = (float)xPosD,
         .mouseY = (float)yPosD,
@@ -84,6 +85,7 @@ void Window::processKeyboardInput() {
     auto ctx = InputContext {
         .glfwWindow = m_glfwWindow,
         .cameraManager = m_cameraManager,
+        .playbackState = m_playbackState,
         .deltaTime = deltaTime(),
     };
     m_inputController.handleKeyboardInput(ctx);
@@ -94,7 +96,7 @@ void Window::swapBuffers() {
 }
 
 void Window::waitEvents() {
-    if (m_playbackState.continuous) {
+    if (m_playbackState.continuous || m_inputController.shouldRenderContinuously()) {
         glfwPostEmptyEvent();
     }
     glfwWaitEvents();
