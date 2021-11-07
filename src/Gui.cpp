@@ -75,8 +75,24 @@ void Gui::drawRenderInfo(GuiRenderContext &ctx) {
 
 void Gui::drawCameraControl(GuiRenderContext &ctx) {
     if (show_camera_control) {
-        auto& ac = ctx.cameraManager.activeCamera();
+        auto& cm = ctx.cameraManager;
         ImGui::Begin("Camera Control");
+        if (ImGui::Button("Add Camera")) {
+            cm.addCamera();
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Remove Camera")) {
+            cm.removeActiveCamera();
+        }
+        const auto& cs = cm.cameras();
+        for (int i = 0; i < cs.size(); i++) {
+            char buf[32];
+            sprintf(buf, "Camera %d", i);
+            if (ImGui::Selectable(buf, i == cm.activeCameraIndex())) {
+                cm.setActiveCamera(i);
+            }
+        }
+        auto& ac = cm.activeCamera();
         ImGui::SliderFloat("fovy", &ac.fovyDeg, 10.0f, 170.0f);
         ImGui::SliderFloat("zNear", &ac.zNear, 0.01f, 10.0f);
         ImGui::SliderFloat("zFar", &ac.zFar, 0.1f, 200.0f);

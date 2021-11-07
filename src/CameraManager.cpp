@@ -18,3 +18,19 @@ bool CameraManager::removeActiveCamera() {
 void CameraManager::addCamera() {
     m_cameras.emplace_back();
 }
+
+const std::vector<CameraState> &CameraManager::cameras() {
+    return m_cameras;
+}
+
+bool CameraManager::setActiveCamera(int index) {
+    if (0 <= index && index < m_cameras.size()) {
+        m_activeCameraIndex = index;
+        return true;
+    }
+    return false;
+}
+
+int CameraManager::activeCameraIndex() const {
+    return m_activeCameraIndex;
+}

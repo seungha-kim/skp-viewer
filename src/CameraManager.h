@@ -6,8 +6,11 @@ class CameraManager {
 public:
     // TODO: 데이터 노출
     CameraState& activeCamera();
+    int activeCameraIndex() const;
     bool removeActiveCamera();
     void addCamera();
+    const std::vector<CameraState>& cameras();
+    bool setActiveCamera(int index);
 private:
     std::vector<CameraState> m_cameras = {CameraState()};
     int m_activeCameraIndex = 0;
