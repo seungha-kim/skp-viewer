@@ -22,6 +22,7 @@ void InputController::handleKeyboardInput(InputContext &ctx) {
         } else {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             m_cameraRotateMode = true;
+            m_flyCameraContext.resetLastMousePos(ctx);
         }
     }
     prevSpace = currentSpace;

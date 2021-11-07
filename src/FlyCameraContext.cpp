@@ -68,18 +68,24 @@ void FlyCameraContext::handleKeyboardInput(InputContext &ctx) {
 
 void FlyCameraContext::handleMouseInput(InputContext &ctx) {
     auto xPos = ctx.mouseX, yPos = ctx.mouseY;
-    static float lastX = xPos, lastY = yPos;
     static float sensitivity = 0.1f;
-    float xOffset = xPos - lastX, yOffset = yPos - lastY;
+    float xOffset = xPos - m_lastMouseX, yOffset = yPos - m_lastMouseY;
 
     auto& cam = ctx.cameraManager.activeCameraMut();
     cam.yaw += xOffset * sensitivity;
     cam.pitch -= yOffset * sensitivity;
 
-    lastX = xPos;
-    lastY = yPos;
+    m_lastMouseX = xPos;
+    m_lastMouseY = yPos;
 }
 
 bool FlyCameraContext::shouldRenderContinuously() const {
     return m_moveState != 0;
+}
+
+void FlyCameraContext::resetLastMousePos(InputContext& ctx) {
+    double xpos, ypos;
+    glfwGetCursorPos(ctx.glfwWindow, &xpos, &ypos);
+    m_lastMouseX = (float)xpos;
+    m_lastMouseY = (float)ypos;
 }
