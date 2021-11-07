@@ -4,8 +4,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "PlaybackState.h"
-#include "InputState.h"
 #include "CameraManager.h"
+#include "InputController.h"
 
 class Window {
     friend void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -20,25 +20,22 @@ public:
     [[nodiscard]] GLFWwindow* glfwWindow() const;
     bool shouldClose();
     void updateTime();
-    void processInput();
+    void processKeyboardInput();
     void swapBuffers();
     void waitEvents();
     float playbackValue();
     [[nodiscard]] float deltaTime() const;
     PlaybackState& playbackState();
-    InputState& inputState();
     CameraManager& cameraManager();
+    InputController& inputController();
 
 private:
     GLFWwindow* m_glfwWindow = nullptr;
     float m_currentTime = 0.0f;
     float m_deltaTime = 0.0f;
     float m_lastTime = 0.0f;
-    // TODO: input manager -> flyCameraContext
-    bool m_cameraRotateMode = false;
     CameraManager m_cameraManager;
+    InputController m_inputController;
 
     PlaybackState m_playbackState;
-    InputState m_inputState;
-
 };

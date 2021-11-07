@@ -18,8 +18,12 @@ Gui::Gui(Window& window) {
 }
 
 void Gui::render(GuiRenderContext& ctx) {
-    // TODO
-    ctx.inputState.isGuiFocused = ImGui::GetIO().WantCaptureKeyboard;
+    auto& io = ImGui::GetIO();
+    if (io.WantCaptureKeyboard || io.WantCaptureMouse) {
+        ctx.inputController.setGuiFocused(true);
+    } else {
+        ctx.inputController.setGuiFocused(false);
+    }
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -59,7 +63,7 @@ void Gui::drawRenderInfo(GuiRenderContext &ctx) {
     deltas[pivot] = deltaTimeMs;
     ImGui::Begin("Render Info");
     ImGui::Text("%.0f ms", deltaTimeMs);
-    ImGui::Text("WantCaptureMouse: %d", ctx.inputState.isGuiFocused);
+//    ImGui::Text("WantCaptureMouse: %d", ctx.inputState.isGuiFocused);
     ImGui::PlotHistogram("", histogram, nullptr, 100, 0, nullptr, 0.0f, 100.0f, ImVec2(0, 20));
     ImGui::Checkbox("Continuous", &ctx.playbackState.continuous);
     ImGui::Checkbox("Manual playback", &ctx.playbackState.manual);

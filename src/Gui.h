@@ -3,13 +3,12 @@
 #include <GLFW/glfw3.h>
 #include "CameraManager.h"
 #include "PlaybackState.h"
-#include "InputState.h"
 #include "Window.h"
 
 struct GuiRenderContext {
     CameraManager& cameraManager;
     PlaybackState& playbackState;
-    InputState& inputState;
+    InputController& inputController;
 };
 
 class Gui {

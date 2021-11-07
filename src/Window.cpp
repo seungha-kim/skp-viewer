@@ -12,18 +12,14 @@ void framebuffer_size_callback(GLFWwindow* glfwWindow, int width, int height)
 
 void mouse_callback(GLFWwindow* glfwWindow, double xPosD, double yPosD) {
     Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
-    if (!window.m_cameraRotateMode) return;
-    auto xPos = (float)xPosD, yPos = (float)yPosD;
-    static float lastX = xPos, lastY = yPos;
-    static float sensitivity = 0.1f;
-    float xOffset = xPos - lastX, yOffset = yPos - lastY;
-
-    auto& cam = window.cameraManager().activeCameraMut();
-    cam.yaw += xOffset * sensitivity;
-    cam.pitch -= yOffset * sensitivity;
-
-    lastX = xPos;
-    lastY = yPos;
+    InputContext ctx {
+        .glfwWindow = glfwWindow,
+        .cameraManager = window.cameraManager(),
+        .deltaTime = window.deltaTime(),
+        .mouseX = (float)xPosD,
+        .mouseY = (float)yPosD,
+    };
+    window.m_inputController.handleMouseInput(ctx);
 }
 
 void Window::initGlfw() {
@@ -84,38 +80,13 @@ void Window::updateTime() {
     m_lastTime = m_currentTime;
 }
 
-void Window::processInput() {
-    auto& cam = m_cameraManager.activeCameraMut();
-    auto* window = m_glfwWindow;
-    float cameraDelta = cam.speed * m_deltaTime;
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        cam.pos += cam.front() * cameraDelta;
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        cam.pos -= cam.front() * cameraDelta;
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        cam.pos -= glm::normalize(glm::cross(cam.front(), cam.up)) * cameraDelta;
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        cam.pos += glm::normalize(glm::cross(cam.front(), cam.up)) * cameraDelta;
-    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-        cam.pos -= cam.up * cameraDelta;
-    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-        cam.pos += cam.up * cameraDelta;
-
-    // TODO: static
-    static int prevSpace = GLFW_RELEASE;
-    int currentSpace = glfwGetKey(window, GLFW_KEY_SPACE);
-    if (prevSpace == GLFW_RELEASE && currentSpace == GLFW_PRESS) {
-        if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED) {
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-            m_cameraRotateMode = false;
-        } else {
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-            m_cameraRotateMode = true;
-        }
-    }
-    prevSpace = currentSpace;
+void Window::processKeyboardInput() {
+    auto ctx = InputContext {
+        .glfwWindow = m_glfwWindow,
+        .cameraManager = m_cameraManager,
+        .deltaTime = deltaTime(),
+    };
+    m_inputController.handleKeyboardInput(ctx);
 }
 
 void Window::swapBuffers() {
@@ -142,11 +113,11 @@ PlaybackState &Window::playbackState() {
     return m_playbackState;
 }
 
-InputState &Window::inputState() {
-    return m_inputState;
-}
-
 CameraManager &Window::cameraManager() {
     return m_cameraManager;
+}
+
+InputController &Window::inputController() {
+    return m_inputController;
 }
 

@@ -18,13 +18,13 @@ int main()
     while (!window.shouldClose())
     {
         window.updateTime();
-        window.processInput();
+        window.processKeyboardInput();
         renderer.render(window.cameraManager().activeCamera(), window.playbackValue());
 
         GuiRenderContext guiCtx {
                 .cameraManager = window.cameraManager(),
                 .playbackState = window.playbackState(),
-                .inputState = window.inputState(),
+                .inputController = window.inputController(),
         };
         gui.render(guiCtx);
 
