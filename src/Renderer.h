@@ -8,7 +8,7 @@ class Renderer {
 public:
     Renderer();
     ~Renderer();
-    void render(const CameraState &cameraState, float playbackValue);
+    void render(const CameraState &cam, float playbackValue);
 private:
     Shader ourShader;
     GLuint texture1, texture2;

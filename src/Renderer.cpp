@@ -110,7 +110,7 @@ Renderer::~Renderer() {
 
 }
 
-void Renderer::render(const CameraState &cameraState, float playbackValue) {
+void Renderer::render(const CameraState &cam, float playbackValue) {
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -122,8 +122,8 @@ void Renderer::render(const CameraState &cameraState, float playbackValue) {
     ourShader.setInt("texture1", 0);
     ourShader.setInt("texture2", 1);
     ourShader.setFloat("mixRatio", ratio);
-    ourShader.setMatrix4f("view", cameraState.viewMatrix());
-    ourShader.setMatrix4f("projection", cameraState.projectionMatrix());
+    ourShader.setMatrix4f("view", cam.viewMatrix());
+    ourShader.setMatrix4f("projection", cam.projectionMatrix());
 
 
     float greenValue = (sin(playbackValue) / 2.0f) + 0.5f;

@@ -5,8 +5,9 @@ void framebuffer_size_callback(GLFWwindow* glfwWindow, int width, int height)
 {
     Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
     glViewport(0, 0, width, height);
-    window.cameraManager().activeCameraMut().aspectWidth = (float)width;
-    window.cameraManager().activeCameraMut().aspectHeight = (float)height;
+    auto& cam = window.cameraManager().activeCameraMut();
+    cam.aspectWidth = (float)width;
+    cam.aspectHeight = (float)height;
 }
 
 void mouse_callback(GLFWwindow* glfwWindow, double xPosD, double yPosD) {
@@ -17,9 +18,9 @@ void mouse_callback(GLFWwindow* glfwWindow, double xPosD, double yPosD) {
     static float sensitivity = 0.1f;
     float xOffset = xPos - lastX, yOffset = yPos - lastY;
 
-    auto& cs = window.cameraManager().activeCameraMut();
-    cs.yaw += xOffset * sensitivity;
-    cs.pitch -= yOffset * sensitivity;
+    auto& cam = window.cameraManager().activeCameraMut();
+    cam.yaw += xOffset * sensitivity;
+    cam.pitch -= yOffset * sensitivity;
 
     lastX = xPos;
     lastY = yPos;
@@ -84,23 +85,23 @@ void Window::updateTime() {
 }
 
 void Window::processInput() {
-    auto& co = m_cameraManager.activeCameraMut();
+    auto& cam = m_cameraManager.activeCameraMut();
     auto* window = m_glfwWindow;
-    float cameraDelta = co.speed * m_deltaTime;
+    float cameraDelta = cam.speed * m_deltaTime;
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        co.pos += co.front() * cameraDelta;
+        cam.pos += cam.front() * cameraDelta;
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        co.pos -= co.front() * cameraDelta;
+        cam.pos -= cam.front() * cameraDelta;
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        co.pos -= glm::normalize(glm::cross(co.front(), co.up)) * cameraDelta;
+        cam.pos -= glm::normalize(glm::cross(cam.front(), cam.up)) * cameraDelta;
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        co.pos += glm::normalize(glm::cross(co.front(), co.up)) * cameraDelta;
+        cam.pos += glm::normalize(glm::cross(cam.front(), cam.up)) * cameraDelta;
     if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-        co.pos -= co.up * cameraDelta;
+        cam.pos -= cam.up * cameraDelta;
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-        co.pos += co.up * cameraDelta;
+        cam.pos += cam.up * cameraDelta;
 
     // TODO: static
     static int prevSpace = GLFW_RELEASE;

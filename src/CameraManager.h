@@ -4,7 +4,7 @@
 
 class CameraManager {
 public:
-    const CameraState& activeCamera() const;
+    [[nodiscard]] const CameraState& activeCamera() const;
     CameraState& activeCameraMut();
     int activeCameraIndex() const;
     bool removeActiveCamera();
