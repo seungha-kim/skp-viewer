@@ -37,3 +37,7 @@ void InputController::handleKeyboardInput(InputContext &ctx) {
 void InputController::setGuiFocused(bool value) {
     m_guiFocused = value;
 }
+
+bool InputController::isCameraRotateMode() {
+    return m_cameraRotateMode;
+}

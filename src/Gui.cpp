@@ -4,6 +4,13 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
+ImGuiWindowFlags windowFlag(GuiContext& ctx) {
+    ImGuiWindowFlags flag = 0;
+    if (ctx.inputController.isCameraRotateMode()) {
+        flag |= ImGuiWindowFlags_NoInputs;
+    }
+    return flag;
+}
 
 Gui::Gui(Window& window) {
 
@@ -61,7 +68,7 @@ void Gui::processRenderInfo(GuiContext &ctx) {
 
     float deltaTimeMs = ImGui::GetIO().DeltaTime * 1000.0f;
     deltas[pivot] = deltaTimeMs;
-    ImGui::Begin("Render Info");
+    ImGui::Begin("Render Info", nullptr, windowFlag(ctx));
     ImGui::Text("%.0f ms", deltaTimeMs);
 //    ImGui::Text("WantCaptureMouse: %d", ctx.inputState.isGuiFocused);
     ImGui::PlotHistogram("", histogram, nullptr, 100, 0, nullptr, 0.0f, 100.0f, ImVec2(0, 20));
@@ -80,7 +87,7 @@ void Gui::processRenderInfo(GuiContext &ctx) {
 void Gui::processCameraControl(GuiContext &ctx) const {
     if (show_camera_control) {
         auto& cm = ctx.cameraManager;
-        ImGui::Begin("Camera Control");
+        ImGui::Begin("Camera Control", nullptr, windowFlag(ctx));
         if (ImGui::Button("Add Camera")) {
             cm.addCamera();
         }
