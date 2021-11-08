@@ -37,7 +37,3 @@ void InputController::handleKeyboardInput(InputContext &ctx) {
 void InputController::setGuiFocused(bool value) {
     m_guiFocused = value;
 }
-
-bool InputController::shouldRenderContinuously() const {
-    return m_cameraRotateMode && m_flyCameraContext.shouldRenderContinuously();
-}

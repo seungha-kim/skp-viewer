@@ -13,7 +13,6 @@ public:
     void handleKeyboardInput(InputContext& ctx);
     void handleMouseInput(InputContext& ctx);
     void setGuiFocused(bool value);
-    [[nodiscard]] bool shouldRenderContinuously() const;
 private:
     bool m_guiFocused = false;
     bool m_cameraRotateMode = false;

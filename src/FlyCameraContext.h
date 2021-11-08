@@ -15,10 +15,12 @@ class FlyCameraContext {
 public:
     void handleKeyboardInput(InputContext& ctx);
     void handleMouseInput(InputContext& ctx);
-    [[nodiscard]] bool shouldRenderContinuously() const;
     void resetLastMousePos(InputContext& ctx);
 private:
     unsigned m_moveState = 0;
     float m_lastMouseX = 0.0f;
     float m_lastMouseY = 0.0f;
+
+    void updateMoveState(InputContext &ctx);
+    void updateCamera(InputContext &ctx);
 };

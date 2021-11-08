@@ -94,7 +94,7 @@ void Window::swapBuffers() {
 }
 
 void Window::waitEvents() {
-    if (m_playbackState.forceContinuous || m_inputController.shouldRenderContinuously() || m_playbackState.continuousRenderSession.has_value()) {
+    if (m_playbackState.forceContinuous || m_playbackState.continuousRenderSession.has_value()) {
         glfwPostEmptyEvent();
     }
     glfwWaitEvents();
