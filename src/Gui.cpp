@@ -17,7 +17,7 @@ Gui::Gui(Window& window) {
     ImGui_ImplOpenGL3_Init("#version 330");
 }
 
-void Gui::render(GuiRenderContext& ctx) {
+void Gui::process(GuiContext& ctx) {
     auto& io = ImGui::GetIO();
     if (io.WantCaptureKeyboard || io.WantCaptureMouse) {
         ctx.inputController.setGuiFocused(true);
@@ -32,8 +32,8 @@ void Gui::render(GuiRenderContext& ctx) {
     if (show_demo_window)
         ImGui::ShowDemoWindow(&show_demo_window);
 
-    drawRenderInfo(ctx);
-    drawCameraControl(ctx);
+    processRenderInfo(ctx);
+    processCameraControl(ctx);
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -45,7 +45,7 @@ Gui::~Gui() {
     ImGui::DestroyContext();
 }
 
-void Gui::drawRenderInfo(GuiRenderContext &ctx) {
+void Gui::processRenderInfo(GuiContext &ctx) {
     static float deltas[100];
     static int pivot = 0;
     static bool init = false;
@@ -77,7 +77,7 @@ void Gui::drawRenderInfo(GuiRenderContext &ctx) {
     pivot = (pivot + 1) % 100;
 }
 
-void Gui::drawCameraControl(GuiRenderContext &ctx) {
+void Gui::processCameraControl(GuiContext &ctx) const {
     if (show_camera_control) {
         auto& cm = ctx.cameraManager;
         ImGui::Begin("Camera Control");

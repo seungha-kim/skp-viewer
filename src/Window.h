@@ -24,9 +24,15 @@ public:
     void swapBuffers();
     void waitEvents();
     float playbackValue();
-    PlaybackState& playbackState();
-    CameraManager& cameraManager();
-    InputController& inputController();
+
+    [[nodiscard]] const PlaybackState& playbackState() const;
+    PlaybackState& playbackStateMut();
+
+    [[nodiscard]] const CameraManager& cameraManager() const;
+    CameraManager& cameraManagerMut();
+
+    [[nodiscard]] const InputController& inputController() const;
+    InputController& inputControllerMut();
 
 private:
     GLFWwindow* m_glfwWindow = nullptr;

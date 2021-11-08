@@ -5,7 +5,7 @@
 #include "PlaybackState.h"
 #include "Window.h"
 
-struct GuiRenderContext {
+struct GuiContext {
     CameraManager& cameraManager;
     PlaybackState& playbackState;
     InputController& inputController;
@@ -15,11 +15,11 @@ class Gui {
 public:
     explicit Gui(Window& window);
     ~Gui();
-    void render(GuiRenderContext& ctx);
+    void process(GuiContext& ctx);
 private:
     bool show_demo_window = false;
     bool show_camera_control = false;
 
-    void drawRenderInfo(GuiRenderContext& ctx);
-    void drawCameraControl(GuiRenderContext& ctx);
+    void processRenderInfo(GuiContext& ctx);
+    void processCameraControl(GuiContext& ctx) const;
 };

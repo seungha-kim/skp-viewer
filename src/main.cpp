@@ -19,14 +19,19 @@ int main()
     {
         window.updateTime();
         window.processKeyboardInput();
-        renderer.render(window.cameraManager().activeCamera(), window.playbackValue());
 
-        GuiRenderContext guiCtx {
-                .cameraManager = window.cameraManager(),
-                .playbackState = window.playbackState(),
-                .inputController = window.inputController(),
+        RenderContext renderCtx {
+            .cam = window.cameraManager().activeCamera(),
+            .playbackValue = window.playbackValue(),
         };
-        gui.render(guiCtx);
+        renderer.render(renderCtx);
+
+        GuiContext guiCtx {
+                .cameraManager = window.cameraManagerMut(),
+                .playbackState = window.playbackStateMut(),
+                .inputController = window.inputControllerMut(),
+        };
+        gui.process(guiCtx);
 
         window.swapBuffers();
         window.waitEvents();

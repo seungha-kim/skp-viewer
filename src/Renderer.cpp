@@ -110,7 +110,9 @@ Renderer::~Renderer() {
 
 }
 
-void Renderer::render(const CameraState &cam, float playbackValue) {
+void Renderer::render(RenderContext& ctx) {
+    const CameraState &cam = ctx.cam;
+    const float playbackValue = ctx.playbackValue; 
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

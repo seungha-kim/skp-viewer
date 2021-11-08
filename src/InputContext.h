@@ -8,6 +8,6 @@ struct InputContext {
     GLFWwindow* glfwWindow;
     CameraManager& cameraManager;
     PlaybackState& playbackState;
-    float mouseX;
-    float mouseY;
+    const float mouseX;
+    const float mouseY;
 };

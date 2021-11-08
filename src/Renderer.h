@@ -4,11 +4,16 @@
 #include "Shader.h"
 #include <glad/glad.h>
 
+struct RenderContext {
+    const CameraState &cam;
+    const float playbackValue;
+};
+
 class Renderer {
 public:
     Renderer();
     ~Renderer();
-    void render(const CameraState &cam, float playbackValue);
+    void render(RenderContext& ctx);
 private:
     Shader ourShader;
     GLuint texture1, texture2;

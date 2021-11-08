@@ -5,7 +5,7 @@ void framebuffer_size_callback(GLFWwindow* glfwWindow, int width, int height)
 {
     Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
     glViewport(0, 0, width, height);
-    auto& cam = window.cameraManager().activeCameraMut();
+    auto& cam = window.cameraManagerMut().activeCameraMut();
     cam.aspectWidth = (float)width;
     cam.aspectHeight = (float)height;
 }
@@ -104,15 +104,28 @@ float Window::playbackValue() {
     return m_playbackState.manual ? m_playbackState.playback : (float)glfwGetTime();
 }
 
-PlaybackState &Window::playbackState() {
+const PlaybackState &Window::playbackState() const {
     return m_playbackState;
 }
 
-CameraManager &Window::cameraManager() {
+PlaybackState &Window::playbackStateMut() {
+    return m_playbackState;
+}
+
+const CameraManager &Window::cameraManager() const {
     return m_cameraManager;
 }
 
-InputController &Window::inputController() {
+CameraManager &Window::cameraManagerMut() {
+    return m_cameraManager;
+}
+
+const InputController &Window::inputController() const {
     return m_inputController;
 }
+
+InputController &Window::inputControllerMut() {
+    return m_inputController;
+}
+
 
