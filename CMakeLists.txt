@@ -86,3 +86,7 @@ target_compile_definitions(learn_opengl PUBLIC GLFW_INCLUDE_NONE)
 set(RESOURCES_SOURCE "${CMAKE_CURRENT_LIST_DIR}/resources")
 set(RESOURCES_DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/resources")
 file(CREATE_LINK ${RESOURCES_SOURCE} ${RESOURCES_DESTINATION} SYMBOLIC)
+
+# Assimp Test
+add_executable(assimp_test src/assimp_test.cpp)
+target_link_libraries(assimp_test assimp)
