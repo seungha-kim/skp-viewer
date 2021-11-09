@@ -12,10 +12,8 @@ void InputController::handleKeyboardInput(InputContext &ctx) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-    // TODO: static
-    static int prevSpace = GLFW_RELEASE;
     int currentSpace = glfwGetKey(window, GLFW_KEY_SPACE);
-    if (!m_guiFocused && prevSpace == GLFW_RELEASE && currentSpace == GLFW_PRESS) {
+    if (!m_guiFocused && m_prevSpaceState == GLFW_RELEASE && currentSpace == GLFW_PRESS) {
         if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED) {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
             m_cameraRotateMode = false;
@@ -25,7 +23,7 @@ void InputController::handleKeyboardInput(InputContext &ctx) {
             m_flyCameraContext.resetLastMousePos(ctx);
         }
     }
-    prevSpace = currentSpace;
+    m_prevSpaceState = currentSpace;
 
     if (m_cameraRotateMode) {
         m_flyCameraContext.handleKeyboardInput(ctx);

@@ -17,6 +17,7 @@ public:
 private:
     bool m_guiFocused = false;
     bool m_cameraRotateMode = false;
+    int m_prevSpaceState = GLFW_RELEASE;
     FlyCameraContext m_flyCameraContext;
     ObjectEditContext m_objectEditContext;
 };

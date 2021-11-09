@@ -20,6 +20,10 @@ private:
     bool show_demo_window = false;
     bool show_camera_control = false;
 
+    float m_deltas[100] = {0};
+    int m_deltasPivot = 0;
+
     void processRenderInfo(GuiContext& ctx);
     void processCameraControl(GuiContext& ctx) const;
+    static float deltasHistogram(void* data, int i);
 };

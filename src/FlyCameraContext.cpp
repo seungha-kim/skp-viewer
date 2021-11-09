@@ -9,12 +9,11 @@ void FlyCameraContext::handleKeyboardInput(InputContext &ctx) {
 
 void FlyCameraContext::handleMouseInput(InputContext &ctx) {
     auto xPos = ctx.mouseX, yPos = ctx.mouseY;
-    static float sensitivity = 0.1f;
     float xOffset = xPos - m_lastMouseX, yOffset = yPos - m_lastMouseY;
 
     auto& cam = ctx.cameraManager.activeCameraMut();
-    cam.yaw += xOffset * sensitivity;
-    cam.pitch -= yOffset * sensitivity;
+    cam.yaw += xOffset * m_sensitivity;
+    cam.pitch -= yOffset * m_sensitivity;
 
     m_lastMouseX = xPos;
     m_lastMouseY = yPos;

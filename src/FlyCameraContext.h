@@ -17,6 +17,7 @@ public:
     void handleMouseInput(InputContext& ctx);
     void resetLastMousePos(InputContext& ctx);
 private:
+    float m_sensitivity = 0.1f;
     unsigned m_moveState = 0;
     float m_lastMouseX = 0.0f;
     float m_lastMouseY = 0.0f;

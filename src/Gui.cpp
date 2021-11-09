@@ -53,25 +53,12 @@ Gui::~Gui() {
 }
 
 void Gui::processRenderInfo(GuiContext &ctx) {
-    static float deltas[100];
-    static int pivot = 0;
-    static bool init = false;
-    static float (*histogram)(void*, int) = [](void*, int i) {
-        return deltas[(pivot + i) % 100];
-    };
-    if (!init) {
-        for (float& delta : deltas) {
-            delta = 0.0f;
-        }
-        init = true;
-    }
-
     float deltaTimeMs = ImGui::GetIO().DeltaTime * 1000.0f;
-    deltas[pivot] = deltaTimeMs;
+    m_deltas[m_deltasPivot] = deltaTimeMs;
     ImGui::Begin("Render Info", nullptr, windowFlag(ctx));
     ImGui::Text("%.0f ms", deltaTimeMs);
 //    ImGui::Text("WantCaptureMouse: %d", ctx.inputState.isGuiFocused);
-    ImGui::PlotHistogram("", histogram, nullptr, 100, 0, nullptr, 0.0f, 100.0f, ImVec2(0, 20));
+    ImGui::PlotHistogram("", deltasHistogram, this, 100, 0, nullptr, 0.0f, 100.0f, ImVec2(0, 20));
     ImGui::Checkbox("Continuous", &ctx.playbackState.forceContinuous);
     ImGui::Checkbox("Manual playback", &ctx.playbackState.manual);
     if (ctx.playbackState.manual) {
@@ -81,7 +68,7 @@ void Gui::processRenderInfo(GuiContext &ctx) {
     ImGui::Checkbox("Demo Window", &show_demo_window);
     ImGui::End();
 
-    pivot = (pivot + 1) % 100;
+    m_deltasPivot = (m_deltasPivot + 1) % 100;
 }
 
 void Gui::processCameraControl(GuiContext &ctx) const {
@@ -109,4 +96,9 @@ void Gui::processCameraControl(GuiContext &ctx) const {
         ImGui::SliderFloat("zFar", &cam.zFar, 0.1f, 200.0f);
         ImGui::End();
     }
+}
+
+float Gui::deltasHistogram(void *data, int i) {
+    auto that = (Gui*)data;
+    return that->m_deltas[(that->m_deltasPivot + i) % 100];
 }
