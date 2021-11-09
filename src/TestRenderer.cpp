@@ -1,4 +1,4 @@
-#include "Renderer.h"
+#include "TestRenderer.h"
 #include "Shader.h"
 #include <stb_image.h>
 #include <iostream>
@@ -64,7 +64,7 @@ glm::vec3 cubePositions[] = {
         glm::vec3(-1.3f,  1.0f, -1.5f)
 };
 
-Renderer::Renderer()
+TestRenderer::TestRenderer(bool smile)
     :ourShader(Shader("simple.vert", "simple.frag")){
 
     glGenVertexArrays(1, &VAO);
@@ -92,7 +92,7 @@ Renderer::Renderer()
     glGenTextures(1, &texture1);
     loadTexture(texture1, "container.jpeg", GL_RGB);
     glGenTextures(1, &texture2);
-    loadTexture(texture2, "awesomeface.png", GL_RGBA);
+    loadTexture(texture2, smile ? "awesomeface.png" : "container.jpeg", GL_RGBA);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -100,7 +100,7 @@ Renderer::Renderer()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
-Renderer::~Renderer() {
+TestRenderer::~TestRenderer() {
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
@@ -110,7 +110,7 @@ Renderer::~Renderer() {
 
 }
 
-void Renderer::render(RenderContext& ctx) {
+void TestRenderer::render(RenderContext& ctx) {
     const CameraState &cam = ctx.cam;
     const float playbackValue = ctx.playbackValue; 
 

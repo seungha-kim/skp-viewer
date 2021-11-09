@@ -41,6 +41,7 @@ void Gui::process(GuiContext& ctx) {
 
     processRenderInfo(ctx);
     processCameraControl(ctx);
+    processMainMenuBar(ctx);
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -50,6 +51,23 @@ Gui::~Gui() {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+}
+
+void Gui::processMainMenuBar(GuiContext &ctx) {
+    if (ImGui::BeginMainMenuBar())
+    {
+        if (ImGui::BeginMenu("Program"))
+        {
+            if (ImGui::MenuItem("Test")) {
+                ctx.programSelector.changeProgram(ProgramKind::Test);
+            }
+            if (ImGui::MenuItem("Test2")) {
+                ctx.programSelector.changeProgram(ProgramKind::Test2);
+            }
+            ImGui::EndMenu();
+        }
+        ImGui::EndMainMenuBar();
+    }
 }
 
 void Gui::processRenderInfo(GuiContext &ctx) {

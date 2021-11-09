@@ -1,15 +1,8 @@
 #pragma once
 #include <memory>
 #include <GLFW/glfw3.h>
-#include "CameraManager.h"
-#include "PlaybackState.h"
 #include "Window.h"
-
-struct GuiContext {
-    CameraManager& cameraManager;
-    PlaybackState& playbackState;
-    InputController& inputController;
-};
+#include "GuiContext.h"
 
 class Gui {
 public:
@@ -23,6 +16,7 @@ private:
     float m_deltas[100] = {0};
     int m_deltasPivot = 0;
 
+    void processMainMenuBar(GuiContext& ctx);
     void processRenderInfo(GuiContext& ctx);
     void processCameraControl(GuiContext& ctx) const;
     static float deltasHistogram(void* data, int i);

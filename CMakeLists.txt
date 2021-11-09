@@ -63,8 +63,8 @@ add_executable(learn_opengl
         src/PlaybackState.h
         src/Window.cpp
         src/Window.h
-        src/Renderer.cpp
-        src/Renderer.h
+        src/TestRenderer.cpp
+        src/TestRenderer.h
         src/CameraManager.cpp
         src/CameraManager.h
         src/InputController.cpp
@@ -75,7 +75,10 @@ add_executable(learn_opengl
         src/FlyCameraContext.cpp
         src/FlyCameraContext.h
         src/ContinuousRenderSession.h
-        )
+        src/ProgramSelector.cpp
+        src/ProgramSelector.h
+        src/BaseRenderer.h
+        src/GuiContext.h)
 target_link_libraries(learn_opengl OpenGL::GL glfw assimp glad imgui)
 target_compile_definitions(learn_opengl PUBLIC GLFW_INCLUDE_NONE)
 

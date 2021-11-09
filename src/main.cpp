@@ -1,6 +1,6 @@
 #include "Window.h"
 #include "Gui.h"
-#include "Renderer.h"
+#include "ProgramSelector.h"
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -12,8 +12,9 @@ int main()
     window.bind();
     Window::initGl();
 
+    ProgramSelector selector;
     auto gui = Gui(window);
-    Renderer renderer;
+
 
     while (!window.shouldClose())
     {
@@ -24,9 +25,10 @@ int main()
             .cam = window.cameraManager().activeCamera(),
             .playbackValue = window.playbackValue(),
         };
-        renderer.render(renderCtx);
+        selector.renderProgram(renderCtx);
 
         GuiContext guiCtx {
+                .programSelector = selector,
                 .cameraManager = window.cameraManagerMut(),
                 .playbackState = window.playbackStateMut(),
                 .inputController = window.inputControllerMut(),
