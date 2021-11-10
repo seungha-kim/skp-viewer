@@ -64,6 +64,9 @@ void Gui::processMainMenuBar(GuiContext &ctx) {
             if (ImGui::MenuItem("Test2")) {
                 ctx.programSelector.changeProgram(ProgramKind::Test2);
             }
+            if (ImGui::MenuItem("Monkey")) {
+                ctx.programSelector.changeProgram(ProgramKind::Monkey);
+            }
             ImGui::EndMenu();
         }
         ImGui::EndMainMenuBar();

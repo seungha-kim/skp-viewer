@@ -52,6 +52,7 @@ target_include_directories(imgui
         extern/imgui/backends)
 
 # Targets
+include_directories(src)
 add_executable(learn_opengl
         src/main.cpp
         src/Shader.cpp
@@ -78,7 +79,13 @@ add_executable(learn_opengl
         src/ProgramSelector.cpp
         src/ProgramSelector.h
         src/BaseRenderer.h
-        src/GuiContext.h)
+        src/GuiContext.h
+        src/programs/monkey/MonkeyRenderer.cpp
+        src/programs/monkey/MonkeyRenderer.h
+        src/graphics/Mesh.cpp
+        src/graphics/Mesh.h
+        src/graphics/Vertex.cpp
+        src/graphics/Vertex.h)
 target_link_libraries(learn_opengl OpenGL::GL glfw assimp glad imgui)
 target_compile_definitions(learn_opengl PUBLIC GLFW_INCLUDE_NONE)
 

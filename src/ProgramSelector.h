@@ -5,6 +5,7 @@
 enum class ProgramKind {
     Test,
     Test2,
+    Monkey
 };
 
 class ProgramSelector {
