@@ -10,7 +10,7 @@ void framebuffer_size_callback(GLFWwindow* glfwWindow, int width, int height)
     cam.aspectHeight = (float)height;
 }
 
-void mouse_callback(GLFWwindow* glfwWindow, double xPosD, double yPosD) {
+void mouse_move_callback(GLFWwindow* glfwWindow, double xPosD, double yPosD) {
     Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
     InputContext ctx {
         .glfwWindow = glfwWindow,
@@ -20,6 +20,18 @@ void mouse_callback(GLFWwindow* glfwWindow, double xPosD, double yPosD) {
         .mouseY = (float)yPosD,
     };
     window.m_inputController.handleMouseInput(ctx);
+}
+
+void mouse_wheel_callback(GLFWwindow* glfwWindow, double xOffset, double yOffset) {
+    Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
+    InputContext ctx {
+            .glfwWindow = glfwWindow,
+            .cameraManager = window.m_cameraManager,
+            .playbackState = window.m_playbackState,
+            .scrollOffsetX = (float)xOffset,
+            .scrollOffsetY = (float)yOffset,
+    };
+    window.m_inputController.handleScrollInput(ctx);
 }
 
 void Window::initGlfw() {
@@ -48,7 +60,8 @@ Window::Window(int width, int height, const char *title) {
     {
         m_glfwWindow = windowPtr;
         glfwSetFramebufferSizeCallback(windowPtr, framebuffer_size_callback);
-        glfwSetCursorPosCallback(windowPtr, mouse_callback);
+        glfwSetCursorPosCallback(windowPtr, mouse_move_callback);
+        glfwSetScrollCallback(windowPtr, mouse_wheel_callback);
         glfwSetWindowUserPointer(windowPtr, this);
     } else {
         std::cout << "Failed to create GLFW window" << std::endl;

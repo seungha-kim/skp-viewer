@@ -9,7 +9,8 @@
 
 class Window {
     friend void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-    friend void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+    friend void mouse_move_callback(GLFWwindow* window, double xpos, double ypos);
+    friend void mouse_wheel_callback(GLFWwindow* window, double xOffset, double yOffset);
 
 public:
     static void initGlfw();

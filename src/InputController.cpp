@@ -39,3 +39,8 @@ void InputController::setGuiFocused(bool value) {
 bool InputController::isCameraRotateMode() {
     return m_cameraRotateMode;
 }
+
+void InputController::handleScrollInput(InputContext &ctx) {
+    auto& cam = ctx.cameraManager.activeCameraMut();
+    cam.fovyDeg = glm::clamp(cam.fovyDeg + ctx.scrollOffsetY, 10.0f, 170.0f);
+}

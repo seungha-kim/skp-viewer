@@ -10,4 +10,6 @@ struct InputContext {
     PlaybackState& playbackState;
     const float mouseX;
     const float mouseY;
+    const float scrollOffsetX;
+    const float scrollOffsetY;
 };
