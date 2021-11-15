@@ -87,7 +87,9 @@ add_executable(learn_opengl
         src/graphics/Mesh.cpp
         src/graphics/Mesh.h
         src/graphics/Vertex.cpp
-        src/graphics/Vertex.h)
+        src/graphics/Vertex.h
+        src/graphics/Material.h
+        )
 target_link_libraries(learn_opengl OpenGL::GL glfw assimp glad imgui)
 target_compile_definitions(learn_opengl PUBLIC GLFW_INCLUDE_NONE)
 
