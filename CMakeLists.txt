@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(learn_opengl)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 add_compile_definitions(GL_SILENCE_DEPRECATION)
 
 # Extern - OpenGL
@@ -19,6 +19,8 @@ include_directories(extern/glfw/include)
 # Extern - assimp
 set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_SAMPLES OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 set(ASSIMP_NO_EXPORT ON CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_OBJ_IMPORTER ON CACHE BOOL "" FORCE)
@@ -92,7 +94,6 @@ target_compile_definitions(learn_opengl PUBLIC GLFW_INCLUDE_NONE)
 # Resources
 set(RESOURCES_SOURCE "${CMAKE_CURRENT_LIST_DIR}/resources")
 set(RESOURCES_DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/resources")
-file(CREATE_LINK ${RESOURCES_SOURCE} ${RESOURCES_DESTINATION} SYMBOLIC)
 
 # Assimp Test
 add_executable(assimp_test src/assimp_test.cpp)
