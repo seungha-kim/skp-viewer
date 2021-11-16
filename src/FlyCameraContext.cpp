@@ -7,8 +7,8 @@ void FlyCameraContext::handleKeyboardInput(InputContext &ctx) {
     updateCamera(ctx);
 }
 
-void FlyCameraContext::handleMouseInput(InputContext &ctx) {
-    auto xPos = ctx.mouseX, yPos = ctx.mouseY;
+void FlyCameraContext::handleMouseInput(InputContext &ctx, const MouseMoveEvent& mouseMoveEvent) {
+    auto xPos = mouseMoveEvent.x, yPos = mouseMoveEvent.y;
     float xOffset = xPos - m_lastMouseX, yOffset = yPos - m_lastMouseY;
 
     auto& cam = ctx.cameraManager.activeCameraMut();

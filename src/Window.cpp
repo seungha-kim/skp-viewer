@@ -16,8 +16,7 @@ void mouse_move_callback(GLFWwindow* glfwWindow, double xPosD, double yPosD) {
         .glfwWindow = glfwWindow,
         .cameraManager = window.m_cameraManager,
         .playbackState = window.m_playbackState,
-        .mouseX = (float)xPosD,
-        .mouseY = (float)yPosD,
+        .mouseEvent = MouseMoveEvent {.x = (float)xPosD, .y = (float)yPosD},
     };
     window.m_inputController.handleMouseInput(ctx);
 }
@@ -28,10 +27,9 @@ void mouse_wheel_callback(GLFWwindow* glfwWindow, double xOffset, double yOffset
             .glfwWindow = glfwWindow,
             .cameraManager = window.m_cameraManager,
             .playbackState = window.m_playbackState,
-            .scrollOffsetX = (float)xOffset,
-            .scrollOffsetY = (float)yOffset,
+            .mouseEvent = MouseScrollEvent {.offsetX = (float)xOffset, .offsetY = (float)yOffset},
     };
-    window.m_inputController.handleScrollInput(ctx);
+    window.m_inputController.handleMouseInput(ctx);
 }
 
 void Window::initGlfw() {

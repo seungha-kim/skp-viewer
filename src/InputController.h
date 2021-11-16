@@ -12,7 +12,6 @@ class InputController {
 public:
     void handleKeyboardInput(InputContext& ctx);
     void handleMouseInput(InputContext& ctx);
-    void handleScrollInput(InputContext& ctx);
     void setGuiFocused(bool value);
     bool isCameraRotateMode();
 private:

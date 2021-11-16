@@ -14,7 +14,7 @@ enum class CameraMoveState: unsigned {
 class FlyCameraContext {
 public:
     void handleKeyboardInput(InputContext& ctx);
-    void handleMouseInput(InputContext& ctx);
+    void handleMouseInput(InputContext& ctx, const MouseMoveEvent& mouseMoveEvent);
     void resetLastMousePos(InputContext& ctx);
 private:
     float m_sensitivity = 0.1f;

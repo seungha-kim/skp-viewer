@@ -1,8 +1,15 @@
 #include "InputController.h"
+#include <variant>
 
 void InputController::handleMouseInput(InputContext &ctx) {
-    if (m_cameraRotateMode) {
-        m_flyCameraContext.handleMouseInput(ctx);
+    const auto& mouseEvent = ctx.mouseEvent.value();
+    if (auto* moveEvent = std::get_if<MouseMoveEvent>(&mouseEvent)) {
+        if (m_cameraRotateMode) {
+            m_flyCameraContext.handleMouseInput(ctx, *moveEvent);
+        }
+    } else if (auto* scrollEvent = std::get_if<MouseScrollEvent>(&mouseEvent)) {
+        auto& cam = ctx.cameraManager.activeCameraMut();
+        cam.fovyDeg = glm::clamp(cam.fovyDeg - scrollEvent->offsetY, 10.0f, 170.0f);
     }
 }
 
@@ -38,9 +45,4 @@ void InputController::setGuiFocused(bool value) {
 
 bool InputController::isCameraRotateMode() {
     return m_cameraRotateMode;
-}
-
-void InputController::handleScrollInput(InputContext &ctx) {
-    auto& cam = ctx.cameraManager.activeCameraMut();
-    cam.fovyDeg = glm::clamp(cam.fovyDeg + ctx.scrollOffsetY, 10.0f, 170.0f);
 }
