@@ -1,5 +1,5 @@
 #pragma once
-
+#include <memory>
 #include "BaseRenderer.h"
 #include "Shader.h"
 #include "graphics/Mesh.h"
@@ -11,5 +11,5 @@ public:
     void render(RenderContext& ctx) override;
 private:
     Shader ourShader;
-    std::vector<Mesh> m_meshes;
+    std::vector<std::unique_ptr<Mesh>> m_meshes;
 };

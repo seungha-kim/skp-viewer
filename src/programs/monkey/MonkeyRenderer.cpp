@@ -14,7 +14,7 @@ MonkeyRenderer::MonkeyRenderer()
 
     for (int i = 0; i < scene->mNumMeshes; i++) {
         // TODO: transform stack
-        m_meshes.emplace_back(*scene->mMeshes[i], scene->mRootNode->mTransformation);
+        m_meshes.push_back(std::make_unique<Mesh>(*scene->mMeshes[i], scene->mRootNode->mTransformation));
     }
 }
 
@@ -35,11 +35,11 @@ void MonkeyRenderer::render(RenderContext &ctx) {
     ourShader.setFloat("material.shininess", ctx.globalMaterial.shininess);
 
     for (auto &mesh: m_meshes) {
-        glBindVertexArray(mesh.VAO());
+        glBindVertexArray(mesh->VAO());
 
         glm::mat4 model = glm::mat4(1.0f);
         ourShader.setMatrix4f("model", model);
 
-        glDrawArrays(GL_TRIANGLES, 0, mesh.verticesCount());
+        glDrawArrays(GL_TRIANGLES, 0, mesh->verticesCount());
     }
 }
