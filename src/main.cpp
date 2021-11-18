@@ -30,7 +30,7 @@ int main()
         window.processKeyboardInput();
 
         RenderContext renderCtx {
-            .cam = window.cameraManager().activeCamera(),
+            .scene = window.sceneManager().activeScene(),
             .playbackValue = window.playbackValue(),
             .globalMaterial = globalMaterial,
         };
@@ -38,7 +38,7 @@ int main()
 
         GuiContext guiCtx {
                 .programSelector = selector,
-                .cameraManager = window.cameraManagerMut(),
+                .sceneManager = window.sceneManagerMut(),
                 .playbackState = window.playbackStateMut(),
                 .inputController = window.inputControllerMut(),
                 .globalMaterial = globalMaterial,

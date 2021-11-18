@@ -3,7 +3,7 @@
 #include <variant>
 #include <optional>
 #include <GLFW/glfw3.h>
-#include "CameraManager.h"
+#include "SceneManager.h"
 #include "PlaybackState.h"
 
 struct MouseMoveEvent {
@@ -20,7 +20,7 @@ using MouseEvent = std::variant<MouseMoveEvent, MouseScrollEvent>;
 
 struct InputContext {
     GLFWwindow* glfwWindow;
-    CameraManager& cameraManager;
+    SceneManager& cameraManager;
     PlaybackState& playbackState;
     std::optional<MouseEvent> mouseEvent;
 };

@@ -40,7 +40,7 @@ void Gui::process(GuiContext& ctx) {
         ImGui::ShowDemoWindow(&show_demo_window);
 
     processRenderInfo(ctx);
-    processCameraControl(ctx);
+    processSceneControl(ctx);
     processMainMenuBar(ctx);
 
     ImGui::Render();
@@ -85,7 +85,7 @@ void Gui::processRenderInfo(GuiContext &ctx) {
     if (ctx.playbackState.manual) {
         ImGui::SliderFloat("playback", &ctx.playbackState.playback, 0.0f, 10.0f);
     }
-    ImGui::Checkbox("Camera Control", &show_camera_control);
+    ImGui::Checkbox("Scenes", &show_camera_control);
     ImGui::Checkbox("Demo Window", &show_demo_window);
 
     if (ImGui::TreeNode("Global Material")) {
@@ -101,26 +101,32 @@ void Gui::processRenderInfo(GuiContext &ctx) {
     m_deltasPivot = (m_deltasPivot + 1) % 100;
 }
 
-void Gui::processCameraControl(GuiContext &ctx) const {
+void Gui::processSceneControl(GuiContext &ctx) const {
     if (show_camera_control) {
-        auto& cm = ctx.cameraManager;
-        ImGui::Begin("Camera Control", nullptr, windowFlag(ctx));
-        if (ImGui::Button("Add Camera")) {
-            cm.addCamera();
+        auto& cm = ctx.sceneManager;
+        ImGui::Begin("Scenes", nullptr, windowFlag(ctx));
+        if (ImGui::Button("Add Scene")) {
+            cm.addScene();
         }
         ImGui::SameLine();
-        if (ImGui::Button("Remove Camera")) {
-            cm.removeActiveCamera();
+        if (ImGui::Button("Remove Scene")) {
+            cm.removeActiveScene();
         }
-        const auto& cs = cm.cameras();
+        const auto& cs = cm.scenes();
         for (int i = 0; i < cs.size(); i++) {
             char buf[32];
-            sprintf(buf, "Camera %d", i);
-            if (ImGui::Selectable(buf, i == cm.activeCameraIndex())) {
-                cm.setActiveCamera(i);
+            sprintf(buf, "Scene %d", i);
+            if (ImGui::Selectable(buf, i == cm.activeSceneIndex())) {
+                cm.setActiveScene(i);
             }
         }
-        auto& cam = cm.activeCameraMut();
+        auto& scene = cm.activeSceneMut();
+        auto& cam = scene.cameraStateMut();
+        auto& sunLight = scene.sunLightMut();
+
+        ImGui::SliderFloat("lightDirX", &sunLight.direction.x, -1.0f, 1.0f);
+        ImGui::SliderFloat("lightDirY", &sunLight.direction.y, -1.0f, 1.0f);
+        ImGui::SliderFloat("lightDirZ", &sunLight.direction.z, -1.0f, 1.0f);
         ImGui::SliderFloat("fovy", &cam.fovyDeg, 10.0f, 170.0f);
         ImGui::SliderFloat("zNear", &cam.zNear, 0.01f, 10.0f);
         ImGui::SliderFloat("zFar", &cam.zFar, 0.1f, 200.0f);

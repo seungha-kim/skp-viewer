@@ -5,7 +5,7 @@ void framebuffer_size_callback(GLFWwindow* glfwWindow, int width, int height)
 {
     Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
     glViewport(0, 0, width, height);
-    auto& cam = window.cameraManagerMut().activeCameraMut();
+    auto& cam = window.sceneManagerMut().activeSceneMut().cameraStateMut();
     cam.aspectWidth = (float)width;
     cam.aspectHeight = (float)height;
 }
@@ -14,7 +14,7 @@ void mouse_move_callback(GLFWwindow* glfwWindow, double xPosD, double yPosD) {
     Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
     InputContext ctx {
         .glfwWindow = glfwWindow,
-        .cameraManager = window.m_cameraManager,
+        .cameraManager = window.m_sceneManager,
         .playbackState = window.m_playbackState,
         .mouseEvent = MouseMoveEvent {.x = (float)xPosD, .y = (float)yPosD},
     };
@@ -25,7 +25,7 @@ void mouse_wheel_callback(GLFWwindow* glfwWindow, double xOffset, double yOffset
     Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
     InputContext ctx {
             .glfwWindow = glfwWindow,
-            .cameraManager = window.m_cameraManager,
+            .cameraManager = window.m_sceneManager,
             .playbackState = window.m_playbackState,
             .mouseEvent = MouseScrollEvent {.offsetX = (float)xOffset, .offsetY = (float)yOffset},
     };
@@ -94,7 +94,7 @@ void Window::updateTime() {
 void Window::processKeyboardInput() {
     auto ctx = InputContext {
         .glfwWindow = m_glfwWindow,
-        .cameraManager = m_cameraManager,
+        .cameraManager = m_sceneManager,
         .playbackState = m_playbackState,
     };
     m_inputController.handleKeyboardInput(ctx);
@@ -123,12 +123,12 @@ PlaybackState &Window::playbackStateMut() {
     return m_playbackState;
 }
 
-const CameraManager &Window::cameraManager() const {
-    return m_cameraManager;
+const SceneManager &Window::sceneManager() const {
+    return m_sceneManager;
 }
 
-CameraManager &Window::cameraManagerMut() {
-    return m_cameraManager;
+SceneManager &Window::sceneManagerMut() {
+    return m_sceneManager;
 }
 
 const InputController &Window::inputController() const {

@@ -111,7 +111,7 @@ TestRenderer::~TestRenderer() {
 }
 
 void TestRenderer::render(RenderContext& ctx) {
-    const CameraState &cam = ctx.cam;
+    const auto& cam = ctx.scene.cameraState();
     const float playbackValue = ctx.playbackValue; 
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);

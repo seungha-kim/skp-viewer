@@ -11,7 +11,7 @@ void FlyCameraContext::handleMouseInput(InputContext &ctx, const MouseMoveEvent&
     auto xPos = mouseMoveEvent.x, yPos = mouseMoveEvent.y;
     float xOffset = xPos - m_lastMouseX, yOffset = yPos - m_lastMouseY;
 
-    auto& cam = ctx.cameraManager.activeCameraMut();
+    auto& cam = ctx.cameraManager.activeSceneMut().cameraStateMut();
     cam.yaw += xOffset * m_sensitivity;
     cam.pitch -= yOffset * m_sensitivity;
 
@@ -81,7 +81,7 @@ void FlyCameraContext::updateMoveState(InputContext &ctx) {
 }
 
 void FlyCameraContext::updateCamera(InputContext &ctx) {
-    auto& cam = ctx.cameraManager.activeCameraMut();
+    auto& cam = ctx.cameraManager.activeSceneMut().cameraStateMut();
     auto& ps = ctx.playbackState;
     auto* window = ctx.glfwWindow;
     float cameraDelta = 0.0f;

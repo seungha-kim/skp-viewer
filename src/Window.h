@@ -4,7 +4,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "PlaybackState.h"
-#include "CameraManager.h"
+#include "SceneManager.h"
 #include "InputController.h"
 
 class Window {
@@ -29,15 +29,15 @@ public:
     [[nodiscard]] const PlaybackState& playbackState() const;
     PlaybackState& playbackStateMut();
 
-    [[nodiscard]] const CameraManager& cameraManager() const;
-    CameraManager& cameraManagerMut();
+    [[nodiscard]] const SceneManager& sceneManager() const;
+    SceneManager& sceneManagerMut();
 
     [[nodiscard]] const InputController& inputController() const;
     InputController& inputControllerMut();
 
 private:
     GLFWwindow* m_glfwWindow = nullptr;
-    CameraManager m_cameraManager;
+    SceneManager m_sceneManager;
     InputController m_inputController;
 
     PlaybackState m_playbackState;

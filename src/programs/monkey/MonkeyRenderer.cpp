@@ -19,7 +19,7 @@ MonkeyRenderer::MonkeyRenderer()
 }
 
 void MonkeyRenderer::render(RenderContext &ctx) {
-    const CameraState &cam = ctx.cam;
+    const auto& cam = ctx.scene.cameraState();
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -28,7 +28,7 @@ void MonkeyRenderer::render(RenderContext &ctx) {
     ourShader.setMatrix4f("view", cam.viewMatrix());
     ourShader.setMatrix4f("projection", cam.projectionMatrix());
     ourShader.setVector3f("cameraPos", cam.pos);
-    ourShader.setVector3f("lightPos", glm::vec3(50.0f, 50.0f, 50.0f));
+    ourShader.setVector3f("sunLightDir", ctx.scene.sunLight().direction);
     ourShader.setVector3f("material.ambient", ctx.globalMaterial.ambient);
     ourShader.setVector3f("material.diffuse", ctx.globalMaterial.diffuse);
     ourShader.setVector3f("material.specular", ctx.globalMaterial.specular);

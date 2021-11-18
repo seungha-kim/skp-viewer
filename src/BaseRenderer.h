@@ -1,10 +1,10 @@
 #pragma once
 
 #include "graphics/Material.h"
-#include "CameraState.h"
+#include "Scene.h"
 
 struct RenderContext {
-    const CameraState &cam;
+    const Scene& scene;
     const float playbackValue;
     const Material globalMaterial;
 };

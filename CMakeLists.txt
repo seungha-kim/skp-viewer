@@ -68,8 +68,8 @@ add_executable(learn_opengl
         src/Window.h
         src/TestRenderer.cpp
         src/TestRenderer.h
-        src/CameraManager.cpp
-        src/CameraManager.h
+        src/SceneManager.cpp
+        src/SceneManager.h
         src/InputController.cpp
         src/InputController.h
         src/InputContext.h
@@ -89,6 +89,9 @@ add_executable(learn_opengl
         src/graphics/Vertex.cpp
         src/graphics/Vertex.h
         src/graphics/Material.h
+        src/graphics/DirectionalLight.cpp
+        src/graphics/DirectionalLight.h
+        src/Scene.cpp src/Scene.h
         )
 target_link_libraries(learn_opengl OpenGL::GL glfw assimp glad imgui)
 target_compile_definitions(learn_opengl PUBLIC GLFW_INCLUDE_NONE)

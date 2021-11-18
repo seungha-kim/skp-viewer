@@ -2,7 +2,7 @@
 
 
 #include <GLFW/glfw3.h>
-#include "CameraManager.h"
+#include "SceneManager.h"
 #include "InputContext.h"
 #include "FlyCameraContext.h"
 #include "ObjectEditContext.h"
