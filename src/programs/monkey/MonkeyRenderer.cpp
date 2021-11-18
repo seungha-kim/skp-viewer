@@ -34,6 +34,7 @@ void MonkeyRenderer::initMain() {
 }
 
 void MonkeyRenderer::renderMain(RenderContext &ctx) {
+    glViewport(0, 0, ctx.windowDimension.framebufferWidth, ctx.windowDimension.framebufferHeight);
     auto& cam = ctx.scene.cameraState();
     m_mainShader.use();
     m_mainShader.setMatrix4f("view", cam.viewMatrix());
@@ -82,7 +83,6 @@ void MonkeyRenderer::initSub() {
 void MonkeyRenderer::renderSub(RenderContext &ctx) {
     auto& cam = ctx.scene.cameraState();
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-    glViewport(0,0,1024,768);
 
     glClearColor(1.0f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

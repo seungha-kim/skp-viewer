@@ -4,10 +4,22 @@
 void framebuffer_size_callback(GLFWwindow* glfwWindow, int width, int height)
 {
     Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
-    glViewport(0, 0, width, height);
-    auto& cam = window.sceneManagerMut().activeSceneMut().cameraStateMut();
-    cam.aspectWidth = (float)width;
-    cam.aspectHeight = (float)height;
+    window.m_dimension.framebufferWidth = width;
+    window.m_dimension.framebufferHeight = height;
+}
+
+void window_size_callback(GLFWwindow* glfwWindow, int width, int height)
+{
+    Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
+    window.m_dimension.width = width;
+    window.m_dimension.height = height;
+}
+
+void content_scale_size_callback(GLFWwindow* glfwWindow, float x, float y)
+{
+    Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
+    window.m_dimension.contentScaleX = x;
+    window.m_dimension.contentScaleY = y;
 }
 
 void mouse_move_callback(GLFWwindow* glfwWindow, double xPosD, double yPosD) {
@@ -58,9 +70,14 @@ Window::Window(int width, int height, const char *title) {
     {
         m_glfwWindow = windowPtr;
         glfwSetFramebufferSizeCallback(windowPtr, framebuffer_size_callback);
+        glfwSetWindowSizeCallback(windowPtr, window_size_callback);
+        glfwSetWindowContentScaleCallback(windowPtr, content_scale_size_callback);
         glfwSetCursorPosCallback(windowPtr, mouse_move_callback);
         glfwSetScrollCallback(windowPtr, mouse_wheel_callback);
         glfwSetWindowUserPointer(windowPtr, this);
+        glfwGetFramebufferSize(windowPtr, &m_dimension.framebufferWidth, &m_dimension.framebufferHeight);
+        glfwGetWindowSize(windowPtr, &m_dimension.width, &m_dimension.height);
+        glfwGetWindowContentScale(windowPtr, &m_dimension.contentScaleX, &m_dimension.contentScaleY);
     } else {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -89,6 +106,12 @@ void Window::updateTime() {
     if (m_playbackState.continuousRenderSession.has_value()) {
         m_playbackState.continuousRenderSession->updateTime();
     }
+}
+
+void Window::updateCamera() {
+    auto& cam = sceneManagerMut().activeSceneMut().cameraStateMut();
+    cam.aspectWidth = (float)m_dimension.width;
+    cam.aspectHeight = (float)m_dimension.height;
 }
 
 void Window::processKeyboardInput() {
@@ -137,6 +160,10 @@ const InputController &Window::inputController() const {
 
 InputController &Window::inputControllerMut() {
     return m_inputController;
+}
+
+const WindowDimension &Window::dimension() const {
+    return m_dimension;
 }
 
 

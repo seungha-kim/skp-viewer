@@ -77,7 +77,11 @@ void Gui::processRenderInfo(GuiContext &ctx) {
     float deltaTimeMs = ImGui::GetIO().DeltaTime * 1000.0f;
     m_deltas[m_deltasPivot] = deltaTimeMs;
     ImGui::Begin("Render Info", nullptr, windowFlag(ctx));
-    ImGui::Text("%.0f ms", deltaTimeMs);
+    auto& dim = ctx.windowDimension;
+    ImGui::Text("window size: %d * %d", dim.width, dim.height);
+    ImGui::Text("framebuffer size: %d * %d", dim.framebufferWidth, dim.framebufferHeight);
+    ImGui::Text("pixel scale: %.0f * %.0f", dim.contentScaleX, dim.contentScaleY);
+    ImGui::Text("render time: %.0f ms", deltaTimeMs);
 //    ImGui::Text("WantCaptureMouse: %d", ctx.inputState.isGuiFocused);
     ImGui::PlotHistogram("", deltasHistogram, this, 100, 0, nullptr, 0.0f, 100.0f, ImVec2(0, 20));
     ImGui::Checkbox("Continuous", &ctx.playbackState.forceContinuous);

@@ -4,8 +4,8 @@
 #include "graphics/Material.h"
 #include <glm/glm.hpp>
 
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 1366;
+const unsigned int SCR_HEIGHT = 768;
 
 int main()
 {
@@ -26,13 +26,16 @@ int main()
 
     while (!window.shouldClose())
     {
-        window.updateTime();
         window.processKeyboardInput();
+
+        window.updateTime();
+        window.updateCamera();
 
         RenderContext renderCtx {
             .scene = window.sceneManager().activeScene(),
             .playbackValue = window.playbackValue(),
             .globalMaterial = globalMaterial,
+            .windowDimension = window.dimension(),
         };
         selector.renderProgram(renderCtx);
 
@@ -42,6 +45,7 @@ int main()
                 .playbackState = window.playbackStateMut(),
                 .inputController = window.inputControllerMut(),
                 .globalMaterial = globalMaterial,
+                .windowDimension = window.dimension(),
         };
         gui.process(guiCtx);
 
