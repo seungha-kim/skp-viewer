@@ -98,6 +98,8 @@ add_executable(learn_opengl
         src/RenderOnlyProgram.h
         src/programs/monkey/MonkeyProgram.cpp
         src/programs/monkey/MonkeyProgram.h
+        src/guiCommon.h
+        src/guiCommon.cpp
         )
 target_link_libraries(learn_opengl OpenGL::GL glfw assimp glad imgui)
 target_compile_definitions(learn_opengl PUBLIC GLFW_INCLUDE_NONE)

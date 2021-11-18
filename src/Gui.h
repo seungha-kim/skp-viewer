@@ -8,7 +8,9 @@ class Gui {
 public:
     explicit Gui(Window& window);
     ~Gui();
+    void begin();
     void process(GuiContext& ctx);
+    void end();
 private:
     bool show_demo_window = false;
     bool show_camera_control = false;

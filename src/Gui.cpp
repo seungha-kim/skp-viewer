@@ -1,16 +1,8 @@
 #include "Gui.h"
-
+#include "guiCommon.h"
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
-
-ImGuiWindowFlags windowFlag(GuiContext& ctx) {
-    ImGuiWindowFlags flag = 0;
-    if (ctx.inputController.isCameraRotateMode()) {
-        flag |= ImGuiWindowFlags_NoInputs;
-    }
-    return flag;
-}
 
 Gui::Gui(Window& window) {
 
@@ -32,19 +24,12 @@ void Gui::process(GuiContext& ctx) {
         ctx.inputController.setGuiFocused(false);
     }
 
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
-
     if (show_demo_window)
         ImGui::ShowDemoWindow(&show_demo_window);
 
     processRenderInfo(ctx);
     processSceneControl(ctx);
     processMainMenuBar(ctx);
-
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 Gui::~Gui() {
@@ -141,4 +126,15 @@ void Gui::processSceneControl(GuiContext &ctx) const {
 float Gui::deltasHistogram(void *data, int i) {
     auto that = (Gui*)data;
     return that->m_deltas[(that->m_deltasPivot + i) % 100];
+}
+
+void Gui::begin() {
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+}
+
+void Gui::end() {
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }

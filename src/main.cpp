@@ -49,10 +49,12 @@ int main()
                 .globalMaterial = globalMaterial,
                 .windowDimension = window.dimension(),
         };
+        gui.begin();
         program.processGui(guiCtx);
 
         // Many mutation can happen here, so this call must be located in the end.
         gui.process(guiCtx);
+        gui.end();
 
         window.swapBuffers();
         window.waitEvents();

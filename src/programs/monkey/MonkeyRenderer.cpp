@@ -3,11 +3,9 @@
 
 MonkeyRenderer::MonkeyRenderer()
         : m_mainShader(Shader("monkey.vert", "monkey.frag"))
-        , m_subShader(Shader("monkey_sub.vert", "monkey_sub.frag"))
-        , m_dispShader(Shader("monkey_disp.vert", "monkey_disp.frag")) {
+        , m_subShader(Shader("monkey_sub.vert", "monkey_sub.frag")) {
     initMain();
     initSub();
-    initSubDisp();
 }
 
 void MonkeyRenderer::render(RenderContext &ctx) {
@@ -15,7 +13,6 @@ void MonkeyRenderer::render(RenderContext &ctx) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     renderMain(ctx);
     renderSub(ctx);
-    renderSubDisp(ctx);
 }
 
 void MonkeyRenderer::initMain() {
@@ -109,41 +106,6 @@ void MonkeyRenderer::renderSub(RenderContext &ctx) {
 
 }
 
-void MonkeyRenderer::renderSubDisp(RenderContext &ctx) {
-    glClear(GL_DEPTH_BUFFER_BIT);
-    m_dispShader.use();
-    m_dispShader.setInt("colorTexture", 0);
-
-    glBindVertexArray(m_dispVao);
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_colorTexture);
-
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-}
-
-void MonkeyRenderer::initSubDisp() {
-
-    glGenVertexArrays(1, &m_dispVao);
-    glBindVertexArray(m_dispVao);
-
-    static const GLfloat g_quad_vertex_buffer_data[] = {
-            0.0f, -1.0f, 0.0f, 0.0f, 0.0f, // BL
-            1.0f, -1.0f, 0.0f, 1.0f, 0.0f, // BR
-            0.0f,  0.0f, 0.0f, 0.0f, 1.0f, // TL
-            0.0f,  0.0f, 0.0f, 0.0f, 1.0f, // TL
-            1.0f, -1.0f, 0.0f, 1.0f, 0.0f, // BR
-            1.0f,  0.0f, 0.0f, 1.0f, 1.0f, // TR
-    };
-
-    glGenBuffers(1, &m_dispVbo);
-    glBindBuffer(GL_ARRAY_BUFFER, m_dispVbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(g_quad_vertex_buffer_data), g_quad_vertex_buffer_data, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, nullptr);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)(sizeof(float) * 3));
-    glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+GLuint MonkeyRenderer::assistantTexture() {
+    return m_colorTexture;
 }
