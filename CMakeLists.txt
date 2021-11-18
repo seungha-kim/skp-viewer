@@ -93,6 +93,11 @@ add_executable(learn_opengl
         src/graphics/DirectionalLight.h
         src/Scene.cpp src/Scene.h
         src/WindowDimension.h
+        src/Program.h
+        src/RenderOnlyProgram.cpp
+        src/RenderOnlyProgram.h
+        src/programs/monkey/MonkeyProgram.cpp
+        src/programs/monkey/MonkeyProgram.h
         )
 target_link_libraries(learn_opengl OpenGL::GL glfw assimp glad imgui)
 target_compile_definitions(learn_opengl PUBLIC GLFW_INCLUDE_NONE)

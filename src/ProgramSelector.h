@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include "BaseRenderer.h"
+#include "Program.h"
 
 enum class ProgramKind {
     Test,
@@ -11,8 +11,8 @@ enum class ProgramKind {
 class ProgramSelector {
 public:
     ProgramSelector();
-    void renderProgram(RenderContext& ctx);
     void changeProgram(ProgramKind kind);
+    Program& currentProgram();
 private:
-    std::unique_ptr<BaseRenderer> m_renderer;
+    std::unique_ptr<Program> m_currentProgram;
 };
