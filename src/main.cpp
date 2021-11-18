@@ -24,10 +24,7 @@ int main()
             .shininess = 32.0f,
     };
 
-    while (!window.shouldClose())
-    {
-        auto& program = selector.currentProgram();
-
+    while (!window.shouldClose()) {
         window.processKeyboardInput();
 
         window.updateTime();
@@ -39,7 +36,7 @@ int main()
             .globalMaterial = globalMaterial,
             .windowDimension = window.dimension(),
         };
-        program.render(renderCtx);
+        selector.currentProgram().render(renderCtx);
 
         GuiContext guiCtx {
                 .programSelector = selector,
@@ -50,9 +47,7 @@ int main()
                 .windowDimension = window.dimension(),
         };
         gui.begin();
-        program.processGui(guiCtx);
-
-        // Many mutation can happen here, so this call must be located in the end.
+        selector.currentProgram().processGui(guiCtx);
         gui.process(guiCtx);
         gui.end();
 
