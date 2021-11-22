@@ -2,7 +2,7 @@
 #include <imgui.h>
 #include "../../guiCommon.h"
 
-MonkeyProgram::MonkeyProgram():m_renderer(std::make_unique<MonkeyRenderer>()) {}
+MonkeyProgram::MonkeyProgram(const WindowDimension& dimension):m_renderer(std::make_unique<MonkeyRenderer>(dimension)) {}
 
 void MonkeyProgram::render(RenderContext &ctx) {
     m_renderer->render(ctx);

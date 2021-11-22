@@ -14,7 +14,7 @@ int main()
     window.bind();
     Window::initGl();
 
-    ProgramSelector selector;
+    ProgramSelector selector(window.dimension());
     auto gui = Gui(window);
 
     Material globalMaterial = {

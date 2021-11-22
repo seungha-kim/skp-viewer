@@ -1,9 +1,11 @@
 #include "MonkeyRenderer.h"
 #include "Shader.h"
 
-MonkeyRenderer::MonkeyRenderer()
+MonkeyRenderer::MonkeyRenderer(const WindowDimension& dimension)
         : m_mainShader(Shader("monkey.vert", "monkey.frag"))
-        , m_subShader(Shader("monkey_sub.vert", "monkey_sub.frag")) {
+        , m_subShader(Shader("monkey_sub.vert", "monkey_sub.frag"))
+        , m_framebufferWidth(dimension.framebufferWidth)
+        , m_framebufferHeight(dimension.framebufferHeight) {
     initMain();
     initSub();
 }
@@ -54,27 +56,59 @@ void MonkeyRenderer::renderMain(RenderContext &ctx) {
 }
 
 void MonkeyRenderer::initSub() {
+    // http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
+    // https://community.khronos.org/t/drawing-depth-texture-bound-to-a-fbo/66919
+
+    // --- Color ---
+    glGenTextures(1, &m_colorTexture);
+    glBindTexture(GL_TEXTURE_2D, m_colorTexture);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_framebufferWidth, m_framebufferHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    // --- Depth ---
+    glGenTextures(1, &m_depthTexture);
+    glBindTexture(GL_TEXTURE_2D, m_depthTexture);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    // Remove artefact on the edges of the shadow map
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_framebufferWidth, m_framebufferHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     glGenFramebuffers(1, &m_fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
-    glGenTextures(1, &m_colorTexture);
-    glBindTexture(GL_TEXTURE_2D, m_colorTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, 1024, 768, 0,GL_RGB, GL_UNSIGNED_BYTE, 0);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//    glDrawBuffer(GL_NONE);
+//    glReadBuffer(GL_NONE);
 
-    glGenRenderbuffers(1, &m_depthTexture);
-    glBindRenderbuffer(GL_RENDERBUFFER, m_depthTexture);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, 1024, 768);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthTexture);
+    glFramebufferTexture(
+            GL_FRAMEBUFFER,
+            GL_DEPTH_ATTACHMENT,
+            m_depthTexture,
+            0);
 
-    glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_colorTexture, 0);
-    GLenum DrawBuffers[1] = {GL_COLOR_ATTACHMENT0};
-    glDrawBuffers(1, DrawBuffers);
+    glFramebufferTexture(
+            GL_FRAMEBUFFER,
+            GL_COLOR_ATTACHMENT0,
+            m_colorTexture,
+            0);
+
     if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         exit(1);
     }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void MonkeyRenderer::renderSub(RenderContext &ctx) {

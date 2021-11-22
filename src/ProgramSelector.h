@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include "Program.h"
+#include "WindowDimension.h"
 
 enum class ProgramKind {
     Test,
@@ -10,8 +11,8 @@ enum class ProgramKind {
 
 class ProgramSelector {
 public:
-    ProgramSelector();
-    void changeProgram(ProgramKind kind);
+    explicit ProgramSelector(const WindowDimension& dimension);
+    void changeProgram(const WindowDimension& dimension, ProgramKind kind);
     Program& currentProgram();
 private:
     std::unique_ptr<Program> m_currentProgram;

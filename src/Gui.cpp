@@ -44,13 +44,13 @@ void Gui::processMainMenuBar(GuiContext &ctx) {
         if (ImGui::BeginMenu("Program"))
         {
             if (ImGui::MenuItem("Test")) {
-                ctx.programSelector.changeProgram(ProgramKind::Test);
+                ctx.programSelector.changeProgram(ctx.windowDimension, ProgramKind::Test);
             }
             if (ImGui::MenuItem("Test2")) {
-                ctx.programSelector.changeProgram(ProgramKind::Test2);
+                ctx.programSelector.changeProgram(ctx.windowDimension, ProgramKind::Test2);
             }
             if (ImGui::MenuItem("Monkey")) {
-                ctx.programSelector.changeProgram(ProgramKind::Monkey);
+                ctx.programSelector.changeProgram(ctx.windowDimension, ProgramKind::Monkey);
             }
             ImGui::EndMenu();
         }
