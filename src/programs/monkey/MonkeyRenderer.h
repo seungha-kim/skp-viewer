@@ -21,6 +21,7 @@ private:
     GLuint m_fbo{};
     GLuint m_colorTexture{};
     GLuint m_depthTexture{};
+    glm::mat4 m_lightSpaceMatrix{};
 
     void initMain();
     void renderMain(RenderContext& ctx);

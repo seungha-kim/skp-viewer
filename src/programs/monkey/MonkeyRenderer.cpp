@@ -13,8 +13,8 @@ MonkeyRenderer::MonkeyRenderer(const WindowDimension& dimension)
 void MonkeyRenderer::render(RenderContext &ctx) {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    renderMain(ctx);
     renderSub(ctx);
+    renderMain(ctx);
 }
 
 void MonkeyRenderer::initMain() {
@@ -44,6 +44,10 @@ void MonkeyRenderer::renderMain(RenderContext &ctx) {
     m_mainShader.setVector3f("material.diffuse", ctx.globalMaterial.diffuse);
     m_mainShader.setVector3f("material.specular", ctx.globalMaterial.specular);
     m_mainShader.setFloat("material.shininess", ctx.globalMaterial.shininess);
+    m_mainShader.setMatrix4f("lightSpaceMatrix", m_lightSpaceMatrix);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_depthTexture);
+    m_mainShader.setInt("shadowMap", 0);
 
     for (auto &mesh: m_meshes) {
         glBindVertexArray(mesh->VAO());
@@ -73,8 +77,10 @@ void MonkeyRenderer::initSub() {
     glGenTextures(1, &m_depthTexture);
     glBindTexture(GL_TEXTURE_2D, m_depthTexture);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
     // Remove artefact on the edges of the shadow map
     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
@@ -83,6 +89,7 @@ void MonkeyRenderer::initSub() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
     glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
 
+    // TODO: adjustable shadow resolution
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_framebufferWidth, m_framebufferHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
     glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -113,13 +120,21 @@ void MonkeyRenderer::initSub() {
 
 void MonkeyRenderer::renderSub(RenderContext &ctx) {
     auto& cam = ctx.scene.cameraState();
+
+    // solution for peter panning
+    // glEnable(GL_CULL_FACE);
+    // glFrontFace(GL_CCW);
+    // glCullFace(GL_FRONT);
+
+    // TODO: adjustable shadow resolution
+    glViewport(0, 0, ctx.windowDimension.framebufferWidth, ctx.windowDimension.framebufferHeight);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
     glClearColor(1.0f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Light point of view
-    float width = 10.0f;
+    float width = 30.0f;
     float height = width / (float)ctx.windowDimension.framebufferWidth * (float)ctx.windowDimension.framebufferHeight;
     float top = height / 2.0f;
     float right = width / 2.0f;
@@ -129,6 +144,7 @@ void MonkeyRenderer::renderSub(RenderContext &ctx) {
     auto sunlightPos = glm::vec3(10.0f, 10.0f, 10.0f);
     auto view = glm::lookAt(sunlightPos, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     auto projection = glm::ortho(left, right, bottom, top, 0.1f, 100.0f);
+    m_lightSpaceMatrix = projection * view;
 
     m_subShader.use();
     m_subShader.setMatrix4f("view", view);
@@ -144,12 +160,14 @@ void MonkeyRenderer::renderSub(RenderContext &ctx) {
         glBindVertexArray(mesh->VAO());
 
         glm::mat4 model = glm::mat4(1.0f);
-        m_mainShader.setMatrix4f("model", model);
+        m_subShader.setMatrix4f("model", model);
 
         glDrawArrays(GL_TRIANGLES, 0, mesh->verticesCount());
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+    // glDisable(GL_CULL_FACE);
+    // glCullFace(GL_BACK);
 }
 
 GLuint MonkeyRenderer::assistantTexture() {
