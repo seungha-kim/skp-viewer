@@ -1,8 +1,8 @@
 #pragma once
 #include <memory>
+#include "../../RenderContext.h"
 #include "../../graphics/Mesh.h"
 #include "../../SurfaceInfo.h"
-#include "../../BaseRenderer.h"
 
 struct MainPassInput {
     const std::vector<std::unique_ptr<Mesh>>& meshes;

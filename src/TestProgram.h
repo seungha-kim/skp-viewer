@@ -1,13 +1,14 @@
 #pragma once
 
-#include "BaseRenderer.h"
+#include "Program.h"
 #include "Shader.h"
+#include "RenderContext.h"
 #include <glad/glad.h>
 
-class TestRenderer: public BaseRenderer {
+class TestProgram: public Program {
 public:
-    explicit TestRenderer(bool smile);
-    ~TestRenderer() override;
+    explicit TestProgram(bool smile);
+    ~TestProgram() override;
     void render(RenderContext& ctx) override;
 private:
     Shader ourShader;

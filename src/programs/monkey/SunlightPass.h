@@ -1,10 +1,10 @@
 #pragma once
 #include <memory>
-#include "../../BaseRenderer.h"
 #include "../../SurfaceInfo.h"
 #include "../../graphics/Mesh.h"
 #include <glm/glm.hpp>
 #include <glad/glad.h>
+#include "../../RenderContext.h"
 
 struct SunlightPassInput {
     // TODO: meshes 말고 rootObject 를 받는 것이 적절

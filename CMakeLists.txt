@@ -66,8 +66,8 @@ add_executable(learn_opengl
         src/PlaybackState.h
         src/Window.cpp
         src/Window.h
-        src/TestRenderer.cpp
-        src/TestRenderer.h
+        src/TestProgram.cpp
+        src/TestProgram.h
         src/SceneManager.cpp
         src/SceneManager.h
         src/InputController.cpp
@@ -80,10 +80,7 @@ add_executable(learn_opengl
         src/ContinuousRenderSession.h
         src/ProgramSelector.cpp
         src/ProgramSelector.h
-        src/BaseRenderer.h
         src/GuiContext.h
-        src/programs/monkey/MonkeyRenderer.cpp
-        src/programs/monkey/MonkeyRenderer.h
         src/graphics/Mesh.cpp
         src/graphics/Mesh.h
         src/graphics/Vertex.cpp
@@ -94,8 +91,6 @@ add_executable(learn_opengl
         src/Scene.cpp src/Scene.h
         src/SurfaceInfo.h
         src/Program.h
-        src/RenderOnlyProgram.cpp
-        src/RenderOnlyProgram.h
         src/programs/monkey/MonkeyProgram.cpp
         src/programs/monkey/MonkeyProgram.h
         src/guiCommon.h
@@ -104,6 +99,7 @@ add_executable(learn_opengl
         src/programs/monkey/SunlightPass.h
         src/programs/monkey/MainPass.cpp
         src/programs/monkey/MainPass.h
+        src/RenderContext.h
         )
 target_link_libraries(learn_opengl OpenGL::GL glfw assimp glad imgui)
 target_compile_definitions(learn_opengl PUBLIC GLFW_INCLUDE_NONE)

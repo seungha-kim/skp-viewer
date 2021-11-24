@@ -1,4 +1,4 @@
-#include "TestRenderer.h"
+#include "TestProgram.h"
 #include "Shader.h"
 #include <stb_image.h>
 #include <iostream>
@@ -64,7 +64,7 @@ glm::vec3 cubePositions[] = {
         glm::vec3(-1.3f,  1.0f, -1.5f)
 };
 
-TestRenderer::TestRenderer(bool smile)
+TestProgram::TestProgram(bool smile)
     :ourShader(Shader("simple.vert", "simple.frag")){
 
     glGenVertexArrays(1, &VAO);
@@ -100,7 +100,7 @@ TestRenderer::TestRenderer(bool smile)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
-TestRenderer::~TestRenderer() {
+TestProgram::~TestProgram() {
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
@@ -110,7 +110,7 @@ TestRenderer::~TestRenderer() {
 
 }
 
-void TestRenderer::render(RenderContext& ctx) {
+void TestProgram::render(RenderContext& ctx) {
     const auto& cam = ctx.scene.cameraState();
     const float playbackValue = ctx.playbackValue; 
 

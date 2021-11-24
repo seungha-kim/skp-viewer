@@ -1,9 +1,10 @@
 #pragma once
 #include <glad/glad.h>
 #include "../../Program.h"
-#include "MonkeyRenderer.h"
 #include <memory>
 #include "../../SurfaceInfo.h"
+#include "SunlightPass.h"
+#include "MainPass.h"
 
 class MonkeyProgram final: public Program {
 public:
@@ -16,6 +17,7 @@ private:
     void processGui(GuiContext &ctx) override;
 
 private:
-    std::unique_ptr<MonkeyRenderer> m_renderer;
+    SunlightPass m_sunlightPass;
+    MainPass m_mainPass;
     std::vector<std::unique_ptr<Mesh>> m_meshes;
 };

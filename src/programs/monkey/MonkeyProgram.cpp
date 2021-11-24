@@ -2,7 +2,9 @@
 #include <imgui.h>
 #include "../../guiCommon.h"
 
-MonkeyProgram::MonkeyProgram(const SurfaceInfo& surfaceInfo) {
+MonkeyProgram::MonkeyProgram(const SurfaceInfo& surfaceInfo)
+    : m_sunlightPass(surfaceInfo)
+    , m_mainPass(surfaceInfo) {
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile("resources/monkey.obj",
                                              aiProcess_CalcTangentSpace |
@@ -15,15 +17,27 @@ MonkeyProgram::MonkeyProgram(const SurfaceInfo& surfaceInfo) {
         // TODO: transform stack
         m_meshes.push_back(std::make_unique<Mesh>(*scene->mMeshes[i], scene->mRootNode->mTransformation));
     }
-    m_renderer = std::make_unique<MonkeyRenderer>(surfaceInfo, m_meshes);
 }
 
 void MonkeyProgram::render(RenderContext &ctx) {
-    m_renderer->render(ctx);
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    const SunlightPassInput sunlightPassInput {
+            .meshes = m_meshes,
+    };
+    const auto sunlightPassOutput = m_sunlightPass.render(ctx, sunlightPassInput);
+
+    const MainPassInput mainPassInput {
+            .meshes = m_meshes,
+            .lightSpaceMatrix = sunlightPassOutput.lightSpaceMatrix,
+            .depthTexture = sunlightPassOutput.depthTexture,
+    };
+    const auto mainPassOutput = m_mainPass.render(ctx, mainPassInput);
 }
 
 void MonkeyProgram::processGui(GuiContext &ctx) {
-    auto assistant = m_renderer->assistantTexture();
+    auto assistant = m_sunlightPass.depthTexture();
     ImGui::Begin("Assistant View", nullptr, windowFlag(ctx));
     ImGui::Image((void*)(intptr_t)assistant, ImVec2(512,512), ImVec2(0, 1), ImVec2(1, 0));
     ImGui::End();
