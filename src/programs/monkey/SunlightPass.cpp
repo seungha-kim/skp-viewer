@@ -77,7 +77,7 @@ public:
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    void render(RenderContext &ctx, std::vector<std::unique_ptr<Mesh>>& meshes) {
+    SunlightPassOutput render(RenderContext &ctx, const SunlightPassInput& input) {
         auto& cam = ctx.scene.cameraState();
 
         // solution for peter panning
@@ -115,7 +115,7 @@ public:
         m_subShader->setVector3f("material.specular", ctx.globalMaterial.specular);
         m_subShader->setFloat("material.shininess", ctx.globalMaterial.shininess);
 
-        for (auto &mesh: meshes) {
+        for (auto &mesh: input.meshes) {
             glBindVertexArray(mesh->VAO());
 
             glm::mat4 model = glm::mat4(1.0f);
@@ -127,6 +127,11 @@ public:
 
         // glDisable(GL_CULL_FACE);
         // glCullFace(GL_BACK);
+
+        return SunlightPassOutput {
+            .lightSpaceMatrix = m_lightSpaceMatrix,
+            .depthTexture = m_depthTexture,
+        };
     }
 };
 
@@ -135,14 +140,10 @@ SunlightPass::SunlightPass(const WindowDimension& dimension)
 
 SunlightPass::~SunlightPass() = default;
 
-void SunlightPass::render(RenderContext &ctx, std::vector<std::unique_ptr<Mesh>>& meshes) {
-    m_pimpl->render(ctx, meshes);
+SunlightPassOutput SunlightPass::render(RenderContext &ctx, const SunlightPassInput& input) {
+    return m_pimpl->render(ctx, input);
 }
 
-glm::mat4 SunlightPass::lightSpaceMatrix() {
-    return m_pimpl->m_lightSpaceMatrix;
-}
-
-unsigned SunlightPass::depthTexture() {
+GLuint SunlightPass::depthTexture() {
     return m_pimpl->m_depthTexture;
 }

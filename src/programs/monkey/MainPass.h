@@ -20,9 +20,7 @@ class MainPass {
 public:
     explicit MainPass(const WindowDimension& dimension);
     ~MainPass();
-    void render(RenderContext& ctx, const MainPassInput& input);
+    MainPassOutput render(RenderContext& ctx, const MainPassInput& input);
 private:
     std::unique_ptr<MainPassPimpl> m_pimpl;
 };
-
-

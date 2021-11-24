@@ -10,14 +10,18 @@ MonkeyRenderer::MonkeyRenderer(const WindowDimension& dimension)
 void MonkeyRenderer::render(RenderContext &ctx) {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    m_sunlightPass.render(ctx, m_meshes);
+
+    const SunlightPassInput sunlightPassInput {
+        .meshes = m_meshes,
+    };
+    const auto sunlightPassOutput = m_sunlightPass.render(ctx, sunlightPassInput);
 
     const MainPassInput mainPassInput {
         .meshes = m_meshes,
-        .lightSpaceMatrix = m_sunlightPass.lightSpaceMatrix(),
-        .depthTexture = m_sunlightPass.depthTexture(),
+        .lightSpaceMatrix = sunlightPassOutput.lightSpaceMatrix,
+        .depthTexture = sunlightPassOutput.depthTexture,
     };
-    m_mainPass.render(ctx, mainPassInput);
+    const auto mainPassOutput = m_mainPass.render(ctx, mainPassInput);
 }
 
 void MonkeyRenderer::initMain() {
