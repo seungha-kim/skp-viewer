@@ -17,5 +17,5 @@ private:
 
 private:
     std::unique_ptr<MonkeyRenderer> m_renderer;
-    GLuint assistantTextureName{};
+    std::vector<std::unique_ptr<Mesh>> m_meshes;
 };

@@ -1,11 +1,11 @@
 #include "MonkeyRenderer.h"
 #include "Shader.h"
 
-MonkeyRenderer::MonkeyRenderer(const WindowDimension& dimension)
+MonkeyRenderer::MonkeyRenderer(const WindowDimension& dimension,
+                               const std::vector<std::unique_ptr<Mesh>>& meshes)
         : m_mainPass{dimension}
-        , m_sunlightPass{dimension} {
-    initMain();
-}
+        , m_sunlightPass{dimension}
+        , m_meshes{meshes} {}
 
 void MonkeyRenderer::render(RenderContext &ctx) {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -22,21 +22,6 @@ void MonkeyRenderer::render(RenderContext &ctx) {
         .depthTexture = sunlightPassOutput.depthTexture,
     };
     const auto mainPassOutput = m_mainPass.render(ctx, mainPassInput);
-}
-
-void MonkeyRenderer::initMain() {
-    Assimp::Importer importer;
-    const aiScene *scene = importer.ReadFile("resources/monkey.obj",
-                                             aiProcess_CalcTangentSpace |
-                                             aiProcess_Triangulate |
-                                             aiProcess_JoinIdenticalVertices |
-                                             aiProcess_SortByPType);
-
-
-    for (int i = 0; i < scene->mNumMeshes; i++) {
-        // TODO: transform stack
-        m_meshes.push_back(std::make_unique<Mesh>(*scene->mMeshes[i], scene->mRootNode->mTransformation));
-    }
 }
 
 GLuint MonkeyRenderer::assistantTexture() {

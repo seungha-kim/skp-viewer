@@ -9,15 +9,12 @@
 
 class MonkeyRenderer: public BaseRenderer {
 public:
-    explicit MonkeyRenderer(const WindowDimension& dimension);
+    MonkeyRenderer(const WindowDimension& dimension, const std::vector<std::unique_ptr<Mesh>>& meshes);
     ~MonkeyRenderer() override = default;
     void render(RenderContext& ctx) override;
     GLuint assistantTexture();
 private:
-    std::vector<std::unique_ptr<Mesh>> m_meshes;
-
     SunlightPass m_sunlightPass;
     MainPass m_mainPass;
-
-    void initMain();
+    const std::vector<std::unique_ptr<Mesh>>& m_meshes;
 };
