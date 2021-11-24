@@ -4,6 +4,7 @@
 #include "Shader.h"
 #include "graphics/Mesh.h"
 #include "../../WindowDimension.h"
+#include "SunlightPass.h"
 
 class MonkeyRenderer: public BaseRenderer {
 public:
@@ -16,16 +17,9 @@ private:
     int m_framebufferWidth;
     int m_framebufferHeight;
     Shader m_mainShader;
-    Shader m_subShader;
     std::vector<std::unique_ptr<Mesh>> m_meshes;
-    GLuint m_fbo{};
-    GLuint m_colorTexture{};
-    GLuint m_depthTexture{};
-    glm::mat4 m_lightSpaceMatrix{};
+    SunlightPass m_sunlightPass;
 
     void initMain();
     void renderMain(RenderContext& ctx);
-
-    void initSub();
-    void renderSub(RenderContext& ctx);
 };

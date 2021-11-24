@@ -3,17 +3,16 @@
 
 MonkeyRenderer::MonkeyRenderer(const WindowDimension& dimension)
         : m_mainShader(Shader("monkey.vert", "monkey.frag"))
-        , m_subShader(Shader("monkey_sub.vert", "monkey_sub.frag"))
         , m_framebufferWidth(dimension.framebufferWidth)
-        , m_framebufferHeight(dimension.framebufferHeight) {
+        , m_framebufferHeight(dimension.framebufferHeight)
+        , m_sunlightPass(SunlightPass(dimension)) {
     initMain();
-    initSub();
 }
 
 void MonkeyRenderer::render(RenderContext &ctx) {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    renderSub(ctx);
+    m_sunlightPass.render(ctx, m_meshes);
     renderMain(ctx);
 }
 
@@ -44,9 +43,9 @@ void MonkeyRenderer::renderMain(RenderContext &ctx) {
     m_mainShader.setVector3f("material.diffuse", ctx.globalMaterial.diffuse);
     m_mainShader.setVector3f("material.specular", ctx.globalMaterial.specular);
     m_mainShader.setFloat("material.shininess", ctx.globalMaterial.shininess);
-    m_mainShader.setMatrix4f("lightSpaceMatrix", m_lightSpaceMatrix);
+    m_mainShader.setMatrix4f("lightSpaceMatrix", m_sunlightPass.lightSpaceMatrix());
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_depthTexture);
+    glBindTexture(GL_TEXTURE_2D, m_sunlightPass.depthTexture());
     m_mainShader.setInt("shadowMap", 0);
 
     for (auto &mesh: m_meshes) {
@@ -59,117 +58,6 @@ void MonkeyRenderer::renderMain(RenderContext &ctx) {
     }
 }
 
-void MonkeyRenderer::initSub() {
-    // http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
-    // https://community.khronos.org/t/drawing-depth-texture-bound-to-a-fbo/66919
-
-    // --- Color ---
-    glGenTextures(1, &m_colorTexture);
-    glBindTexture(GL_TEXTURE_2D, m_colorTexture);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_framebufferWidth, m_framebufferHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    // --- Depth ---
-    glGenTextures(1, &m_depthTexture);
-    glBindTexture(GL_TEXTURE_2D, m_depthTexture);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    // Remove artefact on the edges of the shadow map
-    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
-    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
-
-    // TODO: adjustable shadow resolution
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_framebufferWidth, m_framebufferHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    glGenFramebuffers(1, &m_fbo);
-    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-
-//    glDrawBuffer(GL_NONE);
-//    glReadBuffer(GL_NONE);
-
-    glFramebufferTexture(
-            GL_FRAMEBUFFER,
-            GL_DEPTH_ATTACHMENT,
-            m_depthTexture,
-            0);
-
-    glFramebufferTexture(
-            GL_FRAMEBUFFER,
-            GL_COLOR_ATTACHMENT0,
-            m_colorTexture,
-            0);
-
-    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-        exit(1);
-    }
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-void MonkeyRenderer::renderSub(RenderContext &ctx) {
-    auto& cam = ctx.scene.cameraState();
-
-    // solution for peter panning
-    // glEnable(GL_CULL_FACE);
-    // glFrontFace(GL_CCW);
-    // glCullFace(GL_FRONT);
-
-    // TODO: adjustable shadow resolution
-    glViewport(0, 0, ctx.windowDimension.framebufferWidth, ctx.windowDimension.framebufferHeight);
-    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-
-    glClearColor(1.0f, 0.3f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // Light point of view
-    float width = 30.0f;
-    float height = width / (float)ctx.windowDimension.framebufferWidth * (float)ctx.windowDimension.framebufferHeight;
-    float top = height / 2.0f;
-    float right = width / 2.0f;
-    float bottom = -top;
-    float left = -right;
-    // TODO: proper pos considering view frustum
-    auto sunlightPos = glm::vec3(10.0f, 10.0f, 10.0f);
-    auto view = glm::lookAt(sunlightPos, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    auto projection = glm::ortho(left, right, bottom, top, 0.1f, 100.0f);
-    m_lightSpaceMatrix = projection * view;
-
-    m_subShader.use();
-    m_subShader.setMatrix4f("view", view);
-    m_subShader.setMatrix4f("projection", projection);
-    m_subShader.setVector3f("cameraPos", sunlightPos);
-    m_subShader.setVector3f("sunLightDir", ctx.scene.sunLight().direction);
-    m_subShader.setVector3f("material.ambient", ctx.globalMaterial.ambient);
-    m_subShader.setVector3f("material.diffuse", ctx.globalMaterial.diffuse);
-    m_subShader.setVector3f("material.specular", ctx.globalMaterial.specular);
-    m_subShader.setFloat("material.shininess", ctx.globalMaterial.shininess);
-
-    for (auto &mesh: m_meshes) {
-        glBindVertexArray(mesh->VAO());
-
-        glm::mat4 model = glm::mat4(1.0f);
-        m_subShader.setMatrix4f("model", model);
-
-        glDrawArrays(GL_TRIANGLES, 0, mesh->verticesCount());
-    }
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    // glDisable(GL_CULL_FACE);
-    // glCullFace(GL_BACK);
-}
-
 GLuint MonkeyRenderer::assistantTexture() {
-    return m_depthTexture;
+    return m_sunlightPass.depthTexture();
 }

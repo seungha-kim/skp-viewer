@@ -100,6 +100,8 @@ add_executable(learn_opengl
         src/programs/monkey/MonkeyProgram.h
         src/guiCommon.h
         src/guiCommon.cpp
+        src/programs/monkey/SunlightPass.cpp
+        src/programs/monkey/SunlightPass.h
         )
 target_link_libraries(learn_opengl OpenGL::GL glfw assimp glad imgui)
 target_compile_definitions(learn_opengl PUBLIC GLFW_INCLUDE_NONE)
