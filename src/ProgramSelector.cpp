@@ -3,10 +3,10 @@
 #include "programs/monkey/MonkeyProgram.h"
 #include "RenderOnlyProgram.h"
 
-ProgramSelector::ProgramSelector(const WindowDimension& dimension)
-    : m_currentProgram(std::make_unique<MonkeyProgram>(dimension)) {}
+ProgramSelector::ProgramSelector(const SurfaceInfo& surfaceInfo)
+    : m_currentProgram(std::make_unique<MonkeyProgram>(surfaceInfo)) {}
 
-void ProgramSelector::changeProgram(const WindowDimension& dimension, ProgramKind kind) {
+void ProgramSelector::changeProgram(const SurfaceInfo& surfaceInfo, ProgramKind kind) {
     switch (kind) {
         case ProgramKind::Test:
             m_currentProgram = RenderOnlyProgram::make(std::make_unique<TestRenderer>(true));
@@ -15,7 +15,7 @@ void ProgramSelector::changeProgram(const WindowDimension& dimension, ProgramKin
             m_currentProgram = RenderOnlyProgram::make(std::make_unique<TestRenderer>(false));
             break;
         case ProgramKind::Monkey:
-            m_currentProgram = std::make_unique<MonkeyProgram>(dimension);
+            m_currentProgram = std::make_unique<MonkeyProgram>(surfaceInfo);
             break;
     }
 }

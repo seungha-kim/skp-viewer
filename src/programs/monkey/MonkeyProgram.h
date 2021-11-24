@@ -3,11 +3,11 @@
 #include "../../Program.h"
 #include "MonkeyRenderer.h"
 #include <memory>
-#include "../../WindowDimension.h"
+#include "../../SurfaceInfo.h"
 
 class MonkeyProgram final: public Program {
 public:
-    explicit MonkeyProgram(const WindowDimension& dimension);
+    explicit MonkeyProgram(const SurfaceInfo& surfaceInfo);
     ~MonkeyProgram() override = default;
 
 private:

@@ -2,13 +2,13 @@
 
 #include "graphics/Material.h"
 #include "Scene.h"
-#include "WindowDimension.h"
+#include "SurfaceInfo.h"
 
 struct RenderContext {
     const Scene& scene;
     const float playbackValue;
     const Material globalMaterial;
-    const WindowDimension& windowDimension;
+    const SurfaceInfo& surfaceInfo;
 };
 
 class BaseRenderer {

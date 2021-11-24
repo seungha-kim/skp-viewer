@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include "../../graphics/Mesh.h"
-#include "../../WindowDimension.h"
+#include "../../SurfaceInfo.h"
 #include "../../BaseRenderer.h"
 
 struct MainPassInput {
@@ -18,7 +18,7 @@ class MainPassPimpl;
 
 class MainPass {
 public:
-    explicit MainPass(const WindowDimension& dimension);
+    explicit MainPass(const SurfaceInfo& surfaceInfo);
     ~MainPass();
     MainPassOutput render(RenderContext& ctx, const MainPassInput& input);
 private:

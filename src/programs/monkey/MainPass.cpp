@@ -5,12 +5,12 @@ class MainPassPimpl {
     friend class MainPass;
     std::unique_ptr<Shader> m_mainShader;
 public:
-    explicit MainPassPimpl(const WindowDimension& dimension)
+    explicit MainPassPimpl(const SurfaceInfo& surfaceInfo)
         : m_mainShader(std::make_unique<Shader>("monkey.vert", "monkey.frag")) {
     }
 
     MainPassOutput render(RenderContext &ctx, const MainPassInput& input) {
-        glViewport(0, 0, ctx.windowDimension.framebufferWidth, ctx.windowDimension.framebufferHeight);
+        glViewport(0, 0, ctx.surfaceInfo.physicalWidth, ctx.surfaceInfo.physicalHeight);
         auto& cam = ctx.scene.cameraState();
         m_mainShader->use();
         m_mainShader->setMatrix4f("view", cam.viewMatrix());
@@ -41,8 +41,8 @@ public:
     }
 };
 
-MainPass::MainPass(const WindowDimension &dimension)
-    : m_pimpl(std::make_unique<MainPassPimpl>(dimension)) {}
+MainPass::MainPass(const SurfaceInfo &surfaceInfo)
+    : m_pimpl(std::make_unique<MainPassPimpl>(surfaceInfo)) {}
 
 MainPass::~MainPass() = default;
 

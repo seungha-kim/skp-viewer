@@ -3,13 +3,13 @@
 #include "BaseRenderer.h"
 #include "Shader.h"
 #include "graphics/Mesh.h"
-#include "../../WindowDimension.h"
+#include "../../SurfaceInfo.h"
 #include "SunlightPass.h"
 #include "MainPass.h"
 
 class MonkeyRenderer: public BaseRenderer {
 public:
-    MonkeyRenderer(const WindowDimension& dimension, const std::vector<std::unique_ptr<Mesh>>& meshes);
+    MonkeyRenderer(const SurfaceInfo& surfaceInfo, const std::vector<std::unique_ptr<Mesh>>& meshes);
     ~MonkeyRenderer() override = default;
     void render(RenderContext& ctx) override;
     GLuint assistantTexture();

@@ -6,7 +6,7 @@
 #include "PlaybackState.h"
 #include "SceneManager.h"
 #include "InputController.h"
-#include "WindowDimension.h"
+#include "SurfaceInfo.h"
 
 class Window {
     friend void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -39,7 +39,7 @@ public:
     [[nodiscard]] const InputController& inputController() const;
     InputController& inputControllerMut();
 
-    [[nodiscard]] const WindowDimension& dimension() const;
+    [[nodiscard]] const SurfaceInfo& surfaceInfo() const;
 
 private:
     GLFWwindow* m_glfwWindow = nullptr;
@@ -47,5 +47,5 @@ private:
     InputController m_inputController;
 
     PlaybackState m_playbackState;
-    WindowDimension m_dimension;
+    SurfaceInfo m_surfaceInfo;
 };

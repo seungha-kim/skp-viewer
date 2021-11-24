@@ -1,10 +1,10 @@
 #include "MonkeyRenderer.h"
 #include "Shader.h"
 
-MonkeyRenderer::MonkeyRenderer(const WindowDimension& dimension,
+MonkeyRenderer::MonkeyRenderer(const SurfaceInfo& surfaceInfo,
                                const std::vector<std::unique_ptr<Mesh>>& meshes)
-        : m_mainPass{dimension}
-        , m_sunlightPass{dimension}
+        : m_mainPass{surfaceInfo}
+        , m_sunlightPass{surfaceInfo}
         , m_meshes{meshes} {}
 
 void MonkeyRenderer::render(RenderContext &ctx) {

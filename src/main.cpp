@@ -14,7 +14,7 @@ int main()
     window.bind();
     Window::initGl();
 
-    ProgramSelector selector(window.dimension());
+    ProgramSelector selector(window.surfaceInfo());
     auto gui = Gui(window);
 
     Material globalMaterial = {
@@ -34,7 +34,7 @@ int main()
             .scene = window.sceneManager().activeScene(),
             .playbackValue = window.playbackValue(),
             .globalMaterial = globalMaterial,
-            .windowDimension = window.dimension(),
+            .surfaceInfo = window.surfaceInfo(),
         };
         selector.currentProgram().render(renderCtx);
 
@@ -44,7 +44,7 @@ int main()
                 .playbackState = window.playbackStateMut(),
                 .inputController = window.inputControllerMut(),
                 .globalMaterial = globalMaterial,
-                .windowDimension = window.dimension(),
+                .surfaceInfo = window.surfaceInfo(),
         };
         gui.begin();
         selector.currentProgram().processGui(guiCtx);

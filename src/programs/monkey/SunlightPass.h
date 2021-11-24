@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include "../../BaseRenderer.h"
-#include "../../WindowDimension.h"
+#include "../../SurfaceInfo.h"
 #include "../../graphics/Mesh.h"
 #include <glm/glm.hpp>
 #include <glad/glad.h>
@@ -20,7 +20,7 @@ class SunlightPassPimpl;
 
 class SunlightPass {
 public:
-    explicit SunlightPass(const WindowDimension& dimension);
+    explicit SunlightPass(const SurfaceInfo& surfaceInfo);
     ~SunlightPass();
     SunlightPassOutput render(RenderContext& ctx, const SunlightPassInput& input);
     GLuint depthTexture();

@@ -44,13 +44,13 @@ void Gui::processMainMenuBar(GuiContext &ctx) {
         if (ImGui::BeginMenu("Program"))
         {
             if (ImGui::MenuItem("Test")) {
-                ctx.programSelector.changeProgram(ctx.windowDimension, ProgramKind::Test);
+                ctx.programSelector.changeProgram(ctx.surfaceInfo, ProgramKind::Test);
             }
             if (ImGui::MenuItem("Test2")) {
-                ctx.programSelector.changeProgram(ctx.windowDimension, ProgramKind::Test2);
+                ctx.programSelector.changeProgram(ctx.surfaceInfo, ProgramKind::Test2);
             }
             if (ImGui::MenuItem("Monkey")) {
-                ctx.programSelector.changeProgram(ctx.windowDimension, ProgramKind::Monkey);
+                ctx.programSelector.changeProgram(ctx.surfaceInfo, ProgramKind::Monkey);
             }
             ImGui::EndMenu();
         }
@@ -62,9 +62,9 @@ void Gui::processRenderInfo(GuiContext &ctx) {
     float deltaTimeMs = ImGui::GetIO().DeltaTime * 1000.0f;
     m_deltas[m_deltasPivot] = deltaTimeMs;
     ImGui::Begin("Render Info", nullptr, windowFlag(ctx));
-    auto& dim = ctx.windowDimension;
-    ImGui::Text("window size: %d * %d", dim.width, dim.height);
-    ImGui::Text("framebuffer size: %d * %d", dim.framebufferWidth, dim.framebufferHeight);
+    auto& dim = ctx.surfaceInfo;
+    ImGui::Text("window size: %d * %d", dim.logicalWidth, dim.logicalHeight);
+    ImGui::Text("framebuffer size: %d * %d", dim.physicalWidth, dim.physicalHeight);
     ImGui::Text("pixel scale: %.0f * %.0f", dim.contentScaleX, dim.contentScaleY);
     ImGui::Text("render time: %.0f ms", deltaTimeMs);
 //    ImGui::Text("WantCaptureMouse: %d", ctx.inputState.isGuiFocused);

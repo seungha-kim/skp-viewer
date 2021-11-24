@@ -4,22 +4,22 @@
 void framebuffer_size_callback(GLFWwindow* glfwWindow, int width, int height)
 {
     Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
-    window.m_dimension.framebufferWidth = width;
-    window.m_dimension.framebufferHeight = height;
+    window.m_surfaceInfo.physicalWidth = width;
+    window.m_surfaceInfo.physicalHeight = height;
 }
 
 void window_size_callback(GLFWwindow* glfwWindow, int width, int height)
 {
     Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
-    window.m_dimension.width = width;
-    window.m_dimension.height = height;
+    window.m_surfaceInfo.logicalWidth = width;
+    window.m_surfaceInfo.logicalHeight = height;
 }
 
 void content_scale_size_callback(GLFWwindow* glfwWindow, float x, float y)
 {
     Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
-    window.m_dimension.contentScaleX = x;
-    window.m_dimension.contentScaleY = y;
+    window.m_surfaceInfo.contentScaleX = x;
+    window.m_surfaceInfo.contentScaleY = y;
 }
 
 void mouse_move_callback(GLFWwindow* glfwWindow, double xPosD, double yPosD) {
@@ -75,9 +75,9 @@ Window::Window(int width, int height, const char *title) {
         glfwSetCursorPosCallback(windowPtr, mouse_move_callback);
         glfwSetScrollCallback(windowPtr, mouse_wheel_callback);
         glfwSetWindowUserPointer(windowPtr, this);
-        glfwGetFramebufferSize(windowPtr, &m_dimension.framebufferWidth, &m_dimension.framebufferHeight);
-        glfwGetWindowSize(windowPtr, &m_dimension.width, &m_dimension.height);
-        glfwGetWindowContentScale(windowPtr, &m_dimension.contentScaleX, &m_dimension.contentScaleY);
+        glfwGetFramebufferSize(windowPtr, &m_surfaceInfo.physicalWidth, &m_surfaceInfo.physicalHeight);
+        glfwGetWindowSize(windowPtr, &m_surfaceInfo.logicalWidth, &m_surfaceInfo.logicalHeight);
+        glfwGetWindowContentScale(windowPtr, &m_surfaceInfo.contentScaleX, &m_surfaceInfo.contentScaleY);
     } else {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -110,8 +110,8 @@ void Window::updateTime() {
 
 void Window::updateCamera() {
     auto& cam = sceneManagerMut().activeSceneMut().cameraStateMut();
-    cam.aspectWidth = (float)m_dimension.width;
-    cam.aspectHeight = (float)m_dimension.height;
+    cam.aspectWidth = (float)m_surfaceInfo.logicalWidth;
+    cam.aspectHeight = (float)m_surfaceInfo.logicalHeight;
 }
 
 void Window::processKeyboardInput() {
@@ -162,8 +162,8 @@ InputController &Window::inputControllerMut() {
     return m_inputController;
 }
 
-const WindowDimension &Window::dimension() const {
-    return m_dimension;
+const SurfaceInfo &Window::surfaceInfo() const {
+    return m_surfaceInfo;
 }
 
 

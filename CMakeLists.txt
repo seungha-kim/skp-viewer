@@ -92,7 +92,7 @@ add_executable(learn_opengl
         src/graphics/DirectionalLight.cpp
         src/graphics/DirectionalLight.h
         src/Scene.cpp src/Scene.h
-        src/WindowDimension.h
+        src/SurfaceInfo.h
         src/Program.h
         src/RenderOnlyProgram.cpp
         src/RenderOnlyProgram.h

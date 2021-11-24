@@ -2,7 +2,7 @@
 #include <imgui.h>
 #include "../../guiCommon.h"
 
-MonkeyProgram::MonkeyProgram(const WindowDimension& dimension) {
+MonkeyProgram::MonkeyProgram(const SurfaceInfo& surfaceInfo) {
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile("resources/monkey.obj",
                                              aiProcess_CalcTangentSpace |
@@ -15,7 +15,7 @@ MonkeyProgram::MonkeyProgram(const WindowDimension& dimension) {
         // TODO: transform stack
         m_meshes.push_back(std::make_unique<Mesh>(*scene->mMeshes[i], scene->mRootNode->mTransformation));
     }
-    m_renderer = std::make_unique<MonkeyRenderer>(dimension, m_meshes);
+    m_renderer = std::make_unique<MonkeyRenderer>(surfaceInfo, m_meshes);
 }
 
 void MonkeyProgram::render(RenderContext &ctx) {

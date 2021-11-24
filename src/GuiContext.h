@@ -4,7 +4,7 @@
 #include "PlaybackState.h"
 #include "InputController.h"
 #include "graphics/Material.h"
-#include "WindowDimension.h"
+#include "SurfaceInfo.h"
 
 struct GuiContext {
     ProgramSelector& programSelector;
@@ -12,5 +12,5 @@ struct GuiContext {
     PlaybackState& playbackState;
     InputController& inputController;
     Material& globalMaterial;
-    const WindowDimension& windowDimension;
+    const SurfaceInfo& surfaceInfo;
 };

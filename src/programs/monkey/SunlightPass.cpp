@@ -15,9 +15,9 @@ public:
         glDeleteTextures(1, &m_depthTexture);
         glDeleteFramebuffers(1, &m_fbo);
     };
-    explicit SunlightPassPimpl(const WindowDimension& dimension)
+    explicit SunlightPassPimpl(const SurfaceInfo& surfaceInfo)
         : m_subShader(std::make_unique<Shader>("monkey_sub.vert", "monkey_sub.frag")) {
-        int fbWidth = dimension.framebufferWidth, fbHeight = dimension.framebufferHeight;
+        int fbWidth = surfaceInfo.physicalWidth, fbHeight = surfaceInfo.physicalHeight;
 
         // http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
         // https://community.khronos.org/t/drawing-depth-texture-bound-to-a-fbo/66919
@@ -86,7 +86,7 @@ public:
         // glCullFace(GL_FRONT);
 
         // TODO: adjustable shadow resolution
-        glViewport(0, 0, ctx.windowDimension.framebufferWidth, ctx.windowDimension.framebufferHeight);
+        glViewport(0, 0, ctx.surfaceInfo.physicalWidth, ctx.surfaceInfo.physicalHeight);
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
         glClearColor(1.0f, 0.3f, 0.3f, 1.0f);
@@ -94,7 +94,7 @@ public:
 
         // Light point of view
         float width = 30.0f;
-        float height = width / (float)ctx.windowDimension.framebufferWidth * (float)ctx.windowDimension.framebufferHeight;
+        float height = width / (float)ctx.surfaceInfo.physicalWidth * (float)ctx.surfaceInfo.physicalHeight;
         float top = height / 2.0f;
         float right = width / 2.0f;
         float bottom = -top;
@@ -135,8 +135,8 @@ public:
     }
 };
 
-SunlightPass::SunlightPass(const WindowDimension& dimension)
-    : m_pimpl(std::make_unique<SunlightPassPimpl>(dimension)) {}
+SunlightPass::SunlightPass(const SurfaceInfo& surfaceInfo)
+    : m_pimpl(std::make_unique<SunlightPassPimpl>(surfaceInfo)) {}
 
 SunlightPass::~SunlightPass() = default;
 
