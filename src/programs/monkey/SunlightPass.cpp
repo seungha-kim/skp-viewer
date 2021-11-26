@@ -2,19 +2,18 @@
 #include "../../Shader.h"
 #include "../../DepthTexture.h"
 #include "../../ColorTexture.h"
+#include "../../OffscreenRenderTarget.h"
 
 class SunlightPassPimpl {
     friend class SunlightPass;
 
     ColorTexture m_colorTexture;
     DepthTexture m_depthTexture;
-    GLuint m_fbo{};
+    OffscreenRenderTarget m_offscreenRenderTarget;
     glm::mat4 m_lightSpaceMatrix{};
     std::unique_ptr<Shader> m_subShader;
 public:
-    ~SunlightPassPimpl() {
-        glDeleteFramebuffers(1, &m_fbo);
-    };
+    ~SunlightPassPimpl() = default;
     explicit SunlightPassPimpl(const SurfaceInfo& surfaceInfo)
         : m_subShader(std::make_unique<Shader>("monkey_sub.vert", "monkey_sub.frag"))
         , m_colorTexture(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight)
@@ -23,29 +22,9 @@ public:
         // http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
         // https://community.khronos.org/t/drawing-depth-texture-bound-to-a-fbo/66919
 
-        glGenFramebuffers(1, &m_fbo);
-        glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-
-//    glDrawBuffer(GL_NONE);
-//    glReadBuffer(GL_NONE);
-
-        glFramebufferTexture(
-                GL_FRAMEBUFFER,
-                GL_DEPTH_ATTACHMENT,
-                m_depthTexture.textureName(),
-                0);
-
-        glFramebufferTexture(
-                GL_FRAMEBUFFER,
-                GL_COLOR_ATTACHMENT0,
-                m_colorTexture.textureName(),
-                0);
-
-        if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            exit(1);
-        }
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        m_offscreenRenderTarget.setTargetDepthTexture(m_depthTexture);
+        m_offscreenRenderTarget.setTargetColorTexture(m_colorTexture);
+        m_offscreenRenderTarget.checkState();
     }
 
     SunlightPassOutput render(RenderContext &ctx, const SunlightPassInput& input) {
@@ -57,11 +36,7 @@ public:
         // glCullFace(GL_FRONT);
 
         // TODO: adjustable shadow resolution
-        glViewport(0, 0, ctx.surfaceInfo.physicalWidth, ctx.surfaceInfo.physicalHeight);
-        glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-
-        glClearColor(1.0f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        m_offscreenRenderTarget.bindAndPrepare(glm::vec3(1.0f, 1.0f, 0.0f), ctx.surfaceInfo.physicalWidth, ctx.surfaceInfo.physicalHeight);
 
         // Light point of view
         float width = 30.0f;
@@ -94,7 +69,7 @@ public:
 
             glDrawArrays(GL_TRIANGLES, 0, mesh->verticesCount());
         }
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        m_offscreenRenderTarget.unbind();
 
         // glDisable(GL_CULL_FACE);
         // glCullFace(GL_BACK);
