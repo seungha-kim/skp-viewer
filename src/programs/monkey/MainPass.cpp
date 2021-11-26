@@ -19,7 +19,7 @@ public:
     }
 
     MainPassOutput render(RenderContext &ctx, const MainPassInput& input) {
-        m_offscreenRenderTarget.bindAndPrepare(glm::vec3(0.0f, 1.0f, 1.0f), ctx.surfaceInfo.physicalWidth, ctx.surfaceInfo.physicalHeight);
+        auto binding = m_offscreenRenderTarget.bindAndPrepare(glm::vec3(0.0f, 1.0f, 1.0f), ctx.surfaceInfo.physicalWidth, ctx.surfaceInfo.physicalHeight);
 
         auto& cam = ctx.scene.cameraState();
         m_mainShader->use();
@@ -44,8 +44,6 @@ public:
 
             glDrawArrays(GL_TRIANGLES, 0, mesh->verticesCount());
         }
-
-        m_offscreenRenderTarget.unbind();
 
         return MainPassOutput {
             .colorTexture = m_colorTexture,

@@ -36,7 +36,7 @@ public:
         // glCullFace(GL_FRONT);
 
         // TODO: adjustable shadow resolution
-        m_offscreenRenderTarget.bindAndPrepare(glm::vec3(1.0f, 1.0f, 0.0f), ctx.surfaceInfo.physicalWidth, ctx.surfaceInfo.physicalHeight);
+        auto binding = m_offscreenRenderTarget.bindAndPrepare(glm::vec3(1.0f, 1.0f, 0.0f), ctx.surfaceInfo.physicalWidth, ctx.surfaceInfo.physicalHeight);
 
         // Light point of view
         float width = 30.0f;
@@ -69,7 +69,6 @@ public:
 
             glDrawArrays(GL_TRIANGLES, 0, mesh->verticesCount());
         }
-        m_offscreenRenderTarget.unbind();
 
         // glDisable(GL_CULL_FACE);
         // glCullFace(GL_BACK);

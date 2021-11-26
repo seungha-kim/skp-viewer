@@ -8,7 +8,7 @@ OffscreenRenderTarget::~OffscreenRenderTarget() {
     glDeleteFramebuffers(1, &m_fbo);
 }
 
-void OffscreenRenderTarget::bindAndPrepare(glm::vec3 clearColor, int viewportWidth, int viewportHeight) const {
+OffscreenRenderTargetBinding OffscreenRenderTarget::bindAndPrepare(glm::vec3 clearColor, int viewportWidth, int viewportHeight) {
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glViewport(0, 0, viewportWidth, viewportHeight);
     glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0f);
@@ -18,6 +18,8 @@ void OffscreenRenderTarget::bindAndPrepare(glm::vec3 clearColor, int viewportWid
         glDrawBuffer(GL_NONE);
         glReadBuffer(GL_NONE);
     }
+
+    return OffscreenRenderTargetBinding{*this};
 }
 
 void OffscreenRenderTarget::setTargetColorTexture(const ColorTexture &texture) {
@@ -53,4 +55,10 @@ void OffscreenRenderTarget::checkState() {
         exit(1);
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+OffscreenRenderTargetBinding::OffscreenRenderTargetBinding(OffscreenRenderTarget &target): m_target{target} {}
+
+OffscreenRenderTargetBinding::~OffscreenRenderTargetBinding() {
+    m_target.unbind();
 }

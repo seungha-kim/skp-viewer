@@ -22,12 +22,11 @@ public:
     BloomFilterPassOutput render(RenderContext &ctx, const BloomFilterPassInput &input) {
         const auto viewportWidth = ctx.surfaceInfo.physicalWidth;
         const auto viewportHeight = ctx.surfaceInfo.physicalHeight;
-        m_offscreenRenderTarget.bindAndPrepare(glm::vec3(1.0f, 0.0f, 1.0f), viewportWidth, viewportHeight);
+        auto binding = m_offscreenRenderTarget.bindAndPrepare(glm::vec3(1.0f, 0.0f, 1.0f), viewportWidth, viewportHeight);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, input.colorTexture.textureName());
         m_textureRenderer.setTextureToRender(input.colorTexture);
         m_textureRenderer.render(ctx);
-        m_offscreenRenderTarget.unbind();
         return BloomFilterPassOutput {
                 .colorTexture = m_colorTexture,
         };
