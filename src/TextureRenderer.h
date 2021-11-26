@@ -3,15 +3,17 @@
 #include "ColorTexture.h"
 #include "Shader.h"
 #include "RenderContext.h"
+#include <memory>
 
 class TextureRenderer {
 public:
     TextureRenderer();
+    TextureRenderer(std::unique_ptr<Shader> shader);
     ~TextureRenderer();
-    void setTexture(const ColorTexture& texture);
+    void setTextureToRender(const ColorTexture& texture);
     void render(RenderContext& ctx);
 private:
-    Shader m_shader;
+    std::unique_ptr<Shader> m_shader;
     GLuint m_vao{};
     GLuint m_vbo{};
     GLuint m_textureName{};

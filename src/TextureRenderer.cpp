@@ -9,7 +9,9 @@ static const float vertices[] {
         -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
 };
 
-TextureRenderer::TextureRenderer(): m_shader("quad.vert", "quad.frag") {
+TextureRenderer::TextureRenderer(): TextureRenderer(std::make_unique<Shader>("quad.vert", "quad.frag")) {}
+
+TextureRenderer::TextureRenderer(std::unique_ptr<Shader> shader): m_shader(std::move(shader)) {
     // VAO
     glGenVertexArrays(1, &m_vao);
     glBindVertexArray(m_vao);
@@ -32,15 +34,15 @@ TextureRenderer::~TextureRenderer() {
     glDeleteBuffers(1, &m_vbo);
 }
 
-void TextureRenderer::setTexture(const ColorTexture &texture) {
+void TextureRenderer::setTextureToRender(const ColorTexture &texture) {
     m_textureName = texture.textureName();
 }
 
 void TextureRenderer::render(RenderContext &ctx) {
     glViewport(0, 0, ctx.surfaceInfo.physicalWidth, ctx.surfaceInfo.physicalHeight);
 //    glClear(GL_DEPTH_BUFFER_BIT);
-    m_shader.use();
-    m_shader.setInt("tex", 0);
+    m_shader->use();
+    m_shader->setInt("tex", 0);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_textureName);

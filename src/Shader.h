@@ -17,6 +17,7 @@ public:
     // constructor reads and builds the shader
     Shader(const char *vShaderName, const char *fShaderName);
     ~Shader();
+
     // use/activate the shader
     void use();
     // utility uniform functions

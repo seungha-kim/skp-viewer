@@ -4,7 +4,8 @@
 
 MonkeyProgram::MonkeyProgram(const SurfaceInfo& surfaceInfo)
     : m_sunlightPass(surfaceInfo)
-    , m_mainPass(surfaceInfo) {
+    , m_mainPass(surfaceInfo)
+    , m_bloomFilterPass(surfaceInfo) {
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile("resources/monkey.obj",
                                              aiProcess_CalcTangentSpace |
@@ -35,7 +36,12 @@ void MonkeyProgram::render(RenderContext &ctx) {
     };
     const auto mainPassOutput = m_mainPass.render(ctx, mainPassInput);
 
-    m_textureRenderer.setTexture(mainPassOutput.colorTexture);
+    const BloomFilterPassInput bloomFilterPassInput {
+        .colorTexture = mainPassOutput.colorTexture
+    };
+    const auto bloomFilterPassOutput = m_bloomFilterPass.render(ctx, bloomFilterPassInput);
+
+    m_textureRenderer.setTextureToRender(bloomFilterPassOutput.colorTexture);
     m_textureRenderer.render(ctx);
 }
 
