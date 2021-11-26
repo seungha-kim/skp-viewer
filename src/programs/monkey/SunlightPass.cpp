@@ -1,22 +1,23 @@
 #include "SunlightPass.h"
 #include "../../Shader.h"
+#include "../../DepthTexture.h"
 
 class SunlightPassPimpl {
     friend class SunlightPass;
 
     GLuint m_colorTexture{};
-    GLuint m_depthTexture{};
+    DepthTexture m_depthTexture;
     GLuint m_fbo{};
     glm::mat4 m_lightSpaceMatrix{};
     std::unique_ptr<Shader> m_subShader;
 public:
     ~SunlightPassPimpl() {
         glDeleteTextures(1, &m_colorTexture);
-        glDeleteTextures(1, &m_depthTexture);
         glDeleteFramebuffers(1, &m_fbo);
     };
     explicit SunlightPassPimpl(const SurfaceInfo& surfaceInfo)
-        : m_subShader(std::make_unique<Shader>("monkey_sub.vert", "monkey_sub.frag")) {
+        : m_subShader(std::make_unique<Shader>("monkey_sub.vert", "monkey_sub.frag"))
+        , m_depthTexture(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight) {
         int fbWidth = surfaceInfo.physicalWidth, fbHeight = surfaceInfo.physicalHeight;
 
         // http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
@@ -32,26 +33,6 @@ public:
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, fbWidth, fbHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
         glBindTexture(GL_TEXTURE_2D, 0);
 
-        // --- Depth ---
-        glGenTextures(1, &m_depthTexture);
-        glBindTexture(GL_TEXTURE_2D, m_depthTexture);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-        // Remove artefact on the edges of the shadow map
-        glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
-        glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-        glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
-
-        // TODO: adjustable shadow resolution
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, fbWidth, fbHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-        glBindTexture(GL_TEXTURE_2D, 0);
-
         glGenFramebuffers(1, &m_fbo);
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
@@ -61,7 +42,7 @@ public:
         glFramebufferTexture(
                 GL_FRAMEBUFFER,
                 GL_DEPTH_ATTACHMENT,
-                m_depthTexture,
+                m_depthTexture.textureName(),
                 0);
 
         glFramebufferTexture(
@@ -130,7 +111,7 @@ public:
 
         return SunlightPassOutput {
             .lightSpaceMatrix = m_lightSpaceMatrix,
-            .depthTexture = m_depthTexture,
+            .depthTexture = m_depthTexture.textureName(),
         };
     }
 };
@@ -145,5 +126,5 @@ SunlightPassOutput SunlightPass::render(RenderContext &ctx, const SunlightPassIn
 }
 
 GLuint SunlightPass::depthTexture() {
-    return m_pimpl->m_depthTexture;
+    return m_pimpl->m_depthTexture.textureName();
 }
