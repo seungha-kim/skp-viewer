@@ -3,15 +3,17 @@
 #include "../../RenderContext.h"
 #include "../../graphics/Mesh.h"
 #include "../../SurfaceInfo.h"
+#include "../../ColorTexture.h"
+#include "../../DepthTexture.h"
 
 struct MainPassInput {
     const std::vector<std::unique_ptr<Mesh>>& meshes;
     const glm::mat4 lightSpaceMatrix;
-    const GLuint depthTexture;
+    const DepthTexture& shadowDepthTexture;
 };
 
 struct MainPassOutput {
-    const GLuint colorTexture;
+    const ColorTexture& colorTexture;
 };
 
 class MainPassPimpl;

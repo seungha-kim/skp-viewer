@@ -106,6 +106,8 @@ add_executable(learn_opengl
         src/ColorTexture.h
         src/OffscreenRenderTarget.cpp
         src/OffscreenRenderTarget.h
+        src/TextureRenderer.cpp
+        src/TextureRenderer.h
         )
 target_link_libraries(learn_opengl OpenGL::GL glfw assimp glad imgui)
 target_compile_definitions(learn_opengl PUBLIC GLFW_INCLUDE_NONE)

@@ -76,7 +76,7 @@ public:
 
         return SunlightPassOutput {
             .lightSpaceMatrix = m_lightSpaceMatrix,
-            .depthTexture = m_depthTexture.textureName(),
+            .depthTexture = m_depthTexture,
         };
     }
 };

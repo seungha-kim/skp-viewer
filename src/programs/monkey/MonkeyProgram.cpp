@@ -31,9 +31,12 @@ void MonkeyProgram::render(RenderContext &ctx) {
     const MainPassInput mainPassInput {
             .meshes = m_meshes,
             .lightSpaceMatrix = sunlightPassOutput.lightSpaceMatrix,
-            .depthTexture = sunlightPassOutput.depthTexture,
+            .shadowDepthTexture = sunlightPassOutput.depthTexture,
     };
     const auto mainPassOutput = m_mainPass.render(ctx, mainPassInput);
+
+    m_textureRenderer.setTexture(mainPassOutput.colorTexture);
+    m_textureRenderer.render(ctx);
 }
 
 void MonkeyProgram::processGui(GuiContext &ctx) {

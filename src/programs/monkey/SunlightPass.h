@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <glad/glad.h>
 #include "../../RenderContext.h"
+#include "../../DepthTexture.h"
 
 struct SunlightPassInput {
     // TODO: meshes 말고 rootObject 를 받는 것이 적절
@@ -13,7 +14,7 @@ struct SunlightPassInput {
 
 struct SunlightPassOutput {
     const glm::mat4 lightSpaceMatrix;
-    const GLuint depthTexture;
+    const DepthTexture& depthTexture;
 };
 
 class SunlightPassPimpl;
