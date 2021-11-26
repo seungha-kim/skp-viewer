@@ -1,37 +1,27 @@
 #include "SunlightPass.h"
 #include "../../Shader.h"
 #include "../../DepthTexture.h"
+#include "../../ColorTexture.h"
 
 class SunlightPassPimpl {
     friend class SunlightPass;
 
-    GLuint m_colorTexture{};
+    ColorTexture m_colorTexture;
     DepthTexture m_depthTexture;
     GLuint m_fbo{};
     glm::mat4 m_lightSpaceMatrix{};
     std::unique_ptr<Shader> m_subShader;
 public:
     ~SunlightPassPimpl() {
-        glDeleteTextures(1, &m_colorTexture);
         glDeleteFramebuffers(1, &m_fbo);
     };
     explicit SunlightPassPimpl(const SurfaceInfo& surfaceInfo)
         : m_subShader(std::make_unique<Shader>("monkey_sub.vert", "monkey_sub.frag"))
+        , m_colorTexture(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight)
         , m_depthTexture(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight) {
-        int fbWidth = surfaceInfo.physicalWidth, fbHeight = surfaceInfo.physicalHeight;
 
         // http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
         // https://community.khronos.org/t/drawing-depth-texture-bound-to-a-fbo/66919
-
-        // --- Color ---
-        glGenTextures(1, &m_colorTexture);
-        glBindTexture(GL_TEXTURE_2D, m_colorTexture);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, fbWidth, fbHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-        glBindTexture(GL_TEXTURE_2D, 0);
 
         glGenFramebuffers(1, &m_fbo);
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
@@ -48,7 +38,7 @@ public:
         glFramebufferTexture(
                 GL_FRAMEBUFFER,
                 GL_COLOR_ATTACHMENT0,
-                m_colorTexture,
+                m_colorTexture.textureName(),
                 0);
 
         if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
