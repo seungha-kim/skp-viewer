@@ -6,7 +6,7 @@
 #include "SunlightPass.h"
 #include "MainPass.h"
 #include "../../TextureRenderer.h"
-#include "BloomFilterPass.h"
+#include "ColorBalancePass.h"
 
 class MonkeyProgram final: public Program {
 public:
@@ -21,7 +21,9 @@ private:
 private:
     SunlightPass m_sunlightPass;
     MainPass m_mainPass;
-    BloomFilterPass m_bloomFilterPass;
+    ColorBalancePass m_colorBalancePass;
     std::vector<std::unique_ptr<Mesh>> m_meshes;
     TextureRenderer m_textureRenderer;
+
+    glm::vec3 m_colorBalance{};
 };

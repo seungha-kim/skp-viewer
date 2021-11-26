@@ -108,8 +108,8 @@ add_executable(learn_opengl
         src/OffscreenRenderTarget.h
         src/TextureRenderer.cpp
         src/TextureRenderer.h
-        src/programs/monkey/BloomFilterPass.cpp
-        src/programs/monkey/BloomFilterPass.h
+        src/programs/monkey/ColorBalancePass.cpp
+        src/programs/monkey/ColorBalancePass.h
         )
 target_link_libraries(learn_opengl OpenGL::GL glfw assimp glad imgui)
 target_compile_definitions(learn_opengl PUBLIC GLFW_INCLUDE_NONE)

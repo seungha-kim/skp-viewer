@@ -1,3 +1,4 @@
+
 #include "TextureRenderer.h"
 
 static const float vertices[] {
@@ -38,11 +39,15 @@ void TextureRenderer::setTextureToRender(const ColorTexture &texture) {
     m_textureName = texture.textureName();
 }
 
-void TextureRenderer::render(RenderContext &ctx) {
+void TextureRenderer::render(RenderContext &ctx, const std::function<void(Shader&)>& shaderCallback) {
     glViewport(0, 0, ctx.surfaceInfo.physicalWidth, ctx.surfaceInfo.physicalHeight);
 //    glClear(GL_DEPTH_BUFFER_BIT);
     m_shader->use();
     m_shader->setInt("tex", 0);
+
+    if (shaderCallback) {
+        shaderCallback(*m_shader);
+    }
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_textureName);

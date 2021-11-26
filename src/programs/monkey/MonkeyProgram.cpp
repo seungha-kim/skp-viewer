@@ -5,7 +5,7 @@
 MonkeyProgram::MonkeyProgram(const SurfaceInfo& surfaceInfo)
     : m_sunlightPass(surfaceInfo)
     , m_mainPass(surfaceInfo)
-    , m_bloomFilterPass(surfaceInfo) {
+    , m_colorBalancePass(surfaceInfo) {
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile("resources/monkey.obj",
                                              aiProcess_CalcTangentSpace |
@@ -36,12 +36,13 @@ void MonkeyProgram::render(RenderContext &ctx) {
     };
     const auto mainPassOutput = m_mainPass.render(ctx, mainPassInput);
 
-    const BloomFilterPassInput bloomFilterPassInput {
+    const ColorBalancePassInput colorBalancePassInput {
         .colorTexture = mainPassOutput.colorTexture
     };
-    const auto bloomFilterPassOutput = m_bloomFilterPass.render(ctx, bloomFilterPassInput);
+    m_colorBalancePass.setColorBalance(m_colorBalance);
+    const auto colorBalancePassOutput = m_colorBalancePass.render(ctx, colorBalancePassInput);
 
-    m_textureRenderer.setTextureToRender(bloomFilterPassOutput.colorTexture);
+    m_textureRenderer.setTextureToRender(colorBalancePassOutput.colorTexture);
     m_textureRenderer.render(ctx);
 }
 
@@ -49,5 +50,12 @@ void MonkeyProgram::processGui(GuiContext &ctx) {
     auto assistant = m_sunlightPass.depthTexture();
     ImGui::Begin("Assistant View", nullptr, windowFlag(ctx));
     ImGui::Image((void*)(intptr_t)assistant, ImVec2(512,512), ImVec2(0, 1), ImVec2(1, 0));
+    ImGui::End();
+
+    ImGui::Begin("Program Setting", nullptr, windowFlag(ctx));
+    ImGui::Text("Color Balance");
+    ImGui::SliderFloat("Red", &m_colorBalance.r, -1.0f, 1.0f);
+    ImGui::SliderFloat("Green", &m_colorBalance.g, -1.0f, 1.0f);
+    ImGui::SliderFloat("Blue", &m_colorBalance.b, -1.0f, 1.0f);
     ImGui::End();
 }

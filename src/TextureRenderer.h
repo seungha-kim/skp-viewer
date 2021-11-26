@@ -4,6 +4,7 @@
 #include "Shader.h"
 #include "RenderContext.h"
 #include <memory>
+#include <functional>
 
 class TextureRenderer {
 public:
@@ -11,7 +12,7 @@ public:
     TextureRenderer(std::unique_ptr<Shader> shader);
     ~TextureRenderer();
     void setTextureToRender(const ColorTexture& texture);
-    void render(RenderContext& ctx);
+    void render(RenderContext& ctx, const std::function<void(Shader&)>& shaderCallback = nullptr);
 private:
     std::unique_ptr<Shader> m_shader;
     GLuint m_vao{};
