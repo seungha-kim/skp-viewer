@@ -23,7 +23,7 @@ public:
         // https://community.khronos.org/t/drawing-depth-texture-bound-to-a-fbo/66919
 
         m_offscreenRenderTarget.setTargetDepthTexture(m_depthTexture);
-        m_offscreenRenderTarget.setTargetColorTexture(m_colorTexture);
+        m_offscreenRenderTarget.setTargetColorTexture(m_colorTexture, 0);
         m_offscreenRenderTarget.checkState();
     }
 

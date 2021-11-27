@@ -15,7 +15,7 @@ public:
     explicit ColorBalancePassPimpl(const SurfaceInfo& surfaceInfo)
             : m_colorTexture(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight)
             , m_textureRenderer(std::make_unique<Shader>("colorBalance.vert", "colorBalance.frag")) {
-        m_offscreenRenderTarget.setTargetColorTexture(m_colorTexture);
+        m_offscreenRenderTarget.setTargetColorTexture(m_colorTexture, 0);
     }
 
     ~ColorBalancePassPimpl() = default;

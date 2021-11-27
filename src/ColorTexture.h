@@ -5,7 +5,6 @@ class ColorTexture {
 public:
     ColorTexture(int width, int height);
     ~ColorTexture();
-    void bind() const;
     [[nodiscard]] GLuint textureName() const;
     [[nodiscard]] int width() const;
     [[nodiscard]] int height() const;

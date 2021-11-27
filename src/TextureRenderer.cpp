@@ -43,6 +43,7 @@ void TextureRenderer::render(RenderContext &ctx, const std::function<void(Shader
     glViewport(0, 0, ctx.surfaceInfo.physicalWidth, ctx.surfaceInfo.physicalHeight);
 //    glClear(GL_DEPTH_BUFFER_BIT);
     m_shader->use();
+    // TODO: remove
     m_shader->setInt("tex", 0);
 
     if (shaderCallback) {

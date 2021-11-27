@@ -14,7 +14,7 @@ public:
         : m_mainShader(std::make_unique<Shader>("monkey.vert", "monkey.frag"))
         , m_colorTexture(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight)
         , m_depthTexture(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight) {
-        m_offscreenRenderTarget.setTargetColorTexture(m_colorTexture);
+        m_offscreenRenderTarget.setTargetColorTexture(m_colorTexture, 0);
         m_offscreenRenderTarget.setTargetDepthTexture(m_depthTexture);
     }
 

@@ -5,6 +5,7 @@
 MonkeyProgram::MonkeyProgram(const SurfaceInfo& surfaceInfo)
     : m_sunlightPass(surfaceInfo)
     , m_mainPass(surfaceInfo)
+    , m_gaussianBlurPass(surfaceInfo)
     , m_colorBalancePass(surfaceInfo) {
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile("resources/monkey.obj",
@@ -36,8 +37,14 @@ void MonkeyProgram::render(RenderContext &ctx) {
     };
     const auto mainPassOutput = m_mainPass.render(ctx, mainPassInput);
 
+    m_gaussianBlurPass.setEnabled(m_enableGaussianBlur);
+    const GaussianBlurPassInput gaussianBlurPassInput {
+            .colorTexture = mainPassOutput.colorTexture,
+    };
+    const auto gaussianBlurPassOutput = m_gaussianBlurPass.render(ctx, gaussianBlurPassInput);
+
     const ColorBalancePassInput colorBalancePassInput {
-        .colorTexture = mainPassOutput.colorTexture
+            .colorTexture = gaussianBlurPassOutput.colorTexture,
     };
     m_colorBalancePass.setColorBalance(m_colorBalance);
     const auto colorBalancePassOutput = m_colorBalancePass.render(ctx, colorBalancePassInput);
@@ -53,6 +60,7 @@ void MonkeyProgram::processGui(GuiContext &ctx) {
     ImGui::End();
 
     ImGui::Begin("Program Setting", nullptr, windowFlag(ctx));
+    ImGui::Checkbox("Gaussian Blur", &m_enableGaussianBlur);
     ImGui::Text("Color Balance");
     ImGui::SliderFloat("Red", &m_colorBalance.r, -1.0f, 1.0f);
     ImGui::SliderFloat("Green", &m_colorBalance.g, -1.0f, 1.0f);

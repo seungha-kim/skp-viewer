@@ -11,8 +11,9 @@ class OffscreenRenderTarget {
 public:
     OffscreenRenderTarget();
     ~OffscreenRenderTarget();
-    void setTargetColorTexture(const ColorTexture& texture);
+    void setTargetColorTexture(const ColorTexture& texture, int index);
     void setTargetDepthTexture(const DepthTexture& texture);
+    void setTargetColorTextureCount(int count);
     [[nodiscard]] OffscreenRenderTargetBinding bindAndPrepare(glm::vec3 clearColor, int viewportWidth, int viewportHeight);
     void checkState();
 private:

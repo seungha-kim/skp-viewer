@@ -110,6 +110,8 @@ add_executable(learn_opengl
         src/TextureRenderer.h
         src/programs/monkey/ColorBalancePass.cpp
         src/programs/monkey/ColorBalancePass.h
+        src/programs/monkey/GaussianBlurPass.cpp
+        src/programs/monkey/GaussianBlurPass.h
         )
 target_link_libraries(learn_opengl OpenGL::GL glfw assimp glad imgui)
 target_compile_definitions(learn_opengl PUBLIC GLFW_INCLUDE_NONE)

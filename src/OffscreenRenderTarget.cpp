@@ -22,12 +22,12 @@ OffscreenRenderTargetBinding OffscreenRenderTarget::bindAndPrepare(glm::vec3 cle
     return OffscreenRenderTargetBinding{*this};
 }
 
-void OffscreenRenderTarget::setTargetColorTexture(const ColorTexture &texture) {
+void OffscreenRenderTarget::setTargetColorTexture(const ColorTexture &texture, int index) {
     m_colorGiven = true;
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glFramebufferTexture(
             GL_FRAMEBUFFER,
-            GL_COLOR_ATTACHMENT0,
+            GL_COLOR_ATTACHMENT0 + index,
             texture.textureName(),
             0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -54,6 +54,14 @@ void OffscreenRenderTarget::checkState() {
     if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         exit(1);
     }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void OffscreenRenderTarget::setTargetColorTextureCount(int count) {
+    // TODO: setTargetColorTexture 만 가지고도 가능
+    static GLuint attachments[] {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT0 + 1, GL_COLOR_ATTACHMENT0 + 2, GL_COLOR_ATTACHMENT0 + 3};
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    glDrawBuffers(count, attachments);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
