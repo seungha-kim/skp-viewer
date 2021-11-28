@@ -9,6 +9,7 @@
 #include "ColorBalancePass.h"
 #include "GaussianBlurPass.h"
 #include "AdditiveBlendPass.h"
+#include "BrightFilterPass.h"
 
 class MonkeyProgram final: public Program {
 public:
@@ -25,9 +26,10 @@ private:
     ColorBalancePass m_colorBalancePass;
     GaussianBlurPass m_gaussianBlurPass;
     AdditiveBlendPass m_additiveBlendPass;
+    BrightFilterPass m_brightFilterPass;
     std::vector<std::unique_ptr<Mesh>> m_meshes;
     TextureRenderer m_textureRenderer;
 
     glm::vec3 m_colorBalance{};
-    bool m_enableGaussianBlur{};
+    bool m_enableGaussianBlur{true};
 };
