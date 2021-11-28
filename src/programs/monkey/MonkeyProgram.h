@@ -10,6 +10,7 @@
 #include "GaussianBlurPass.h"
 #include "AdditiveBlendPass.h"
 #include "BrightFilterPass.h"
+#include "ToneMapPass.h"
 
 class MonkeyProgram final: public Program {
 public:
@@ -27,9 +28,14 @@ private:
     GaussianBlurPass m_gaussianBlurPass;
     AdditiveBlendPass m_additiveBlendPass;
     BrightFilterPass m_brightFilterPass;
+    ToneMapPass m_toneMapPass;
     std::vector<std::unique_ptr<Mesh>> m_meshes;
     TextureRenderer m_textureRenderer;
 
     glm::vec3 m_colorBalance{};
     bool m_enableGaussianBlur{true};
+
+    float m_toneMapExposure = 2.0f;
+    float m_toneMapGamma = 0.7f;
+    bool m_toneMapEnabled = true;
 };

@@ -8,6 +8,7 @@ MonkeyProgram::MonkeyProgram(const SurfaceInfo& surfaceInfo)
     , m_gaussianBlurPass(surfaceInfo)
     , m_additiveBlendPass(surfaceInfo)
     , m_brightFilterPass(surfaceInfo)
+    , m_toneMapPass(surfaceInfo)
     , m_colorBalancePass(surfaceInfo) {
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile("resources/monkey.obj",
@@ -57,8 +58,16 @@ void MonkeyProgram::render(RenderContext &ctx) {
     };
     const auto additivePassOutput = m_additiveBlendPass.render(ctx, additiveBlendPassInput);
 
+    const ToneMapPassInput toneMapPassInput {
+        .colorTexture = additivePassOutput.colorTexture,
+        .exposure = m_toneMapExposure,
+        .gamma = m_toneMapGamma,
+        .enabled = m_toneMapEnabled,
+    };
+    const auto toneMapPassOutput = m_toneMapPass.render(ctx, toneMapPassInput);
+
     const ColorBalancePassInput colorBalancePassInput {
-            .colorTexture = additivePassOutput.colorTexture,
+            .colorTexture = toneMapPassOutput.colorTexture,
     };
     m_colorBalancePass.setColorBalance(m_colorBalance);
     const auto colorBalancePassOutput = m_colorBalancePass.render(ctx, colorBalancePassInput);
@@ -75,6 +84,11 @@ void MonkeyProgram::processGui(GuiContext &ctx) {
 
     ImGui::Begin("Program Setting", nullptr, windowFlag(ctx));
     ImGui::Checkbox("Gaussian Blur", &m_enableGaussianBlur);
+    ImGui::Checkbox("Tone Mapping", &m_toneMapEnabled);
+    if (m_toneMapEnabled) {
+        ImGui::SliderFloat("Exposure", &m_toneMapExposure, 0.1f, 5.0f);
+        ImGui::SliderFloat("Gamma", &m_toneMapGamma, 0.1f, 5.0f);
+    }
     ImGui::Text("Color Balance");
     ImGui::SliderFloat("Red", &m_colorBalance.r, -1.0f, 1.0f);
     ImGui::SliderFloat("Green", &m_colorBalance.g, -1.0f, 1.0f);
