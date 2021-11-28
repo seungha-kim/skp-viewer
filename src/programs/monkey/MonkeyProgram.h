@@ -8,6 +8,7 @@
 #include "../../TextureRenderer.h"
 #include "ColorBalancePass.h"
 #include "GaussianBlurPass.h"
+#include "AdditiveBlendPass.h"
 
 class MonkeyProgram final: public Program {
 public:
@@ -23,6 +24,7 @@ private:
     MainPass m_mainPass;
     ColorBalancePass m_colorBalancePass;
     GaussianBlurPass m_gaussianBlurPass;
+    AdditiveBlendPass m_additiveBlendPass;
     std::vector<std::unique_ptr<Mesh>> m_meshes;
     TextureRenderer m_textureRenderer;
 

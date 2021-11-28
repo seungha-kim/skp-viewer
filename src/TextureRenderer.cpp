@@ -35,8 +35,9 @@ TextureRenderer::~TextureRenderer() {
     glDeleteBuffers(1, &m_vbo);
 }
 
-void TextureRenderer::setTextureToRender(const ColorTexture &texture) {
-    m_textureName = texture.textureName();
+void TextureRenderer::setSourceTexture(const ColorTexture &texture, int index) {
+    m_textureNames[index] = texture.textureName();
+    m_maxTextureIndex = index > m_maxTextureIndex ? index : m_maxTextureIndex;
 }
 
 void TextureRenderer::render(RenderContext &ctx, const std::function<void(Shader&)>& shaderCallback) {
@@ -50,8 +51,10 @@ void TextureRenderer::render(RenderContext &ctx, const std::function<void(Shader
         shaderCallback(*m_shader);
     }
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_textureName);
+    for (int i = 0; i <= m_maxTextureIndex; i++) {
+        glActiveTexture(GL_TEXTURE0 + i);
+        glBindTexture(GL_TEXTURE_2D, m_textureNames[i]);
+    }
 
     glBindVertexArray(m_vao);
 

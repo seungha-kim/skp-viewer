@@ -26,7 +26,7 @@ public:
         auto binding = m_offscreenRenderTarget.bindAndPrepare(glm::vec3(1.0f, 0.0f, 1.0f), viewportWidth, viewportHeight);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, input.colorTexture.textureName());
-        m_textureRenderer.setTextureToRender(input.colorTexture);
+        m_textureRenderer.setSourceTexture(input.colorTexture, 0);
         m_textureRenderer.render(ctx, [&](Shader& shader) {
             shader.setVector3f("colorBalance", m_colorBalance);
         });

@@ -6,6 +6,7 @@ MonkeyProgram::MonkeyProgram(const SurfaceInfo& surfaceInfo)
     : m_sunlightPass(surfaceInfo)
     , m_mainPass(surfaceInfo)
     , m_gaussianBlurPass(surfaceInfo)
+    , m_additiveBlendPass(surfaceInfo)
     , m_colorBalancePass(surfaceInfo) {
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile("resources/monkey.obj",
@@ -37,9 +38,15 @@ void MonkeyProgram::render(RenderContext &ctx) {
     };
     const auto mainPassOutput = m_mainPass.render(ctx, mainPassInput);
 
+    const AdditiveBlendPassInput additiveBlendPassInput {
+        .colorTexture1 = mainPassOutput.colorTexture,
+        .colorTexture2 = mainPassOutput.colorTexture,
+    };
+    const auto additivePassOutput = m_additiveBlendPass.render(ctx, additiveBlendPassInput);
+
     m_gaussianBlurPass.setEnabled(m_enableGaussianBlur);
     const GaussianBlurPassInput gaussianBlurPassInput {
-            .colorTexture = mainPassOutput.colorTexture,
+            .colorTexture = additivePassOutput.colorTexture,
     };
     const auto gaussianBlurPassOutput = m_gaussianBlurPass.render(ctx, gaussianBlurPassInput);
 
@@ -49,7 +56,7 @@ void MonkeyProgram::render(RenderContext &ctx) {
     m_colorBalancePass.setColorBalance(m_colorBalance);
     const auto colorBalancePassOutput = m_colorBalancePass.render(ctx, colorBalancePassInput);
 
-    m_textureRenderer.setTextureToRender(colorBalancePassOutput.colorTexture);
+    m_textureRenderer.setSourceTexture(colorBalancePassOutput.colorTexture, 0);
     m_textureRenderer.render(ctx);
 }
 

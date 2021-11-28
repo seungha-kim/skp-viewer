@@ -34,7 +34,7 @@ public:
         for (unsigned int i = 0; i < amount; i++)
         {
             auto binding = m_offscreenRenderTargets[horizontal].bindAndPrepare(glm::vec3(1.0f, 0.0f, 1.0f), viewportWidth, viewportHeight);
-            m_textureRenderer.setTextureToRender(first_iteration ? input.colorTexture : m_colorTextures[!horizontal]);
+            m_textureRenderer.setSourceTexture(first_iteration ? input.colorTexture : m_colorTextures[!horizontal], 0);
             m_textureRenderer.render(ctx, [&](Shader& shader) {
                 shader.setInt("horizontal", horizontal);
             });
