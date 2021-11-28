@@ -32,7 +32,7 @@ private:
     std::vector<std::unique_ptr<Mesh>> m_meshes;
     TextureRenderer m_textureRenderer;
 
-    glm::vec3 m_colorBalance{};
+    glm::vec3 m_colorBalance{1.0};
     bool m_enableGaussianBlur{true};
 
     float m_toneMapExposure = 2.0f;

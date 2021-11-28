@@ -90,8 +90,8 @@ void MonkeyProgram::processGui(GuiContext &ctx) {
         ImGui::SliderFloat("Gamma", &m_toneMapGamma, 0.1f, 5.0f);
     }
     ImGui::Text("Color Balance");
-    ImGui::SliderFloat("Red", &m_colorBalance.r, -1.0f, 1.0f);
-    ImGui::SliderFloat("Green", &m_colorBalance.g, -1.0f, 1.0f);
-    ImGui::SliderFloat("Blue", &m_colorBalance.b, -1.0f, 1.0f);
+    ImGui::SliderFloat("Red", &m_colorBalance.r, 0.1f, 10.0f);
+    ImGui::SliderFloat("Green", &m_colorBalance.g, 0.1f, 10.0f);
+    ImGui::SliderFloat("Blue", &m_colorBalance.b, 0.1f, 10.0f);
     ImGui::End();
 }
