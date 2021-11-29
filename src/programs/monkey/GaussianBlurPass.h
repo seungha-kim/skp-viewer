@@ -6,6 +6,7 @@
 
 struct GaussianBlurPassInput {
     const ColorTexture& colorTexture;
+    const int iteration;
 };
 
 struct GaussianBlurPassOutput {

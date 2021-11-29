@@ -42,13 +42,14 @@ void MonkeyProgram::render(RenderContext &ctx) {
 
     const BrightFilterPassInput brightFilterPassInput {
         .colorTexture = mainPassOutput.colorTexture,
-        .threshold = 0.7f,
+        .threshold = m_brightFilterThreshold,
     };
     const auto brightFilterPassOutput = m_brightFilterPass.render(ctx, brightFilterPassInput);
 
     m_gaussianBlurPass.setEnabled(m_enableGaussianBlur);
     const GaussianBlurPassInput gaussianBlurPassInput {
             .colorTexture = brightFilterPassOutput.brightColorTexture,
+            .iteration = m_gaussianBlurIteration,
     };
     const auto gaussianBlurPassOutput = m_gaussianBlurPass.render(ctx, gaussianBlurPassInput);
 
@@ -83,7 +84,11 @@ void MonkeyProgram::processGui(GuiContext &ctx) {
     ImGui::End();
 
     ImGui::Begin("Program Setting", nullptr, windowFlag(ctx));
+    ImGui::SliderFloat("Bright Filter Threshold", &m_brightFilterThreshold, 0.0f, 1.0f);
     ImGui::Checkbox("Gaussian Blur", &m_enableGaussianBlur);
+    if (m_enableGaussianBlur) {
+        ImGui::SliderInt("Iteration", &m_gaussianBlurIteration, 1, 50);
+    }
     ImGui::Checkbox("Tone Mapping", &m_toneMapEnabled);
     if (m_toneMapEnabled) {
         ImGui::SliderFloat("Exposure", &m_toneMapExposure, 0.1f, 5.0f);

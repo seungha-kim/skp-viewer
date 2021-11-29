@@ -30,7 +30,7 @@ public:
         const auto viewportHeight = ctx.surfaceInfo.physicalHeight;
 
         bool horizontal = true, first_iteration = true;
-        int amount = 10;
+        int amount = input.iteration * 2;
         for (unsigned int i = 0; i < amount; i++)
         {
             auto binding = m_offscreenRenderTargets[horizontal].bindAndPrepare(glm::vec3(1.0f, 0.0f, 1.0f), viewportWidth, viewportHeight);

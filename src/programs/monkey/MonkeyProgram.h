@@ -38,4 +38,7 @@ private:
     float m_toneMapExposure = 2.0f;
     float m_toneMapGamma = 0.7f;
     bool m_toneMapEnabled = true;
+
+    int m_gaussianBlurIteration = 5;
+    float m_brightFilterThreshold = 0.7f;
 };
