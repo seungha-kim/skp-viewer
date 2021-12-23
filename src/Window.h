@@ -3,10 +3,8 @@
 #include <vector>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "PlaybackState.h"
-#include "SceneManager.h"
-#include "InputController.h"
-#include "SurfaceInfo.h"
+#include "Engine.h"
+#include <memory>
 
 class Window {
     friend void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -21,7 +19,6 @@ public:
     Window(int width, int height, const char* title);
     ~Window();
     void bind();
-    [[nodiscard]] GLFWwindow* glfwWindow() const;
     bool shouldClose();
     void updateTime();
     void updateCamera();
@@ -29,23 +26,17 @@ public:
     void swapBuffers();
     void waitEvents();
     float playbackValue();
+    void mainLoop();
+    void initGlfwGui();
 
-    [[nodiscard]] const PlaybackState& playbackState() const;
-    PlaybackState& playbackStateMut();
-
-    [[nodiscard]] const SceneManager& sceneManager() const;
-    SceneManager& sceneManagerMut();
-
-    [[nodiscard]] const InputController& inputController() const;
-    InputController& inputControllerMut();
-
-    [[nodiscard]] const SurfaceInfo& surfaceInfo() const;
+    void beginGui();
+    void endGui();
 
 private:
     GLFWwindow* m_glfwWindow = nullptr;
-    SceneManager m_sceneManager;
-    InputController m_inputController;
-
-    PlaybackState m_playbackState;
-    SurfaceInfo m_surfaceInfo;
+    std::unique_ptr<Engine> m_engine;
+    KeyCommandSet m_keyCommandSet;
+    KeyCommandSet m_prevKeyCommandSet;
+    bool m_shouldClose = false;
+    bool m_showMouseCursor = true;
 };

@@ -1,47 +1,71 @@
 #include "Window.h"
 #include <iostream>
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 
 void framebuffer_size_callback(GLFWwindow* glfwWindow, int width, int height)
 {
     Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
-    window.m_surfaceInfo.physicalWidth = width;
-    window.m_surfaceInfo.physicalHeight = height;
+    auto& surfaceInfo = window.m_engine->surfaceInfoMut();
+    surfaceInfo.physicalWidth = width;
+    surfaceInfo.physicalHeight = height;
 }
 
 void window_size_callback(GLFWwindow* glfwWindow, int width, int height)
 {
     Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
-    window.m_surfaceInfo.logicalWidth = width;
-    window.m_surfaceInfo.logicalHeight = height;
+    auto& surfaceInfo = window.m_engine->surfaceInfoMut();
+    surfaceInfo.logicalWidth = width;
+    surfaceInfo.logicalHeight = height;
 }
 
 void content_scale_size_callback(GLFWwindow* glfwWindow, float x, float y)
 {
     Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
-    window.m_surfaceInfo.contentScaleX = x;
-    window.m_surfaceInfo.contentScaleY = y;
+    auto& surfaceInfo = window.m_engine->surfaceInfoMut();
+    surfaceInfo.contentScaleX = x;
+    surfaceInfo.contentScaleY = y;
 }
 
 void mouse_move_callback(GLFWwindow* glfwWindow, double xPosD, double yPosD) {
     Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
+
+    double mousePosX, mousePosY;
+    glfwGetCursorPos(glfwWindow, &mousePosX, &mousePosY);
+
     InputContext ctx {
-        .glfwWindow = glfwWindow,
-        .cameraManager = window.m_sceneManager,
-        .playbackState = window.m_playbackState,
+        .cameraManager = window.m_engine->sceneManagerMut(),
+        .playbackState = window.m_engine->playbackStateMut(),
         .mouseEvent = MouseMoveEvent {.x = (float)xPosD, .y = (float)yPosD},
+        .keyCommandSet = window.m_keyCommandSet,
+        .prevKeyCommandSet = window.m_prevKeyCommandSet,
+        .shouldClose = window.m_shouldClose,
+        .showMouseCursor = window.m_showMouseCursor,
+        .mousePosX = (float)mousePosX,
+        .mousePosY = (float)mousePosY,
     };
-    window.m_inputController.handleMouseInput(ctx);
+    window.m_engine->inputControllerMut().handleMouseInput(ctx);
 }
 
 void mouse_wheel_callback(GLFWwindow* glfwWindow, double xOffset, double yOffset) {
     Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
+
+    double mousePosX, mousePosY;
+    glfwGetCursorPos(glfwWindow, &mousePosX, &mousePosY);
+
     InputContext ctx {
-            .glfwWindow = glfwWindow,
-            .cameraManager = window.m_sceneManager,
-            .playbackState = window.m_playbackState,
+            .cameraManager = window.m_engine->sceneManagerMut(),
+            .playbackState = window.m_engine->playbackStateMut(),
             .mouseEvent = MouseScrollEvent {.offsetX = (float)xOffset, .offsetY = (float)yOffset},
+            .keyCommandSet = window.m_keyCommandSet,
+            .prevKeyCommandSet = window.m_prevKeyCommandSet,
+            .shouldClose = window.m_shouldClose,
+            .showMouseCursor = window.m_showMouseCursor,
+            .mousePosX = (float)mousePosX,
+            .mousePosY = (float)mousePosY,
     };
-    window.m_inputController.handleMouseInput(ctx);
+    window.m_engine->inputControllerMut().handleMouseInput(ctx);
 }
 
 void Window::initGlfw() {
@@ -62,22 +86,28 @@ void Window::initGl() {
         std::cout << "Failed to initialize GLAD" << std::endl;
         exit(-1);
     }
-    glEnable(GL_DEPTH_TEST);
 }
 
 Window::Window(int width, int height, const char *title) {
+    initGlfw();
     if (auto* windowPtr = glfwCreateWindow(width, height, title, NULL, NULL))
     {
+        SurfaceInfo surfaceInfo;
         m_glfwWindow = windowPtr;
+        bind();
+        initGl();
+        initGlfwGui();
         glfwSetFramebufferSizeCallback(windowPtr, framebuffer_size_callback);
         glfwSetWindowSizeCallback(windowPtr, window_size_callback);
         glfwSetWindowContentScaleCallback(windowPtr, content_scale_size_callback);
         glfwSetCursorPosCallback(windowPtr, mouse_move_callback);
         glfwSetScrollCallback(windowPtr, mouse_wheel_callback);
         glfwSetWindowUserPointer(windowPtr, this);
-        glfwGetFramebufferSize(windowPtr, &m_surfaceInfo.physicalWidth, &m_surfaceInfo.physicalHeight);
-        glfwGetWindowSize(windowPtr, &m_surfaceInfo.logicalWidth, &m_surfaceInfo.logicalHeight);
-        glfwGetWindowContentScale(windowPtr, &m_surfaceInfo.contentScaleX, &m_surfaceInfo.contentScaleY);
+        glfwGetFramebufferSize(windowPtr, &surfaceInfo.physicalWidth, &surfaceInfo.physicalHeight);
+        glfwGetWindowSize(windowPtr, &surfaceInfo.logicalWidth, &surfaceInfo.logicalHeight);
+        glfwGetWindowContentScale(windowPtr, &surfaceInfo.contentScaleX, &surfaceInfo.contentScaleY);
+
+        m_engine = std::make_unique<Engine>(surfaceInfo);
     } else {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -86,6 +116,9 @@ Window::Window(int width, int height, const char *title) {
 }
 
 Window::~Window() {
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+
     glfwDestroyWindow(m_glfwWindow);
     glfwTerminate();
 }
@@ -94,33 +127,80 @@ void Window::bind() {
     glfwMakeContextCurrent(m_glfwWindow);
 }
 
-GLFWwindow *Window::glfwWindow() const {
-    return m_glfwWindow;
-}
-
 bool Window::shouldClose() {
-    return glfwWindowShouldClose(m_glfwWindow);
+    return glfwWindowShouldClose(m_glfwWindow) || m_shouldClose;
 }
 
 void Window::updateTime() {
-    if (m_playbackState.continuousRenderSession.has_value()) {
-        m_playbackState.continuousRenderSession->updateTime();
+    auto& playbackState = m_engine->playbackStateMut();
+    if (playbackState.continuousRenderSession.has_value()) {
+        playbackState.continuousRenderSession->updateTime((float)glfwGetTime());
     }
 }
 
 void Window::updateCamera() {
-    auto& cam = sceneManagerMut().activeSceneMut().cameraStateMut();
-    cam.aspectWidth = (float)m_surfaceInfo.logicalWidth;
-    cam.aspectHeight = (float)m_surfaceInfo.logicalHeight;
+    auto& cam = m_engine->sceneManagerMut().activeSceneMut().cameraStateMut();
+    auto& surfaceInfo = m_engine->surfaceInfo();
+    cam.aspectWidth = (float)surfaceInfo.logicalWidth;
+    cam.aspectHeight = (float)surfaceInfo.logicalHeight;
 }
 
 void Window::processKeyboardInput() {
+    m_prevKeyCommandSet = m_keyCommandSet;
+    auto m = KeyCommandSetManipulator {m_keyCommandSet};
+    m.set(
+            KeyCommand::FLY_MODE_TOGGLE,
+            glfwGetKey(m_glfwWindow, GLFW_KEY_SPACE) == GLFW_PRESS
+            );
+    m.set(
+            KeyCommand::FLY_MODE_FORWARD,
+            glfwGetKey(m_glfwWindow, GLFW_KEY_W) == GLFW_PRESS
+            );
+    m.set(
+            KeyCommand::FLY_MODE_BACKWARD,
+            glfwGetKey(m_glfwWindow, GLFW_KEY_S) == GLFW_PRESS
+            );
+    m.set(
+            KeyCommand::FLY_MODE_LEFT,
+            glfwGetKey(m_glfwWindow, GLFW_KEY_A) == GLFW_PRESS
+            );
+    m.set(
+            KeyCommand::FLY_MODE_RIGHT,
+            glfwGetKey(m_glfwWindow, GLFW_KEY_D) == GLFW_PRESS
+            );
+    m.set(
+            KeyCommand::FLY_MODE_UPWARD,
+            glfwGetKey(m_glfwWindow, GLFW_KEY_E) == GLFW_PRESS
+            );
+    m.set(
+            KeyCommand::FLY_MODE_DOWNWARD,
+            glfwGetKey(m_glfwWindow, GLFW_KEY_Q) == GLFW_PRESS
+            );
+    m.set(
+            KeyCommand::EXIT,
+            glfwGetKey(m_glfwWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS
+            );
+
+    double mousePosX, mousePosY;
+    glfwGetCursorPos(m_glfwWindow, &mousePosX, &mousePosY);
+
     auto ctx = InputContext {
-        .glfwWindow = m_glfwWindow,
-        .cameraManager = m_sceneManager,
-        .playbackState = m_playbackState,
+        .cameraManager = m_engine->sceneManagerMut(),
+        .playbackState = m_engine->playbackStateMut(),
+        .keyCommandSet = m_keyCommandSet,
+        .prevKeyCommandSet = m_prevKeyCommandSet,
+        .shouldClose = m_shouldClose,
+        .showMouseCursor = m_showMouseCursor,
+        .mousePosX = (float)mousePosX,
+        .mousePosY = (float)mousePosY,
     };
-    m_inputController.handleKeyboardInput(ctx);
+    m_engine->inputControllerMut().handleKeyboardInput(ctx);
+
+    if (m_showMouseCursor) {
+        glfwSetInputMode(m_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    } else {
+        glfwSetInputMode(m_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    }
 }
 
 void Window::swapBuffers() {
@@ -128,42 +208,53 @@ void Window::swapBuffers() {
 }
 
 void Window::waitEvents() {
-    if (m_playbackState.forceContinuous || m_playbackState.continuousRenderSession.has_value()) {
+    const auto& playbackState = m_engine->playbackState();
+    if (playbackState.forceContinuous || playbackState.continuousRenderSession.has_value()) {
         glfwPostEmptyEvent();
     }
     glfwWaitEvents();
 }
 
 float Window::playbackValue() {
-    return m_playbackState.manual ? m_playbackState.playback : (float)glfwGetTime();
+    const auto& playbackState = m_engine->playbackState();
+    return playbackState.manual ? playbackState.playback : (float)glfwGetTime();
 }
 
-const PlaybackState &Window::playbackState() const {
-    return m_playbackState;
+void Window::mainLoop() {
+    while (!shouldClose()) {
+        processKeyboardInput();
+        updateTime();
+        updateCamera();
+        m_engine->render(playbackValue());
+
+#ifdef ENABLE_IMGUI
+        beginGui();
+        m_engine->renderGui();
+        endGui();
+#endif
+        swapBuffers();
+        waitEvents();
+    }
 }
 
-PlaybackState &Window::playbackStateMut() {
-    return m_playbackState;
+void Window::initGlfwGui() {
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    ImGui::StyleColorsDark();
+
+    ImGui_ImplGlfw_InitForOpenGL(m_glfwWindow, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
 }
 
-const SceneManager &Window::sceneManager() const {
-    return m_sceneManager;
+void Window::beginGui() {
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
 }
 
-SceneManager &Window::sceneManagerMut() {
-    return m_sceneManager;
+void Window::endGui() {
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
-
-const InputController &Window::inputController() const {
-    return m_inputController;
-}
-
-InputController &Window::inputControllerMut() {
-    return m_inputController;
-}
-
-const SurfaceInfo &Window::surfaceInfo() const {
-    return m_surfaceInfo;
-}
-
-

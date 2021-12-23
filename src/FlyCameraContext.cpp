@@ -1,5 +1,4 @@
 #include "FlyCameraContext.h"
-#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
 void FlyCameraContext::handleKeyboardInput(InputContext &ctx) {
@@ -20,55 +19,46 @@ void FlyCameraContext::handleMouseInput(InputContext &ctx, const MouseMoveEvent&
 }
 
 void FlyCameraContext::resetLastMousePos(InputContext& ctx) {
-    double xpos, ypos;
-    glfwGetCursorPos(ctx.glfwWindow, &xpos, &ypos);
-    m_lastMouseX = (float)xpos;
-    m_lastMouseY = (float)ypos;
+    m_lastMouseX = ctx.mousePosX;
+    m_lastMouseY = ctx.mousePosY;
 }
 
 void FlyCameraContext::updateMoveState(InputContext &ctx) {
     auto& ps = ctx.playbackState;
-    auto* window = ctx.glfwWindow;
 
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+    if (ctx.isBeingPressed(KeyCommand::FLY_MODE_FORWARD)) {
         m_moveState |= (unsigned)CameraMoveState::forward;
-    }
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE) {
+    } else {
         m_moveState &= ~(unsigned)CameraMoveState::forward;
     }
 
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+    if (ctx.isBeingPressed(KeyCommand::FLY_MODE_BACKWARD)) {
         m_moveState |= (unsigned)CameraMoveState::backward;
-    }
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE) {
+    } else {
         m_moveState &= ~(unsigned)CameraMoveState::backward;
     }
 
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+    if (ctx.isBeingPressed(KeyCommand::FLY_MODE_LEFT)) {
         m_moveState |= (unsigned)CameraMoveState::left;
-    }
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE) {
+    } else {
         m_moveState &= ~(unsigned)CameraMoveState::left;
     }
 
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+    if (ctx.isBeingPressed(KeyCommand::FLY_MODE_RIGHT)) {
         m_moveState |= (unsigned)CameraMoveState::right;
-    }
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_RELEASE) {
+    } else {
         m_moveState &= ~(unsigned)CameraMoveState::right;
     }
 
-    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+    if (ctx.isBeingPressed(KeyCommand::FLY_MODE_DOWNWARD)) {
         m_moveState |= (unsigned)CameraMoveState::down;
-    }
-    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_RELEASE) {
+    } else {
         m_moveState &= ~(unsigned)CameraMoveState::down;
     }
 
-    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+    if (ctx.isBeingPressed(KeyCommand::FLY_MODE_UPWARD)) {
         m_moveState |= (unsigned)CameraMoveState::up;
-    }
-    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_RELEASE) {
+    } else {
         m_moveState &= ~(unsigned)CameraMoveState::up;
     }
 
@@ -83,33 +73,33 @@ void FlyCameraContext::updateMoveState(InputContext &ctx) {
 void FlyCameraContext::updateCamera(InputContext &ctx) {
     auto& cam = ctx.cameraManager.activeSceneMut().cameraStateMut();
     auto& ps = ctx.playbackState;
-    auto* window = ctx.glfwWindow;
     float cameraDelta = 0.0f;
     if (ps.continuousRenderSession.has_value()) {
         cameraDelta = cam.speed * ps.continuousRenderSession.value().deltaTime;
     }
 
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+    // TODO: 위쪽 코드랑 중복?
+    if (ctx.isBeingPressed(KeyCommand::FLY_MODE_FORWARD)) {
         cam.pos += cam.front() * cameraDelta;
     }
 
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+    if (ctx.isBeingPressed(KeyCommand::FLY_MODE_BACKWARD)) {
         cam.pos -= cam.front() * cameraDelta;
     }
 
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+    if (ctx.isBeingPressed(KeyCommand::FLY_MODE_LEFT)) {
         cam.pos -= glm::normalize(glm::cross(cam.front(), cam.up)) * cameraDelta;
     }
 
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+    if (ctx.isBeingPressed(KeyCommand::FLY_MODE_RIGHT)) {
         cam.pos += glm::normalize(glm::cross(cam.front(), cam.up)) * cameraDelta;
     }
 
-    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
-        cam.pos -= cam.up * cameraDelta;
+    if (ctx.isBeingPressed(KeyCommand::FLY_MODE_UPWARD)) {
+        cam.pos += cam.up * cameraDelta;
     }
 
-    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-        cam.pos += cam.up * cameraDelta;
+    if (ctx.isBeingPressed(KeyCommand::FLY_MODE_DOWNWARD)) {
+        cam.pos -= cam.up * cameraDelta;
     }
 }

@@ -1,16 +1,12 @@
 #pragma once
 #include <memory>
-#include <GLFW/glfw3.h>
-#include "Window.h"
 #include "GuiContext.h"
 
 class Gui {
 public:
-    explicit Gui(Window& window);
+    Gui() = default;
     ~Gui();
-    void begin();
     void process(GuiContext& ctx);
-    void end();
 private:
     bool show_demo_window = false;
     bool show_camera_control = false;

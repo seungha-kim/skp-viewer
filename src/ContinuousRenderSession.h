@@ -1,13 +1,13 @@
 #pragma once
-#include <GLFW/glfw3.h>
 
 struct ContinuousRenderSession {
-    float lastTime = (float)glfwGetTime();
+    float lastTime = 0.0f;
     float deltaTime = 0.0f;
 
-    void updateTime() {
-        auto currentTime = (float)glfwGetTime();
-        deltaTime = currentTime - lastTime;
+    void updateTime(float currentTime) {
+        if (lastTime != 0.0f) {
+            deltaTime = currentTime - lastTime;
+        }
         lastTime = currentTime;
     }
 };

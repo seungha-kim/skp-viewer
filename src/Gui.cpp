@@ -1,20 +1,6 @@
 #include "Gui.h"
 #include "guiCommon.h"
 #include <imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
-
-Gui::Gui(Window& window) {
-
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    ImGui::StyleColorsDark();
-
-    ImGui_ImplGlfw_InitForOpenGL(window.glfwWindow(), true);
-    ImGui_ImplOpenGL3_Init("#version 330");
-}
 
 void Gui::process(GuiContext& ctx) {
     auto& io = ImGui::GetIO();
@@ -33,8 +19,6 @@ void Gui::process(GuiContext& ctx) {
 }
 
 Gui::~Gui() {
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 }
 
@@ -119,6 +103,9 @@ void Gui::processSceneControl(GuiContext &ctx) const {
         ImGui::SliderFloat("fovy", &cam.fovyDeg, 10.0f, 170.0f);
         ImGui::SliderFloat("zNear", &cam.zNear, 0.01f, 10.0f);
         ImGui::SliderFloat("zFar", &cam.zFar, 0.1f, 200.0f);
+        ImGui::Text("Cam Pos: (%.2f, %.2f, %.2f)", cam.pos.x, cam.pos.y, cam.pos.z);
+        ImGui::Text("Cam Up: (%.2f, %.2f, %.2f)", cam.up.x, cam.up.y, cam.up.z);
+        ImGui::Text("Cam Pitch/Yaw: (%.2f, %.2f)", cam.yaw, cam.pitch);
         ImGui::End();
     }
 }
@@ -128,13 +115,3 @@ float Gui::deltasHistogram(void *data, int i) {
     return that->m_deltas[(that->m_deltasPivot + i) % 100];
 }
 
-void Gui::begin() {
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
-}
-
-void Gui::end() {
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-}

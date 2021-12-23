@@ -14,23 +14,19 @@ void InputController::handleMouseInput(InputContext &ctx) {
 }
 
 void InputController::handleKeyboardInput(InputContext &ctx) {
-    auto* window = ctx.glfwWindow;
+    if (ctx.isBeingPressed(KeyCommand::EXIT)) {
+        ctx.shouldClose = true;
+    }
 
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-
-    int currentSpace = glfwGetKey(window, GLFW_KEY_SPACE);
-    if (!m_guiFocused && m_prevSpaceState == GLFW_RELEASE && currentSpace == GLFW_PRESS) {
-        if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED) {
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    if (!m_guiFocused && ctx.isJustPressed(KeyCommand::FLY_MODE_TOGGLE )) {
+        if (m_cameraRotateMode) {
             m_cameraRotateMode = false;
         } else {
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             m_cameraRotateMode = true;
             m_flyCameraContext.resetLastMousePos(ctx);
         }
+        ctx.showMouseCursor = !m_cameraRotateMode;
     }
-    m_prevSpaceState = currentSpace;
 
     if (m_cameraRotateMode) {
         m_flyCameraContext.handleKeyboardInput(ctx);
