@@ -1,5 +1,6 @@
 #include "Mesh.h"
 #include "Vertex.h"
+#include "../checkError.h"
 #include <glm/geometric.hpp>
 
 Mesh::Mesh(aiMesh &mesh, aiMatrix4x4 transform) {
@@ -11,10 +12,13 @@ Mesh::Mesh(aiMesh &mesh, aiMatrix4x4 transform) {
         auto vertex1 = vec3AssimpToGlm(mesh.mVertices[face.mIndices[0]]);
         auto vertex2 = vec3AssimpToGlm(mesh.mVertices[face.mIndices[1]]);
         auto vertex3 = vec3AssimpToGlm(mesh.mVertices[face.mIndices[2]]);
-        auto normal = glm::normalize(glm::cross(vertex2 - vertex1, vertex3 - vertex1));
-        vertices.push_back(Vertex{vertex1, normal});
-        vertices.push_back(Vertex{vertex2, normal});
-        vertices.push_back(Vertex{vertex3, normal});
+        auto normal1 = vec3AssimpToGlm(mesh.mNormals[face.mIndices[0]]);
+        auto normal2 = vec3AssimpToGlm(mesh.mNormals[face.mIndices[1]]);
+        auto normal3 = vec3AssimpToGlm(mesh.mNormals[face.mIndices[2]]);
+//        auto normal = glm::normalize(glm::cross(vertex2 - vertex1, vertex3 - vertex1));
+        vertices.push_back(Vertex{vertex1, normal1});
+        vertices.push_back(Vertex{vertex2, normal2});
+        vertices.push_back(Vertex{vertex3, normal3});
     }
     m_verticesCount = vertices.size();
 

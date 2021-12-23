@@ -1,14 +1,17 @@
 #include "MonkeyProgram.h"
 #include <imgui.h>
 #include "../../guiCommon.h"
+#include "../../checkError.h"
 
 MonkeyProgram::MonkeyProgram(const SurfaceInfo& surfaceInfo)
     : m_sunlightPass(surfaceInfo)
     , m_mainPass(surfaceInfo)
     , m_gaussianBlurPass(surfaceInfo)
-    , m_additiveBlendPass(surfaceInfo)
+    , m_additiveBlendPass(surfaceInfo, BlendPassKind::additive)
     , m_brightFilterPass(surfaceInfo)
     , m_toneMapPass(surfaceInfo)
+    , m_outlinePass(surfaceInfo)
+    , m_outlineMultiplicativeBlendPass(surfaceInfo, BlendPassKind::multiplicative)
     , m_colorBalancePass(surfaceInfo) {
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile("resources/monkey.obj",
@@ -25,7 +28,7 @@ MonkeyProgram::MonkeyProgram(const SurfaceInfo& surfaceInfo)
 }
 
 void MonkeyProgram::render(RenderContext &ctx) {
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClearColor(0.2f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     const SunlightPassInput sunlightPassInput {
@@ -73,7 +76,21 @@ void MonkeyProgram::render(RenderContext &ctx) {
     m_colorBalancePass.setColorBalance(m_colorBalance);
     const auto colorBalancePassOutput = m_colorBalancePass.render(ctx, colorBalancePassInput);
 
-    m_textureRenderer.setSourceTexture(colorBalancePassOutput.colorTexture, 0);
+    const OutlinePassInput outlinePassInput {
+        .meshes = m_meshes,
+        .depthTexture = mainPassOutput.depthTexture,
+        .outlineWidth = m_outlineWidth,
+        .outlineDepthThreshold = m_outlineDepthThreshold,
+    };
+    const auto outlinePassOutput = m_outlinePass.render(ctx, outlinePassInput);
+
+    const AdditiveBlendPassInput multiInput {
+        .colorTexture1 = colorBalancePassOutput.colorTexture,
+        .colorTexture2 = outlinePassOutput.colorTexture,
+    };
+    const auto multiOutput = m_outlineMultiplicativeBlendPass.render(ctx, multiInput);
+
+    m_textureRenderer.setSourceTexture(multiOutput.colorTexture, 0);
     m_textureRenderer.render(ctx);
 }
 
@@ -98,5 +115,10 @@ void MonkeyProgram::processGui(GuiContext &ctx) {
     ImGui::SliderFloat("Red", &m_colorBalance.r, 0.1f, 10.0f);
     ImGui::SliderFloat("Green", &m_colorBalance.g, 0.1f, 10.0f);
     ImGui::SliderFloat("Blue", &m_colorBalance.b, 0.1f, 10.0f);
+
+    ImGui::Text("Outline");
+    ImGui::SliderFloat("Width", &m_outlineWidth, 0.0f, 10.0f);
+    ImGui::SliderFloat("DepthThreshold", &m_outlineDepthThreshold, 0.0f, 100.0f);
+
     ImGui::End();
 }

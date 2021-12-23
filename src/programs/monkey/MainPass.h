@@ -14,6 +14,7 @@ struct MainPassInput {
 
 struct MainPassOutput {
     const ColorTexture& colorTexture;
+    const DepthTexture& depthTexture;
 };
 
 class MainPassPimpl;

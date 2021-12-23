@@ -1,6 +1,7 @@
 #include "../../Shader.h"
 #include "MainPass.h"
 #include "../../OffscreenRenderTarget.h"
+#include "../../checkError.h"
 
 class MainPassPimpl {
     friend class MainPass;
@@ -47,6 +48,7 @@ public:
 
         return MainPassOutput {
             .colorTexture = m_colorTexture,
+            .depthTexture = m_depthTexture,
         };
     }
 };

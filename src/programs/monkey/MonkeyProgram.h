@@ -11,6 +11,7 @@
 #include "AdditiveBlendPass.h"
 #include "BrightFilterPass.h"
 #include "ToneMapPass.h"
+#include "OutlinePass.h"
 
 class MonkeyProgram final: public Program {
 public:
@@ -29,11 +30,13 @@ private:
     AdditiveBlendPass m_additiveBlendPass;
     BrightFilterPass m_brightFilterPass;
     ToneMapPass m_toneMapPass;
+    OutlinePass m_outlinePass;
+    AdditiveBlendPass m_outlineMultiplicativeBlendPass;
     std::vector<std::unique_ptr<Mesh>> m_meshes;
     TextureRenderer m_textureRenderer;
 
     glm::vec3 m_colorBalance{1.0};
-    bool m_enableGaussianBlur{true};
+    bool m_enableGaussianBlur{false};
 
     float m_toneMapExposure = 2.0f;
     float m_toneMapGamma = 0.7f;
@@ -41,4 +44,7 @@ private:
 
     int m_gaussianBlurIteration = 5;
     float m_brightFilterThreshold = 0.7f;
+
+    float m_outlineWidth = 1.0f;
+    float m_outlineDepthThreshold = 20.0f;
 };

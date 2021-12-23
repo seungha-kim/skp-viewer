@@ -5,6 +5,10 @@
 #include "../../SurfaceInfo.h"
 #include "../../ColorTexture.h"
 
+enum class BlendPassKind {
+    additive, multiplicative,
+};
+
 struct AdditiveBlendPassInput {
     const ColorTexture& colorTexture1;
     const ColorTexture& colorTexture2;
@@ -20,7 +24,7 @@ class AdditiveBlendPassPimpl;
 
 class AdditiveBlendPass {
 public:
-    explicit AdditiveBlendPass(const SurfaceInfo& surfaceInfo);
+    explicit AdditiveBlendPass(const SurfaceInfo& surfaceInfo, BlendPassKind kind);
     ~AdditiveBlendPass();
     AdditiveBlendPassOutput render(RenderContext& ctx, const AdditiveBlendPassInput& input);
 

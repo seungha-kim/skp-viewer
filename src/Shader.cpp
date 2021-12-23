@@ -1,4 +1,5 @@
 #include "Shader.h"
+#include "checkError.h"
 
 #include <string>
 #include <fstream>
@@ -112,3 +113,12 @@ void Shader::setVector3f(const std::string &name, glm::vec3 v) {
     glUniform3fv(loc, 1, glm::value_ptr(v));
 }
 
+void Shader::setVector4fv(const std::string &name, glm::vec4* v, int count) {
+    unsigned loc = glGetUniformLocation(m_ID, name.c_str());
+    glUniform4fv(loc, count, glm::value_ptr(v[0]));
+}
+
+void Shader::setMatrix3f(const std::string &name, glm::mat3 m) {
+    unsigned loc = glGetUniformLocation(m_ID, name.c_str());
+    glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(m));
+}
