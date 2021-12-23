@@ -14,14 +14,14 @@ public:
     void setTargetColorTexture(const ColorTexture& texture, int index);
     void setTargetDepthTexture(const DepthTexture& texture);
     void setTargetColorTextureCount(int count);
-    [[nodiscard]] OffscreenRenderTargetBinding bindAndPrepare(glm::vec3 clearColor, int viewportWidth, int viewportHeight);
+    // TODO: OffscreenRenderTargetBinding 를 movable 로 만들고 불필요한 힙 할당 제거하기
+    [[nodiscard]] std::unique_ptr<OffscreenRenderTargetBinding> bind();
+    [[nodiscard]] std::unique_ptr<OffscreenRenderTargetBinding> bindAndPrepare(glm::vec3 clearColor, int viewportWidth, int viewportHeight);
     void checkState();
 private:
     GLuint m_fbo{};
     bool m_depthGiven = false;
     bool m_colorGiven = false;
-
-    void unbind();
 };
 
 class OffscreenRenderTargetBinding {
@@ -29,5 +29,5 @@ public:
     explicit OffscreenRenderTargetBinding(OffscreenRenderTarget& target);
     ~OffscreenRenderTargetBinding();
 private:
-    OffscreenRenderTarget& m_target;
+    GLint m_prevFbo = 0;
 };

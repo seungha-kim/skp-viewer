@@ -1,0 +1,86 @@
+import sys
+import faulthandler
+
+from PySide6.QtCore import QSize
+from PySide6.QtGui import QSurfaceFormat
+from PySide6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget
+from PySide6.QtOpenGLWidgets import QOpenGLWidget
+import binding_test
+
+
+faulthandler.enable()
+
+
+class CanvasWidget(QOpenGLWidget):
+    engine = None
+
+    def initializeGL(self) -> None:
+        print("--- initializeGL start")
+        self.engine = binding_test.Engine(1366, 768, 1366, 768, 1.0, 1.0)
+        print("--- initializeGL end")
+
+    def paintGL(self) -> None:
+        print("--- paintGL start")
+        self.engine.render(1)
+        print("--- paintGL end")
+
+    def resizeGL(self, w: int, h: int) -> None:
+        pass
+
+    def set_random_global_diffuse(self):
+        self.engine.setRandomGlobalDiffuse()
+        self.update()
+
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        self.setWindowTitle("My App")
+
+        widget = QWidget()
+        layout = QVBoxLayout()
+        widget.setLayout(layout)
+
+        canvas = CanvasWidget()
+        layout.addWidget(canvas)
+
+        button = QPushButton("Press Me!")
+        layout.addWidget(button)
+        button.clicked.connect(self.handle_button_click)
+
+        self.setFixedSize(QSize(1366, 768))  # <1>
+
+        # Set the central widget of the Window.
+        self.setCentralWidget(widget)
+
+        self.canvas = canvas
+
+    def handle_button_click(self):
+        self.canvas.set_random_global_diffuse()
+
+
+
+def main():
+    gl_format = QSurfaceFormat()
+    gl_format.setProfile(QSurfaceFormat.CoreProfile)
+    gl_format.setVersion(3, 3)
+    gl_format.setDepthBufferSize(24)
+    gl_format.setStencilBufferSize(8)
+    gl_format.setRedBufferSize(8)
+    gl_format.setGreenBufferSize(8)
+    gl_format.setBlueBufferSize(8)
+    gl_format.setAlphaBufferSize(8)
+    gl_format.setRenderableType(QSurfaceFormat.OpenGL)
+    QSurfaceFormat.setDefaultFormat(gl_format)
+
+    app = QApplication(sys.argv)
+
+    window = MainWindow()
+    window.show()
+
+    app.exec()
+
+
+if __name__ == "__main__":
+    main()

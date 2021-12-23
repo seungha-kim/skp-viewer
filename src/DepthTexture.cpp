@@ -1,4 +1,5 @@
 #include "DepthTexture.h"
+#include "checkError.h"
 
 DepthTexture::DepthTexture(int width, int height): m_width(width), m_height(height) {
     glGenTextures(1, &m_textureName);
@@ -10,8 +11,9 @@ DepthTexture::DepthTexture(int width, int height): m_width(width), m_height(heig
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
     // Remove artefact on the edges of the shadow map
-    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
-    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
+    // TODO: invalid enum 에러 해결하기
+//    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
+//    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
     glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);

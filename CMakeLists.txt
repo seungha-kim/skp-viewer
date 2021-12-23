@@ -1,8 +1,15 @@
 cmake_minimum_required(VERSION 3.20)
+set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "" FORCE)
 project(learn_opengl)
 
 set(CMAKE_CXX_STANDARD 20)
 add_compile_definitions(GL_SILENCE_DEPRECATION)
+if (ENABLE_IMGUI)
+    add_compile_definitions(ENABLE_IMGUI)
+endif()
+
+# Extern - pybind11
+add_subdirectory(extern/pybind11)
 
 # Extern - OpenGL
 find_package(OpenGL REQUIRED)
@@ -53,10 +60,31 @@ target_include_directories(imgui
         extern/imgui
         extern/imgui/backends)
 
-# Targets
-include_directories(src)
-add_executable(learn_opengl
-        src/main.cpp
+# Extern - python
+execute_process(COMMAND python3 scripts/find_python.py --include
+        WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+        OUTPUT_VARIABLE PYTHON_INCLUDE_DIRS)
+execute_process(COMMAND python3 scripts/find_python.py --lib
+        WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+        OUTPUT_VARIABLE PYTHON_LIBRARY_DIR)
+execute_process(COMMAND python3 scripts/find_python.py --name
+        WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+        OUTPUT_VARIABLE PYTHON_LIBRARY_NAME)
+find_library(PYTHON_LIBRARIES
+        NAMES ${PYTHON_LIBRARY_NAME}
+        PATHS ${PYTHON_LIBRARY_DIR})
+add_library(python INTERFACE)
+target_link_libraries(python INTERFACE ${PYTHON_LIBRARIES})
+target_include_directories(python INTERFACE ${PYTHON_INCLUDE_DIRS})
+
+# Settings after building dependencies
+add_compile_definitions(GLFW_INCLUDE_NONE)
+
+# Target - Renderer
+add_library(renderer
+        STATIC # TODO: SHARED 로 하니까 윈도에서 에러 - "Windows fatal exception: access violation"
+        src/checkError.cpp
+        src/checkError.h
         src/Shader.cpp
         src/Shader.h
         src/lib.cpp
@@ -64,8 +92,6 @@ add_executable(learn_opengl
         src/Gui.h
         src/CameraState.h
         src/PlaybackState.h
-        src/Window.cpp
-        src/Window.h
         src/TestProgram.cpp
         src/TestProgram.h
         src/SceneManager.cpp
@@ -73,6 +99,7 @@ add_executable(learn_opengl
         src/InputController.cpp
         src/InputController.h
         src/InputContext.h
+        src/InputContext.cpp
         src/ObjectEditContext.cpp
         src/ObjectEditContext.h
         src/FlyCameraContext.cpp
@@ -118,9 +145,36 @@ add_executable(learn_opengl
         src/programs/monkey/BrightFilterPass.h
         src/programs/monkey/ToneMapPass.cpp
         src/programs/monkey/ToneMapPass.h
+        src/programs/monkey/OutlinePass.cpp
+        src/programs/monkey/OutlinePass.h
+        src/Engine.cpp
+        src/Engine.h
+        src/export.h
         )
-target_link_libraries(learn_opengl OpenGL::GL glfw assimp glad imgui)
-target_compile_definitions(learn_opengl PUBLIC GLFW_INCLUDE_NONE)
+
+target_link_libraries(renderer
+        PUBLIC
+        assimp glad imgui)
+
+# Target - Main
+add_executable(learn_opengl
+        src/Window.cpp
+        src/Window.h
+        src/main.cpp)
+target_link_libraries(learn_opengl
+        PRIVATE
+        renderer
+        glfw
+        )
+
+# Target - Binding
+pybind11_add_module(binding_test
+        src/bindings.cpp)
+target_link_libraries(binding_test
+        PRIVATE
+        renderer
+        pybind11_headers
+        python)
 
 # Resources
 set(RESOURCES_SOURCE "${CMAKE_CURRENT_LIST_DIR}/resources")
