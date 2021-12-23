@@ -1,5 +1,9 @@
 #include "Scene.h"
 
+Scene::Scene(const SurfaceInfo &surfaceInfo) {
+    m_camera.aspectWidth = surfaceInfo.logicalWidth;
+    m_camera.aspectHeight = surfaceInfo.logicalHeight;
+}
 
 const DirectionalLight &Scene::sunLight() const {
     return m_sunLight;

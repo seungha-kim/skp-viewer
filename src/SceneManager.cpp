@@ -1,5 +1,7 @@
 #include "SceneManager.h"
 
+SceneManager::SceneManager(const SurfaceInfo &surfaceInfo): m_scenes{Scene(surfaceInfo)} {}
+
 const Scene &SceneManager::activeScene() const {
     return m_scenes[m_activeSceneIndex];
 }
@@ -20,7 +22,7 @@ bool SceneManager::removeActiveScene() {
 }
 
 void SceneManager::addScene() {
-    m_scenes.emplace_back();
+    m_scenes.push_back(m_scenes.back());
 }
 
 const std::vector<Scene> &SceneManager::scenes() {

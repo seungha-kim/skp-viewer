@@ -15,8 +15,15 @@ class CanvasWidget(QOpenGLWidget):
     engine = None
 
     def initializeGL(self) -> None:
+        w = self.size().width()
+        h = self.size().height()
+        screen = self.screen()
+        device_pixel_ratio = screen.devicePixelRatio()
+        pw = int(w * device_pixel_ratio)
+        ph = int(h * device_pixel_ratio)
+
         print("--- initializeGL start")
-        self.engine = binding_test.Engine(1366, 768, 1366, 768, 1.0, 1.0)
+        self.engine = binding_test.Engine(w, h, pw, ph, device_pixel_ratio, device_pixel_ratio)
         print("--- initializeGL end")
 
     def paintGL(self) -> None:
@@ -49,7 +56,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(button)
         button.clicked.connect(self.handle_button_click)
 
-        self.setFixedSize(QSize(1366, 768))  # <1>
+        self.setFixedSize(QSize(800, 800))  # <1>
 
         # Set the central widget of the Window.
         self.setCentralWidget(widget)
@@ -58,7 +65,6 @@ class MainWindow(QMainWindow):
 
     def handle_button_click(self):
         self.canvas.set_random_global_diffuse()
-
 
 
 def main():

@@ -1,9 +1,11 @@
 #pragma once
 #include <vector>
 #include "Scene.h"
+#include "SurfaceInfo.h"
 
 class SceneManager {
 public:
+    explicit SceneManager(const SurfaceInfo& surfaceInfo);
     [[nodiscard]] const Scene& activeScene() const;
     Scene& activeSceneMut();
     int activeSceneIndex() const;
@@ -12,6 +14,6 @@ public:
     const std::vector<Scene>& scenes();
     bool setActiveScene(int index);
 private:
-    std::vector<Scene> m_scenes = {Scene()};
+    std::vector<Scene> m_scenes;
     int m_activeSceneIndex = 0;
 };
