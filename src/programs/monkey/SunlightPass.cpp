@@ -7,24 +7,16 @@
 class SunlightPassPimpl {
     friend class SunlightPass;
 
-    ColorTexture m_colorTexture;
-    DepthTexture m_depthTexture;
+    std::unique_ptr<ColorTexture> m_colorTexture;
+    std::unique_ptr<DepthTexture> m_depthTexture;
     OffscreenRenderTarget m_offscreenRenderTarget;
     glm::mat4 m_lightSpaceMatrix{};
     std::unique_ptr<Shader> m_subShader;
 public:
     ~SunlightPassPimpl() = default;
     explicit SunlightPassPimpl(const SurfaceInfo& surfaceInfo)
-        : m_subShader(std::make_unique<Shader>("monkey_sub.vert", "monkey_sub.frag"))
-        , m_colorTexture(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight)
-        , m_depthTexture(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight) {
-
-        // http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
-        // https://community.khronos.org/t/drawing-depth-texture-bound-to-a-fbo/66919
-
-        m_offscreenRenderTarget.setTargetDepthTexture(m_depthTexture);
-        m_offscreenRenderTarget.setTargetColorTexture(m_colorTexture, 0);
-        m_offscreenRenderTarget.checkState();
+        : m_subShader(std::make_unique<Shader>("monkey_sub.vert", "monkey_sub.frag")) {
+        resizeResources(surfaceInfo);
     }
 
     SunlightPassOutput render(RenderContext &ctx, const SunlightPassInput& input) {
@@ -34,6 +26,13 @@ public:
         // glEnable(GL_CULL_FACE);
         // glFrontFace(GL_CCW);
         // glCullFace(GL_FRONT);
+
+        // http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
+        // https://community.khronos.org/t/drawing-depth-texture-bound-to-a-fbo/66919
+
+        m_offscreenRenderTarget.setTargetDepthTexture(*m_depthTexture);
+        m_offscreenRenderTarget.setTargetColorTexture(*m_colorTexture, 0);
+        m_offscreenRenderTarget.checkState();
 
         // TODO: adjustable shadow resolution
         auto binding = m_offscreenRenderTarget.bindAndPrepare(glm::vec3(1.0f, 1.0f, 0.0f), ctx.surfaceInfo.physicalWidth, ctx.surfaceInfo.physicalHeight);
@@ -75,8 +74,13 @@ public:
 
         return SunlightPassOutput {
             .lightSpaceMatrix = m_lightSpaceMatrix,
-            .depthTexture = m_depthTexture,
+            .depthTexture = *m_depthTexture,
         };
+    }
+
+    void resizeResources(const SurfaceInfo &surfaceInfo) {
+        m_colorTexture = std::make_unique<ColorTexture>(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight);
+        m_depthTexture = std::make_unique<DepthTexture>(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight);
     }
 };
 
@@ -90,5 +94,9 @@ SunlightPassOutput SunlightPass::render(RenderContext &ctx, const SunlightPassIn
 }
 
 GLuint SunlightPass::depthTexture() {
-    return m_pimpl->m_depthTexture.textureName();
+    return m_pimpl->m_depthTexture->textureName();
+}
+
+void SunlightPass::resizeResources(const SurfaceInfo &surfaceInfo) {
+    m_pimpl->resizeResources(surfaceInfo);
 }

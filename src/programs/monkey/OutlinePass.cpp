@@ -12,17 +12,13 @@ class OutlinePassPimpl {
 
     std::unique_ptr<Shader> m_shader;
     OffscreenRenderTarget m_offscreenRenderTarget;
-    ColorTexture m_colorTexture;
-    DepthTexture m_depthTexture;
+    std::unique_ptr<ColorTexture> m_colorTexture;
+    std::unique_ptr<DepthTexture> m_depthTexture;
 
 public:
     explicit OutlinePassPimpl(const SurfaceInfo& surfaceInfo)
-            : m_colorTexture(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight)
-            , m_depthTexture(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight)
-            , m_shader(std::make_unique<Shader>("outline.vert", "outline.frag")) {
-        printf("OutlinePassPimpl\n");
-        m_offscreenRenderTarget.setTargetColorTexture(m_colorTexture, 0);
-        m_offscreenRenderTarget.setTargetDepthTexture(m_depthTexture);
+            : m_shader(std::make_unique<Shader>("outline.vert", "outline.frag")) {
+        resizeResources(surfaceInfo);
     }
 
     ~OutlinePassPimpl() = default;
@@ -30,6 +26,8 @@ public:
     OutlinePassOutput render(RenderContext &ctx, const OutlinePassInput &input) {
         const auto viewportWidth = ctx.surfaceInfo.physicalWidth;
         const auto viewportHeight = ctx.surfaceInfo.physicalHeight;
+        m_offscreenRenderTarget.setTargetColorTexture(*m_colorTexture, 0);
+        m_offscreenRenderTarget.setTargetDepthTexture(*m_depthTexture);
         auto binding = m_offscreenRenderTarget.bindAndPrepare(glm::vec3(1.0f, 0.0f, 1.0f), viewportWidth, viewportHeight);
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -72,9 +70,14 @@ public:
         }
 
         return {
-                .colorTexture = m_colorTexture,
+                .colorTexture = *m_colorTexture,
         };
 
+    }
+
+    void resizeResources(const SurfaceInfo &surfaceInfo) {
+        m_colorTexture = std::make_unique<ColorTexture>(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight);
+        m_depthTexture = std::make_unique<DepthTexture>(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight);
     }
 };
 
@@ -84,4 +87,8 @@ OutlinePass::~OutlinePass() = default;
 
 OutlinePassOutput OutlinePass::render(RenderContext &ctx, const OutlinePassInput &input) {
     return m_pimpl->render(ctx, input);
+}
+
+void OutlinePass::resizeResources(const SurfaceInfo &surfaceInfo) {
+    m_pimpl->resizeResources(surfaceInfo);
 }

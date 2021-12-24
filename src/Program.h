@@ -9,4 +9,5 @@ public:
     virtual ~Program() = default;
     virtual void render(RenderContext& ctx) {};
     virtual void processGui(GuiContext& ctx) {};
+    virtual void resizeResources(const SurfaceInfo& surfaceInfo) {};
 };

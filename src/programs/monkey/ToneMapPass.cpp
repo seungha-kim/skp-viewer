@@ -7,14 +7,13 @@ class ToneMapPassPimpl {
     friend class ToneMapPass;
 
     OffscreenRenderTarget m_offscreenRenderTarget;
-    ColorTexture m_colorTexture;
+    std::unique_ptr<ColorTexture> m_colorTexture;
     TextureRenderer m_textureRenderer;
 
 public:
     explicit ToneMapPassPimpl(const SurfaceInfo& surfaceInfo)
-            : m_colorTexture(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight)
-            , m_textureRenderer(std::make_unique<Shader>("quad.vert", "toneMap.frag")) {
-        m_offscreenRenderTarget.setTargetColorTexture(m_colorTexture, 0);
+            : m_textureRenderer(std::make_unique<Shader>("quad.vert", "toneMap.frag")) {
+        resizeResources(surfaceInfo);
     }
 
     ~ToneMapPassPimpl() = default;
@@ -27,6 +26,7 @@ public:
         }
         const auto viewportWidth = ctx.surfaceInfo.physicalWidth;
         const auto viewportHeight = ctx.surfaceInfo.physicalHeight;
+        m_offscreenRenderTarget.setTargetColorTexture(*m_colorTexture, 0);
         auto binding = m_offscreenRenderTarget.bindAndPrepare(glm::vec3(0.0f, 0.0f, 0.0f), viewportWidth, viewportHeight);
         m_textureRenderer.setSourceTexture(input.colorTexture, 0);
         m_textureRenderer.render(ctx, [&](Shader& shader) {
@@ -34,8 +34,12 @@ public:
             shader.setFloat("gamma", input.gamma);
         });
         return {
-                .colorTexture = m_colorTexture,
+                .colorTexture = *m_colorTexture,
         };
+    }
+
+    void resizeResources(const SurfaceInfo &surfaceInfo) {
+        m_colorTexture = std::make_unique<ColorTexture>(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight);
     }
 };
 
@@ -45,4 +49,8 @@ ToneMapPass::~ToneMapPass() = default;
 
 ToneMapPassOutput ToneMapPass::render(RenderContext &ctx, const ToneMapPassInput &input) {
     return m_pimpl->render(ctx, input);
+}
+
+void ToneMapPass::resizeResources(const SurfaceInfo &surfaceInfo) {
+    m_pimpl->resizeResources(surfaceInfo);
 }

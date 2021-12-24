@@ -15,24 +15,23 @@ class CanvasWidget(QOpenGLWidget):
     engine = None
 
     def initializeGL(self) -> None:
+        binding_test.init()
+        self.engine = binding_test.Engine(self.surface_info())
+
+    def paintGL(self) -> None:
+        self.engine.render(0)
+
+    def resizeGL(self, w: int, h: int) -> None:
+        self.engine.resize(self.surface_info())
+
+    def surface_info(self):
         w = self.size().width()
         h = self.size().height()
         screen = self.screen()
         device_pixel_ratio = screen.devicePixelRatio()
         pw = int(w * device_pixel_ratio)
         ph = int(h * device_pixel_ratio)
-
-        print("--- initializeGL start")
-        self.engine = binding_test.Engine(w, h, pw, ph, device_pixel_ratio, device_pixel_ratio)
-        print("--- initializeGL end")
-
-    def paintGL(self) -> None:
-        print("--- paintGL start")
-        self.engine.render(1)
-        print("--- paintGL end")
-
-    def resizeGL(self, w: int, h: int) -> None:
-        pass
+        return binding_test.SurfaceInfo(w, h, pw, ph, device_pixel_ratio, device_pixel_ratio)
 
     def set_random_global_diffuse(self):
         self.engine.setRandomGlobalDiffuse()
@@ -56,7 +55,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(button)
         button.clicked.connect(self.handle_button_click)
 
-        self.setFixedSize(QSize(800, 800))  # <1>
+        self.sizeHint = lambda: QSize(1366, 800)
 
         # Set the central widget of the Window.
         self.setCentralWidget(widget)

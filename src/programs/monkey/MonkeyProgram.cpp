@@ -122,3 +122,15 @@ void MonkeyProgram::processGui(GuiContext &ctx) {
 
     ImGui::End();
 }
+
+void MonkeyProgram::resizeResources(const SurfaceInfo &surfaceInfo) {
+    m_sunlightPass.resizeResources(surfaceInfo);
+    m_mainPass.resizeResources(surfaceInfo);
+    m_colorBalancePass.resizeResources(surfaceInfo);
+    m_gaussianBlurPass.resizeResources(surfaceInfo);
+    m_additiveBlendPass.resizeResources(surfaceInfo);
+    m_brightFilterPass.resizeResources(surfaceInfo);
+    m_toneMapPass.resizeResources(surfaceInfo);
+    m_outlinePass.resizeResources(surfaceInfo);
+    m_outlineMultiplicativeBlendPass.resizeResources(surfaceInfo);
+}

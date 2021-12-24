@@ -7,14 +7,13 @@ class BrightFilterPassPimpl {
     friend class BrightFilterPass;
 
     OffscreenRenderTarget m_offscreenRenderTarget;
-    ColorTexture m_brightColorTexture;
+    std::unique_ptr<ColorTexture> m_brightColorTexture;
     TextureRenderer m_textureRenderer;
 
 public:
     explicit BrightFilterPassPimpl(const SurfaceInfo& surfaceInfo)
-            : m_brightColorTexture(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight)
-            , m_textureRenderer(std::make_unique<Shader>("quad.vert", "brightFilter.frag")) {
-        m_offscreenRenderTarget.setTargetColorTexture(m_brightColorTexture, 0);
+            : m_textureRenderer(std::make_unique<Shader>("quad.vert", "brightFilter.frag")) {
+        resizeResources(surfaceInfo);
     }
 
     ~BrightFilterPassPimpl() = default;
@@ -22,6 +21,7 @@ public:
     BrightFilterPassOutput render(RenderContext &ctx, const BrightFilterPassInput &input) {
         const auto viewportWidth = ctx.surfaceInfo.physicalWidth;
         const auto viewportHeight = ctx.surfaceInfo.physicalHeight;
+        m_offscreenRenderTarget.setTargetColorTexture(*m_brightColorTexture, 0);
         auto binding = m_offscreenRenderTarget.bindAndPrepare(glm::vec3(0.0f, 0.0f, 0.0f), viewportWidth, viewportHeight);
         m_textureRenderer.setSourceTexture(input.colorTexture, 0);
         m_textureRenderer.render(ctx, [&](Shader& shader) {
@@ -29,8 +29,12 @@ public:
             shader.setFloat("threshold", input.threshold);
         });
         return {
-            .brightColorTexture = m_brightColorTexture,
+            .brightColorTexture = *m_brightColorTexture,
         };
+    }
+
+    void resizeResources(const SurfaceInfo &surfaceInfo) {
+        m_brightColorTexture = std::make_unique<ColorTexture>(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight);
     }
 };
 
@@ -40,4 +44,8 @@ BrightFilterPass::~BrightFilterPass() = default;
 
 BrightFilterPassOutput BrightFilterPass::render(RenderContext &ctx, const BrightFilterPassInput &input) {
     return m_pimpl->render(ctx, input);
+}
+
+void BrightFilterPass::resizeResources(const SurfaceInfo &surfaceInfo) {
+    m_pimpl->resizeResources(surfaceInfo);
 }

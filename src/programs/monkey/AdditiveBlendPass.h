@@ -4,6 +4,7 @@
 #include "../../graphics/Mesh.h"
 #include "../../SurfaceInfo.h"
 #include "../../ColorTexture.h"
+#include "./BasePass.h"
 
 enum class BlendPassKind {
     additive, multiplicative,
@@ -22,11 +23,12 @@ struct AdditiveBlendPassOutput {
 
 class AdditiveBlendPassPimpl;
 
-class AdditiveBlendPass {
+class AdditiveBlendPass: public BasePass {
 public:
     explicit AdditiveBlendPass(const SurfaceInfo& surfaceInfo, BlendPassKind kind);
     ~AdditiveBlendPass();
     AdditiveBlendPassOutput render(RenderContext& ctx, const AdditiveBlendPassInput& input);
+    void resizeResources(const SurfaceInfo &surfaceInfo) override;
 
 private:
     std::unique_ptr<AdditiveBlendPassPimpl> m_pimpl;

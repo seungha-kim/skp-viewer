@@ -23,12 +23,12 @@ public:
     InputController& inputControllerMut();
 
     [[nodiscard]] const SurfaceInfo& surfaceInfo() const;
-    SurfaceInfo& surfaceInfoMut();
 
     void setRandomGlobalDiffuse();
 
     void render(float playbackValue);
     void renderGui();
+    void resize(const SurfaceInfo& surfaceInfo);
 private:
     SceneManager m_sceneManager;
     InputController m_inputController;
@@ -39,6 +39,10 @@ private:
     ProgramSelector m_selector;
 
     Material m_globalMaterial;
+
+    bool m_sizeUpdated = false;
+
+    void updateTextures();
 
 #ifdef ENABLE_IMGUI
     Gui m_gui;

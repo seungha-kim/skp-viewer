@@ -47,15 +47,12 @@ const SurfaceInfo &Engine::surfaceInfo() const {
     return m_surfaceInfo;
 }
 
-SurfaceInfo &Engine::surfaceInfoMut() {
-    return m_surfaceInfo;
-}
-
 void Engine::render(float playbackValue) {
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         printf("WARN - NOT COMPLETE\n");
         return;
     }
+    updateTextures();
 //    printf("RENDER %f\n", playbackValue);
     RenderContext renderCtx {
             .scene = sceneManager().activeScene(),
@@ -83,4 +80,19 @@ void Engine::renderGui() {
 
 void Engine::setRandomGlobalDiffuse() {
     m_globalMaterial.diffuse = glm::linearRand(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+}
+
+void Engine::resize(const SurfaceInfo &surfaceInfo) {
+    m_surfaceInfo = surfaceInfo;
+    m_sizeUpdated = true;
+}
+
+void Engine::updateTextures() {
+    if (!m_sizeUpdated) return;
+    m_sizeUpdated = false;
+
+    auto& cam = m_sceneManager.activeSceneMut().cameraStateMut();
+    cam.aspectWidth = (float)m_surfaceInfo.logicalWidth;
+    cam.aspectHeight = (float)m_surfaceInfo.logicalHeight;
+    m_selector.currentProgram().resizeResources(m_surfaceInfo);
 }

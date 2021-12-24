@@ -4,6 +4,7 @@
 #include "../../graphics/Mesh.h"
 #include "../../SurfaceInfo.h"
 #include "../../ColorTexture.h"
+#include "BasePass.h"
 
 struct BrightFilterPassInput {
     const ColorTexture& colorTexture;
@@ -16,11 +17,12 @@ struct BrightFilterPassOutput {
 
 class BrightFilterPassPimpl;
 
-class BrightFilterPass {
+class BrightFilterPass: public BasePass {
 public:
     explicit BrightFilterPass(const SurfaceInfo& surfaceInfo);
     ~BrightFilterPass();
     BrightFilterPassOutput render(RenderContext& ctx, const BrightFilterPassInput& input);
+    void resizeResources(const SurfaceInfo &surfaceInfo) override;
 
 private:
     std::unique_ptr<BrightFilterPassPimpl> m_pimpl;

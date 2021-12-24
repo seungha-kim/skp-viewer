@@ -4,6 +4,7 @@
 #include "../../graphics/Mesh.h"
 #include "../../SurfaceInfo.h"
 #include "../../ColorTexture.h"
+#include "BasePass.h"
 
 struct ToneMapPassInput {
     const ColorTexture& colorTexture;
@@ -18,11 +19,12 @@ struct ToneMapPassOutput {
 
 class ToneMapPassPimpl;
 
-class ToneMapPass {
+class ToneMapPass: public BasePass {
 public:
     explicit ToneMapPass(const SurfaceInfo& surfaceInfo);
     ~ToneMapPass();
     ToneMapPassOutput render(RenderContext& ctx, const ToneMapPassInput& input);
+    void resizeResources(const SurfaceInfo &surfaceInfo) override;
 private:
     std::unique_ptr<ToneMapPassPimpl> m_pimpl;
 };

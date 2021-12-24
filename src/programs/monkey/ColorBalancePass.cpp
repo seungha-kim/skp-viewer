@@ -7,15 +7,14 @@ class ColorBalancePassPimpl {
     friend class ColorBalancePass;
 
     OffscreenRenderTarget m_offscreenRenderTarget;
-    ColorTexture m_colorTexture;
+    std::unique_ptr<ColorTexture> m_colorTexture;
     TextureRenderer m_textureRenderer;
     glm::vec3 m_colorBalance{};
 
 public:
     explicit ColorBalancePassPimpl(const SurfaceInfo& surfaceInfo)
-            : m_colorTexture(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight)
-            , m_textureRenderer(std::make_unique<Shader>("colorBalance.vert", "colorBalance.frag")) {
-        m_offscreenRenderTarget.setTargetColorTexture(m_colorTexture, 0);
+            : m_textureRenderer(std::make_unique<Shader>("colorBalance.vert", "colorBalance.frag")) {
+        resizeResources(surfaceInfo);
     }
 
     ~ColorBalancePassPimpl() = default;
@@ -23,15 +22,20 @@ public:
     ColorBalancePassOutput render(RenderContext &ctx, const ColorBalancePassInput &input) {
         const auto viewportWidth = ctx.surfaceInfo.physicalWidth;
         const auto viewportHeight = ctx.surfaceInfo.physicalHeight;
+        m_offscreenRenderTarget.setTargetColorTexture(*m_colorTexture, 0);
         auto binding = m_offscreenRenderTarget.bindAndPrepare(glm::vec3(1.0f, 0.0f, 1.0f), viewportWidth, viewportHeight);
         m_textureRenderer.setSourceTexture(input.colorTexture, 0);
         m_textureRenderer.render(ctx, [&](Shader& shader) {
             shader.setVector3f("colorBalance", m_colorBalance);
         });
         return {
-                .colorTexture = m_colorTexture,
+                .colorTexture = *m_colorTexture,
         };
 
+    }
+
+    void resizeResources(const SurfaceInfo &surfaceInfo) {
+        m_colorTexture = std::make_unique<ColorTexture>(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight);
     }
 };
 
@@ -45,4 +49,8 @@ ColorBalancePassOutput ColorBalancePass::render(RenderContext &ctx, const ColorB
 
 void ColorBalancePass::setColorBalance(glm::vec3 colorBalance) {
     m_pimpl->m_colorBalance = colorBalance;
+}
+
+void ColorBalancePass::resizeResources(const SurfaceInfo &surfaceInfo) {
+    m_pimpl->resizeResources(surfaceInfo);
 }

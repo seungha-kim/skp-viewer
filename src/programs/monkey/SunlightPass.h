@@ -6,6 +6,7 @@
 #include <glad/glad.h>
 #include "../../RenderContext.h"
 #include "../../DepthTexture.h"
+#include "BasePass.h"
 
 struct SunlightPassInput {
     // TODO: meshes 말고 rootObject 를 받는 것이 적절
@@ -19,11 +20,12 @@ struct SunlightPassOutput {
 
 class SunlightPassPimpl;
 
-class SunlightPass {
+class SunlightPass: public BasePass {
 public:
     explicit SunlightPass(const SurfaceInfo& surfaceInfo);
     ~SunlightPass();
     SunlightPassOutput render(RenderContext& ctx, const SunlightPassInput& input);
+    void resizeResources(const SurfaceInfo &surfaceInfo) override;
     GLuint depthTexture();
 
 private:

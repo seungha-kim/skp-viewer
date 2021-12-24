@@ -21,6 +21,7 @@ public:
 private:
     void render(RenderContext &ctx) override;
     void processGui(GuiContext &ctx) override;
+    void resizeResources(const SurfaceInfo &surfaceInfo) override;
 
 private:
     SunlightPass m_sunlightPass;

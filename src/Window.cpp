@@ -7,25 +7,28 @@
 void framebuffer_size_callback(GLFWwindow* glfwWindow, int width, int height)
 {
     Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
-    auto& surfaceInfo = window.m_engine->surfaceInfoMut();
+    auto surfaceInfo = window.m_engine->surfaceInfo();
     surfaceInfo.physicalWidth = width;
     surfaceInfo.physicalHeight = height;
+    window.m_engine->resize(surfaceInfo);
 }
 
 void window_size_callback(GLFWwindow* glfwWindow, int width, int height)
 {
     Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
-    auto& surfaceInfo = window.m_engine->surfaceInfoMut();
+    auto surfaceInfo = window.m_engine->surfaceInfo();
     surfaceInfo.logicalWidth = width;
     surfaceInfo.logicalHeight = height;
+    window.m_engine->resize(surfaceInfo);
 }
 
 void content_scale_size_callback(GLFWwindow* glfwWindow, float x, float y)
 {
     Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
-    auto& surfaceInfo = window.m_engine->surfaceInfoMut();
+    auto surfaceInfo = window.m_engine->surfaceInfo();
     surfaceInfo.contentScaleX = x;
     surfaceInfo.contentScaleY = y;
+    window.m_engine->resize(surfaceInfo);
 }
 
 void mouse_move_callback(GLFWwindow* glfwWindow, double xPosD, double yPosD) {
