@@ -23,10 +23,6 @@ const PlaybackState &Engine::playbackState() const {
     return m_playbackState;
 }
 
-PlaybackState &Engine::playbackStateMut() {
-    return m_playbackState;
-}
-
 const SceneManager &Engine::sceneManager() const {
     return m_sceneManager;
 }
@@ -59,7 +55,7 @@ void Engine::renderGui() {
     GuiContext guiCtx {
             .programSelector = m_selector,
             .sceneManager = sceneManagerMut(),
-            .playbackState = playbackStateMut(),
+            .playbackState = m_playbackState,
             .inputController = m_inputController,
             .globalMaterial = m_globalMaterial,
             .surfaceInfo = surfaceInfo(),
@@ -129,4 +125,14 @@ bool Engine::shouldClose() const {
 
 bool Engine::showMouseCursor() const {
     return m_showMouseCursor;
+}
+
+void Engine::updateTime(float time) {
+    if (m_playbackState.continuousRenderSession.has_value()) {
+        m_playbackState.continuousRenderSession->updateTime(time);
+    }
+}
+
+bool Engine::shouldContinuouslyRender() const {
+    return m_playbackState.continuousRenderSession.has_value();
 }

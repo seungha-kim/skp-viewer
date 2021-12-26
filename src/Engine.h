@@ -14,7 +14,6 @@ public:
     explicit Engine(SurfaceInfo surfaceInfo);
 
     [[nodiscard]] const PlaybackState& playbackState() const;
-    PlaybackState& playbackStateMut();
 
     [[nodiscard]] const SceneManager& sceneManager() const;
     SceneManager& sceneManagerMut();
@@ -32,8 +31,12 @@ public:
     void onKeyboardStateChange(const KeyCommandSet& keyCommandSet);
     void handleInput();
 
+    void updateTime(float time);
+
     [[nodiscard]] bool shouldClose() const;
     [[nodiscard]] bool showMouseCursor() const;
+
+    [[nodiscard]] bool shouldContinuouslyRender() const;
 
 private:
     SceneManager m_sceneManager;

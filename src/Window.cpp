@@ -112,10 +112,7 @@ bool Window::shouldClose() {
 }
 
 void Window::updateTime() {
-    auto& playbackState = m_engine->playbackStateMut();
-    if (playbackState.continuousRenderSession.has_value()) {
-        playbackState.continuousRenderSession->updateTime((float)glfwGetTime());
-    }
+    m_engine->updateTime((float)glfwGetTime());
 }
 
 void Window::updateCamera() {

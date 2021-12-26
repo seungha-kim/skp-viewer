@@ -54,6 +54,10 @@ PYBIND11_MODULE(binding_test, m) {
     py::class_<Engine>(m, "Engine")
             .def(py::init<SurfaceInfo>())
             .def("render", &Engine::render)
+            .def("handleInput", &Engine::handleInput)
+            .def("updateTime", &Engine::updateTime)
+            .def("onKeyboardStateChange", &Engine::onKeyboardStateChange)
+            .def("shouldContinuouslyRender", &Engine::shouldContinuouslyRender)
             .def("resize", &Engine::resize)
             .def("setRandomGlobalDiffuse", &Engine::setRandomGlobalDiffuse);
 
