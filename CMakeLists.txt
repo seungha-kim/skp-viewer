@@ -150,6 +150,9 @@ add_library(renderer
         src/Engine.cpp
         src/Engine.h
         src/export.h
+        src/KeyCommandSet.cpp
+        src/KeyCommandSet.h
+        src/KeyCommand.h
         )
 
 target_link_libraries(renderer

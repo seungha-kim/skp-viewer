@@ -150,36 +150,35 @@ void Window::updateCamera() {
 
 void Window::processKeyboardInput() {
     m_prevKeyCommandSet = m_keyCommandSet;
-    auto m = KeyCommandSetManipulator {m_keyCommandSet};
-    m.set(
+    m_keyCommandSet.setPressed(
             KeyCommand::FLY_MODE_TOGGLE,
             glfwGetKey(m_glfwWindow, GLFW_KEY_SPACE) == GLFW_PRESS
             );
-    m.set(
+    m_keyCommandSet.setPressed(
             KeyCommand::FLY_MODE_FORWARD,
             glfwGetKey(m_glfwWindow, GLFW_KEY_W) == GLFW_PRESS
             );
-    m.set(
+    m_keyCommandSet.setPressed(
             KeyCommand::FLY_MODE_BACKWARD,
             glfwGetKey(m_glfwWindow, GLFW_KEY_S) == GLFW_PRESS
             );
-    m.set(
+    m_keyCommandSet.setPressed(
             KeyCommand::FLY_MODE_LEFT,
             glfwGetKey(m_glfwWindow, GLFW_KEY_A) == GLFW_PRESS
             );
-    m.set(
+    m_keyCommandSet.setPressed(
             KeyCommand::FLY_MODE_RIGHT,
             glfwGetKey(m_glfwWindow, GLFW_KEY_D) == GLFW_PRESS
             );
-    m.set(
+    m_keyCommandSet.setPressed(
             KeyCommand::FLY_MODE_UPWARD,
             glfwGetKey(m_glfwWindow, GLFW_KEY_E) == GLFW_PRESS
             );
-    m.set(
+    m_keyCommandSet.setPressed(
             KeyCommand::FLY_MODE_DOWNWARD,
             glfwGetKey(m_glfwWindow, GLFW_KEY_Q) == GLFW_PRESS
             );
-    m.set(
+    m_keyCommandSet.setPressed(
             KeyCommand::EXIT,
             glfwGetKey(m_glfwWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS
             );

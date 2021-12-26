@@ -4,6 +4,8 @@
 #include <optional>
 #include "SceneManager.h"
 #include "PlaybackState.h"
+#include "KeyCommand.h"
+#include "KeyCommandSet.h"
 #include <bitset>
 
 struct MouseMoveEvent {
@@ -18,22 +20,6 @@ struct MouseScrollEvent {
 
 using MouseEvent = std::variant<MouseMoveEvent, MouseScrollEvent>;
 
-enum class KeyCommand: unsigned {
-    EXIT = 0,
-
-    FLY_MODE_TOGGLE = 10,
-    FLY_MODE_FORWARD,
-    FLY_MODE_BACKWARD,
-    FLY_MODE_LEFT,
-    FLY_MODE_RIGHT,
-    FLY_MODE_UPWARD,
-    FLY_MODE_DOWNWARD,
-
-    END_OF_COMMAND = 256
-};
-
-using KeyCommandSet = std::bitset<static_cast<unsigned long>(KeyCommand::END_OF_COMMAND)>;
-
 struct InputContext {
     SceneManager& cameraManager;
     PlaybackState& playbackState;
@@ -46,10 +32,4 @@ struct InputContext {
     float mousePosY;
     bool isBeingPressed(KeyCommand keyCommand);
     bool isJustPressed(KeyCommand keyCommand);
-};
-
-struct KeyCommandSetManipulator {
-    KeyCommandSet& keyCommandSet;
-
-    void set(KeyCommand keyCommand, bool value);
 };
