@@ -37,18 +37,7 @@ void mouse_move_callback(GLFWwindow* glfwWindow, double xPosD, double yPosD) {
     double mousePosX, mousePosY;
     glfwGetCursorPos(glfwWindow, &mousePosX, &mousePosY);
 
-    InputContext ctx {
-        .cameraManager = window.m_engine->sceneManagerMut(),
-        .playbackState = window.m_engine->playbackStateMut(),
-        .mouseEvent = MouseMoveEvent {.x = (float)xPosD, .y = (float)yPosD},
-        .keyCommandSet = window.m_keyCommandSet,
-        .prevKeyCommandSet = window.m_prevKeyCommandSet,
-        .shouldClose = window.m_shouldClose,
-        .showMouseCursor = window.m_showMouseCursor,
-        .mousePosX = (float)mousePosX,
-        .mousePosY = (float)mousePosY,
-    };
-    window.m_engine->inputControllerMut().handleMouseInput(ctx);
+    window.m_engine->onMouseMove((float) mousePosX, (float) mousePosY);
 }
 
 void mouse_wheel_callback(GLFWwindow* glfwWindow, double xOffset, double yOffset) {
@@ -56,19 +45,7 @@ void mouse_wheel_callback(GLFWwindow* glfwWindow, double xOffset, double yOffset
 
     double mousePosX, mousePosY;
     glfwGetCursorPos(glfwWindow, &mousePosX, &mousePosY);
-
-    InputContext ctx {
-            .cameraManager = window.m_engine->sceneManagerMut(),
-            .playbackState = window.m_engine->playbackStateMut(),
-            .mouseEvent = MouseScrollEvent {.offsetX = (float)xOffset, .offsetY = (float)yOffset},
-            .keyCommandSet = window.m_keyCommandSet,
-            .prevKeyCommandSet = window.m_prevKeyCommandSet,
-            .shouldClose = window.m_shouldClose,
-            .showMouseCursor = window.m_showMouseCursor,
-            .mousePosX = (float)mousePosX,
-            .mousePosY = (float)mousePosY,
-    };
-    window.m_engine->inputControllerMut().handleMouseInput(ctx);
+    window.m_engine->onMouseWheel((float) mousePosX, (float) mousePosY, (float) xOffset, (float) yOffset);
 }
 
 void Window::initGlfw() {
@@ -131,7 +108,7 @@ void Window::bind() {
 }
 
 bool Window::shouldClose() {
-    return glfwWindowShouldClose(m_glfwWindow) || m_shouldClose;
+    return glfwWindowShouldClose(m_glfwWindow) || m_engine->shouldClose();
 }
 
 void Window::updateTime() {
@@ -149,7 +126,6 @@ void Window::updateCamera() {
 }
 
 void Window::processKeyboardInput() {
-    m_prevKeyCommandSet = m_keyCommandSet;
     m_keyCommandSet.setPressed(
             KeyCommand::FLY_MODE_TOGGLE,
             glfwGetKey(m_glfwWindow, GLFW_KEY_SPACE) == GLFW_PRESS
@@ -182,23 +158,9 @@ void Window::processKeyboardInput() {
             KeyCommand::EXIT,
             glfwGetKey(m_glfwWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS
             );
-
-    double mousePosX, mousePosY;
-    glfwGetCursorPos(m_glfwWindow, &mousePosX, &mousePosY);
-
-    auto ctx = InputContext {
-        .cameraManager = m_engine->sceneManagerMut(),
-        .playbackState = m_engine->playbackStateMut(),
-        .keyCommandSet = m_keyCommandSet,
-        .prevKeyCommandSet = m_prevKeyCommandSet,
-        .shouldClose = m_shouldClose,
-        .showMouseCursor = m_showMouseCursor,
-        .mousePosX = (float)mousePosX,
-        .mousePosY = (float)mousePosY,
-    };
-    m_engine->inputControllerMut().handleKeyboardInput(ctx);
-
-    if (m_showMouseCursor) {
+    m_engine->onKeyboardStateChange(m_keyCommandSet);
+    // TODO
+    if (m_engine->showMouseCursor()) {
         glfwSetInputMode(m_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     } else {
         glfwSetInputMode(m_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -225,6 +187,8 @@ float Window::playbackValue() {
 void Window::mainLoop() {
     while (!shouldClose()) {
         processKeyboardInput();
+        m_engine->handleInput();
+
         updateTime();
         updateCamera();
         m_engine->render(playbackValue());

@@ -2,6 +2,7 @@
 #include <variant>
 
 void InputController::handleMouseInput(InputContext &ctx) {
+    if (!ctx.mouseEvent) return;
     const auto& mouseEvent = ctx.mouseEvent.value();
     if (auto* moveEvent = std::get_if<MouseMoveEvent>(&mouseEvent)) {
         if (m_cameraRotateMode) {

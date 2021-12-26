@@ -35,14 +35,6 @@ SceneManager &Engine::sceneManagerMut() {
     return m_sceneManager;
 }
 
-const InputController &Engine::inputController() const {
-    return m_inputController;
-}
-
-InputController &Engine::inputControllerMut() {
-    return m_inputController;
-}
-
 const SurfaceInfo &Engine::surfaceInfo() const {
     return m_surfaceInfo;
 }
@@ -68,7 +60,7 @@ void Engine::renderGui() {
             .programSelector = m_selector,
             .sceneManager = sceneManagerMut(),
             .playbackState = playbackStateMut(),
-            .inputController = inputControllerMut(),
+            .inputController = m_inputController,
             .globalMaterial = m_globalMaterial,
             .surfaceInfo = surfaceInfo(),
     };
@@ -95,4 +87,46 @@ void Engine::updateTextures() {
     cam.aspectWidth = (float)m_surfaceInfo.logicalWidth;
     cam.aspectHeight = (float)m_surfaceInfo.logicalHeight;
     m_selector.currentProgram().resizeResources(m_surfaceInfo);
+}
+
+void Engine::onMouseMove(float mousePosX, float mousePosY) {
+    m_mouseEvent = MouseMoveEvent {.x = mousePosX, .y = (float)mousePosY};
+    m_mousePosX = mousePosX;
+    m_mousePosY = mousePosY;
+}
+
+void Engine::onMouseWheel(float mousePosX, float mousePosY, float wheelOffsetX, float wheelOffsetY) {
+    m_mouseEvent = MouseScrollEvent {.offsetX = (float)wheelOffsetX, .offsetY = (float)wheelOffsetY};
+    m_mousePosX = mousePosX;
+    m_mousePosY = mousePosY;
+}
+
+void Engine::onKeyboardStateChange(const KeyCommandSet& keyCommandSet) {
+    m_keyCommandSet = keyCommandSet;
+}
+
+void Engine::handleInput() {
+    InputContext ctx {
+            .cameraManager = m_sceneManager,
+            .playbackState = m_playbackState,
+            .mouseEvent = m_mouseEvent,
+            .keyCommandSet = m_keyCommandSet,
+            .prevKeyCommandSet = m_prevKeyCommandSet,
+            .shouldClose = m_shouldClose,
+            .showMouseCursor = m_showMouseCursor,
+            .mousePosX = m_mousePosX,
+            .mousePosY = m_mousePosY,
+    };
+    m_inputController.handleKeyboardInput(ctx);
+    m_inputController.handleMouseInput(ctx);
+
+    m_prevKeyCommandSet = m_keyCommandSet;
+}
+
+bool Engine::shouldClose() const {
+    return m_shouldClose;
+}
+
+bool Engine::showMouseCursor() const {
+    return m_showMouseCursor;
 }

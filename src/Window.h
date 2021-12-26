@@ -36,7 +36,4 @@ private:
     GLFWwindow* m_glfwWindow = nullptr;
     std::unique_ptr<Engine> m_engine;
     KeyCommandSet m_keyCommandSet;
-    KeyCommandSet m_prevKeyCommandSet;
-    bool m_shouldClose = false;
-    bool m_showMouseCursor = true;
 };

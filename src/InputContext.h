@@ -9,13 +9,13 @@
 #include <bitset>
 
 struct MouseMoveEvent {
-    const float x;
-    const float y;
+    float x;
+    float y;
 };
 
 struct MouseScrollEvent {
-    const float offsetX;
-    const float offsetY;
+    float offsetX;
+    float offsetY;
 };
 
 using MouseEvent = std::variant<MouseMoveEvent, MouseScrollEvent>;
