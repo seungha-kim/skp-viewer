@@ -10,7 +10,7 @@ class CanvasWidget(QOpenGLWidget):
     engine = None
     key_command_set = binding_test.KeyCommandSet()
     timer = QElapsedTimer()
-    keymap = KeyMap()
+    keymap = KeyMap.default()
 
     def __init__(self):
         super().__init__()
