@@ -17,8 +17,8 @@ sys.path.append(abs_build_path)
 
 
 def main():
-    import binding_test_qt
-    binding_test_qt.main()
+    import studio.main
+    studio.main.main()
 
 
 if __name__ == '__main__':
