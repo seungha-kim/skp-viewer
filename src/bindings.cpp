@@ -7,10 +7,6 @@
 
 namespace py = pybind11;
 
-int add(int i, int j) {
-    return i + j;
-}
-
 void init() {
     gladLoadGL();
 }
@@ -80,6 +76,4 @@ PYBIND11_MODULE(binding_test, m) {
             .def_readwrite("x", &glm::vec3::x)
             .def_readwrite("y", &glm::vec3::y)
             .def_readwrite("z", &glm::vec3::z);
-
-    m.def("add", &add, "A function which adds two numbers");
 }
