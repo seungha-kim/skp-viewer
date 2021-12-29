@@ -1,6 +1,5 @@
 #pragma once
 #include <glad/glad.h>
-#include "../Program.h"
 #include <memory>
 #include "../SurfaceInfo.h"
 #include "SunlightPass.h"
@@ -28,13 +27,13 @@ struct RenderOptions {
     float outlineDepthThreshold = 20.0f;
 };
 
-class Renderer final: public Program {
+class Renderer final {
 public:
     explicit Renderer(const SurfaceInfo& surfaceInfo);
-    ~Renderer() override = default;
+    ~Renderer() = default;
 
-    void render(RenderContext &ctx) override;
-    void resizeResources(const SurfaceInfo &surfaceInfo) override;
+    void render(RenderContext &ctx);
+    void resizeResources(const SurfaceInfo &surfaceInfo);
 
     RenderOptions& renderOptionsMut();
 
