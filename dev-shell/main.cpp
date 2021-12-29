@@ -1,7 +1,4 @@
 #include "Window.h"
-#ifdef ENABLE_IMGUI
-#include "Gui.h"
-#endif
 
 const unsigned int SCR_WIDTH = 1366;
 const unsigned int SCR_HEIGHT = 768;

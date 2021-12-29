@@ -159,16 +159,7 @@ target_link_libraries(renderer
         PUBLIC
         assimp glad imgui)
 
-# Target - Main
-add_executable(learn_opengl
-        src/Window.cpp
-        src/Window.h
-        src/main.cpp)
-target_link_libraries(learn_opengl
-        PRIVATE
-        renderer
-        glfw
-        )
+add_subdirectory(dev-shell)
 
 # Target - Binding
 pybind11_add_module(binding_test
