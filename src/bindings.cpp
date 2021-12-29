@@ -3,6 +3,7 @@
 #include "checkError.h"
 #include <glad/glad.h>
 #include "KeyCommandSet.h"
+#include "CameraState.h"
 
 namespace py = pybind11;
 
@@ -60,6 +61,25 @@ PYBIND11_MODULE(binding_test, m) {
             .def("shouldContinuouslyRender", &Engine::shouldContinuouslyRender)
             .def("resize", &Engine::resize)
             .def("setRandomGlobalDiffuse", &Engine::setRandomGlobalDiffuse);
+
+    py::class_<CameraState>(m, "CameraState")
+            .def(py::init<>())
+            .def_readwrite("fovyDeg", &CameraState::fovyDeg)
+            .def_readwrite("aspectWidth", &CameraState::aspectWidth)
+            .def_readwrite("aspectHeight", &CameraState::aspectHeight)
+            .def_readwrite("zNear", &CameraState::zNear)
+            .def_readwrite("zFar", &CameraState::zFar)
+            .def_readwrite("pos", &CameraState::pos)
+            .def_readwrite("up", &CameraState::up)
+            .def_readwrite("speed", &CameraState::speed)
+            .def_readwrite("pitch", &CameraState::pitch)
+            .def_readwrite("yaw", &CameraState::yaw);
+
+    py::class_<glm::vec3>(m, "Vec3")
+            .def(py::init<>())
+            .def_readwrite("x", &glm::vec3::x)
+            .def_readwrite("y", &glm::vec3::y)
+            .def_readwrite("z", &glm::vec3::z);
 
     m.def("add", &add, "A function which adds two numbers");
 }
