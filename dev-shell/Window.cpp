@@ -37,7 +37,7 @@ void mouse_move_callback(GLFWwindow* glfwWindow, double xPosD, double yPosD) {
     double mousePosX, mousePosY;
     glfwGetCursorPos(glfwWindow, &mousePosX, &mousePosY);
 
-    window.m_engine->onMouseMove((float) mousePosX, (float) mousePosY);
+    window.onMouseMove((float) mousePosX, (float) mousePosY);
 }
 
 void mouse_wheel_callback(GLFWwindow* glfwWindow, double xOffset, double yOffset) {
@@ -45,7 +45,7 @@ void mouse_wheel_callback(GLFWwindow* glfwWindow, double xOffset, double yOffset
 
     double mousePosX, mousePosY;
     glfwGetCursorPos(glfwWindow, &mousePosX, &mousePosY);
-    window.m_engine->onMouseWheel((float) mousePosX, (float) mousePosY, (float) xOffset, (float) yOffset);
+    window.onMouseWheel((float) mousePosX, (float) mousePosY, (float) xOffset, (float) yOffset);
 }
 
 void Window::initGlfw() {
@@ -108,11 +108,13 @@ void Window::bind() {
 }
 
 bool Window::shouldClose() {
-    return glfwWindowShouldClose(m_glfwWindow) || m_engine->shouldClose();
+    return glfwWindowShouldClose(m_glfwWindow) || m_shouldClose;
 }
 
 void Window::updateTime() {
-    m_engine->updateTime((float)glfwGetTime());
+    if (m_playbackState.continuousRenderSession.has_value()) {
+        m_playbackState.continuousRenderSession->updateTime((float)glfwGetTime());
+    }
 }
 
 void Window::updateCamera() {
@@ -155,9 +157,9 @@ void Window::processKeyboardInput() {
             KeyCommand::EXIT,
             glfwGetKey(m_glfwWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS
             );
-    m_engine->onKeyboardStateChange(m_keyCommandSet);
+    onKeyboardStateChange(m_keyCommandSet);
     // TODO
-    if (m_engine->showMouseCursor()) {
+    if (m_showMouseCursor) {
         glfwSetInputMode(m_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     } else {
         glfwSetInputMode(m_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -169,22 +171,20 @@ void Window::swapBuffers() {
 }
 
 void Window::waitEvents() {
-    const auto& playbackState = m_engine->playbackState();
-    if (playbackState.forceContinuous || playbackState.continuousRenderSession.has_value()) {
+    if (m_playbackState.forceContinuous || m_playbackState.continuousRenderSession.has_value()) {
         glfwPostEmptyEvent();
     }
     glfwWaitEvents();
 }
 
 float Window::playbackValue() {
-    const auto& playbackState = m_engine->playbackState();
-    return playbackState.manual ? playbackState.playback : (float)glfwGetTime();
+    return m_playbackState.manual ? m_playbackState.playback : (float)glfwGetTime();
 }
 
 void Window::mainLoop() {
     while (!shouldClose()) {
         processKeyboardInput();
-        m_engine->handleInput();
+        handleInput();
 
         updateTime();
         updateCamera();
@@ -193,8 +193,8 @@ void Window::mainLoop() {
         beginGui();
         GuiContext guiCtx {
                 .sceneManager = m_engine->sceneManagerMut(),
-                .playbackState = m_engine->playbackStateMut(),
-                .inputController = m_engine->inputControllerMut(),
+                .playbackState = m_playbackState,
+                .inputController = m_inputController,
                 .globalMaterial = m_engine->globalMaterialMut(),
                 .surfaceInfo = m_engine->surfaceInfo(),
                 .renderOptions = m_engine->rendererMut().renderOptionsMut(),
@@ -227,4 +227,38 @@ void Window::beginGui() {
 void Window::endGui() {
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void Window::onMouseMove(float mousePosX, float mousePosY) {
+    m_mouseEvent = MouseMoveEvent {.x = mousePosX, .y = (float)mousePosY};
+    m_mousePosX = mousePosX;
+    m_mousePosY = mousePosY;
+}
+
+void Window::onMouseWheel(float mousePosX, float mousePosY, float wheelOffsetX, float wheelOffsetY) {
+    m_mouseEvent = MouseScrollEvent {.offsetX = (float)wheelOffsetX, .offsetY = (float)wheelOffsetY};
+    m_mousePosX = mousePosX;
+    m_mousePosY = mousePosY;
+}
+
+void Window::onKeyboardStateChange(const KeyCommandSet& keyCommandSet) {
+    m_keyCommandSet = keyCommandSet;
+}
+
+void Window::handleInput() {
+    InputContext ctx {
+            .cameraManager = m_engine->sceneManagerMut(),
+            .playbackState = m_playbackState,
+            .mouseEvent = m_mouseEvent,
+            .keyCommandSet = m_keyCommandSet,
+            .prevKeyCommandSet = m_prevKeyCommandSet,
+            .shouldClose = m_shouldClose,
+            .showMouseCursor = m_showMouseCursor,
+            .mousePosX = m_mousePosX,
+            .mousePosY = m_mousePosY,
+    };
+    m_inputController.handleKeyboardInput(ctx);
+    m_inputController.handleMouseInput(ctx);
+
+    m_prevKeyCommandSet = m_keyCommandSet;
 }

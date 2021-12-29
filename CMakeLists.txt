@@ -86,10 +86,8 @@ add_library(renderer
         src/render/Shader.h
         src/lib.cpp
         src/scene/CameraState.h
-        src/PlaybackState.h
         src/scene/SceneManager.cpp
         src/scene/SceneManager.h
-        src/ContinuousRenderSession.h
         src/model/Mesh.cpp
         src/model/Mesh.h
         src/model/Vertex.cpp

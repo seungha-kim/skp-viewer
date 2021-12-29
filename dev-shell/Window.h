@@ -37,5 +37,20 @@ private:
     GLFWwindow* m_glfwWindow = nullptr;
     std::unique_ptr<Engine> m_engine;
     Gui m_gui;
+
+    // Input
+    float m_mousePosX;
+    float m_mousePosY;
+    std::optional<MouseEvent> m_mouseEvent;
+    InputController m_inputController;
+    PlaybackState m_playbackState;
     KeyCommandSet m_keyCommandSet;
+    KeyCommandSet m_prevKeyCommandSet;
+    bool m_showMouseCursor = true;
+    bool m_shouldClose = false;
+
+    void onMouseMove(float mousePosX, float mousePosY);
+    void onMouseWheel(float mousePosX, float mousePosY, float wheelOffsetX, float wheelOffsetY);
+    void onKeyboardStateChange(const KeyCommandSet& keyCommandSet);
+    void handleInput();
 };

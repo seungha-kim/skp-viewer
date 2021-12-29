@@ -7,6 +7,8 @@ add_executable(dev-shell
         InputController.h
         InputContext.h
         InputContext.cpp
+        PlaybackState.h
+        ContinuousRenderSession.h
         FlyCameraContext.cpp
         FlyCameraContext.h
         ObjectEditContext.cpp

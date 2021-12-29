@@ -3,7 +3,7 @@
 #include <variant>
 #include <optional>
 #include "../src/scene/SceneManager.h"
-#include "../src/PlaybackState.h"
+#include "PlaybackState.h"
 #include "KeyCommand.h"
 #include "KeyCommandSet.h"
 #include <bitset>

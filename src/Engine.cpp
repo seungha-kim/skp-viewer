@@ -16,10 +16,6 @@ Engine::Engine(SurfaceInfo surfaceInfo)
     glEnable(GL_DEPTH_TEST);
 }
 
-const PlaybackState &Engine::playbackState() const {
-    return m_playbackState;
-}
-
 const SceneManager &Engine::sceneManager() const {
     return m_sceneManager;
 }
@@ -67,68 +63,8 @@ void Engine::updateTextures() {
     m_renderer.resizeResources(m_surfaceInfo);
 }
 
-void Engine::onMouseMove(float mousePosX, float mousePosY) {
-    m_mouseEvent = MouseMoveEvent {.x = mousePosX, .y = (float)mousePosY};
-    m_mousePosX = mousePosX;
-    m_mousePosY = mousePosY;
-}
-
-void Engine::onMouseWheel(float mousePosX, float mousePosY, float wheelOffsetX, float wheelOffsetY) {
-    m_mouseEvent = MouseScrollEvent {.offsetX = (float)wheelOffsetX, .offsetY = (float)wheelOffsetY};
-    m_mousePosX = mousePosX;
-    m_mousePosY = mousePosY;
-}
-
-void Engine::onKeyboardStateChange(const KeyCommandSet& keyCommandSet) {
-    m_keyCommandSet = keyCommandSet;
-}
-
-void Engine::handleInput() {
-    InputContext ctx {
-            .cameraManager = m_sceneManager,
-            .playbackState = m_playbackState,
-            .mouseEvent = m_mouseEvent,
-            .keyCommandSet = m_keyCommandSet,
-            .prevKeyCommandSet = m_prevKeyCommandSet,
-            .shouldClose = m_shouldClose,
-            .showMouseCursor = m_showMouseCursor,
-            .mousePosX = m_mousePosX,
-            .mousePosY = m_mousePosY,
-    };
-    m_inputController.handleKeyboardInput(ctx);
-    m_inputController.handleMouseInput(ctx);
-
-    m_prevKeyCommandSet = m_keyCommandSet;
-}
-
-bool Engine::shouldClose() const {
-    return m_shouldClose;
-}
-
-bool Engine::showMouseCursor() const {
-    return m_showMouseCursor;
-}
-
-void Engine::updateTime(float time) {
-    if (m_playbackState.continuousRenderSession.has_value()) {
-        m_playbackState.continuousRenderSession->updateTime(time);
-    }
-}
-
-bool Engine::shouldContinuouslyRender() const {
-    return m_playbackState.continuousRenderSession.has_value();
-}
-
-InputController& Engine::inputControllerMut() {
-    return m_inputController;
-}
-
 Material& Engine::globalMaterialMut() {
     return m_globalMaterial;
-}
-
-PlaybackState& Engine::playbackStateMut() {
-    return m_playbackState;
 }
 
 Renderer& Engine::rendererMut() {
