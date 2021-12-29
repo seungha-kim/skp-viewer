@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include "Scene.h"
-#include "SurfaceInfo.h"
+#include "../render/SurfaceInfo.h"
 
 class SceneManager {
 public:

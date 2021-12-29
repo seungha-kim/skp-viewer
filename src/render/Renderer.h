@@ -1,10 +1,10 @@
 #pragma once
 #include <glad/glad.h>
 #include <memory>
-#include "../SurfaceInfo.h"
+#include "SurfaceInfo.h"
 #include "SunlightPass.h"
 #include "MainPass.h"
-#include "../TextureRenderer.h"
+#include "TextureRenderer.h"
 #include "ColorBalancePass.h"
 #include "GaussianBlurPass.h"
 #include "AdditiveBlendPass.h"

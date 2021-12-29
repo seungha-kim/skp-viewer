@@ -1,7 +1,7 @@
 #pragma once
-#include "graphics/DirectionalLight.h"
+#include "DirectionalLight.h"
 #include "CameraState.h"
-#include "SurfaceInfo.h"
+#include "../render/SurfaceInfo.h"
 
 class Scene final {
 public:

@@ -1,9 +1,9 @@
 #include <pybind11/pybind11.h>
 #include "Engine.h"
-#include "checkError.h"
+#include "render/checkError.h"
 #include <glad/glad.h>
 #include "../dev-shell/KeyCommandSet.h"
-#include "CameraState.h"
+#include "scene/CameraState.h"
 
 namespace py = pybind11;
 

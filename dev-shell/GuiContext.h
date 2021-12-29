@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../src/SceneManager.h"
+#include "../src/scene/SceneManager.h"
 #include "../src/PlaybackState.h"
 #include "InputController.h"
-#include "../src/graphics/Material.h"
-#include "../src/SurfaceInfo.h"
+#include "../src/model/Material.h"
+#include "../src/render/SurfaceInfo.h"
 #include "../src/render/Renderer.h"
 
 struct GuiContext {

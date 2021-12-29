@@ -1,9 +1,9 @@
 #pragma once
 #include <memory>
-#include "../RenderContext.h"
-#include "../graphics/Mesh.h"
-#include "../SurfaceInfo.h"
-#include "../ColorTexture.h"
+#include "RenderContext.h"
+#include "../model/Mesh.h"
+#include "SurfaceInfo.h"
+#include "ColorTexture.h"
 #include "BasePass.h"
 
 struct ToneMapPassInput {

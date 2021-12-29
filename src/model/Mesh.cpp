@@ -1,6 +1,6 @@
 #include "Mesh.h"
 #include "Vertex.h"
-#include "../checkError.h"
+#include "../render/checkError.h"
 #include <glm/geometric.hpp>
 
 Mesh::Mesh(aiMesh &mesh, aiMatrix4x4 transform) {

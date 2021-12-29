@@ -1,11 +1,11 @@
 #pragma once
 #include <memory>
-#include "../SurfaceInfo.h"
-#include "../graphics/Mesh.h"
+#include "SurfaceInfo.h"
+#include "../model/Mesh.h"
 #include <glm/glm.hpp>
 #include <glad/glad.h>
-#include "../RenderContext.h"
-#include "../DepthTexture.h"
+#include "RenderContext.h"
+#include "DepthTexture.h"
 #include "BasePass.h"
 
 struct SunlightPassInput {

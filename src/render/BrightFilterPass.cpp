@@ -1,7 +1,7 @@
 #include "BrightFilterPass.h"
-#include "../Shader.h"
-#include "../OffscreenRenderTarget.h"
-#include "../TextureRenderer.h"
+#include "Shader.h"
+#include "OffscreenRenderTarget.h"
+#include "TextureRenderer.h"
 
 class BrightFilterPassPimpl {
     friend class BrightFilterPass;

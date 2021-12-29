@@ -1,7 +1,7 @@
 #pragma once
 
-#include "graphics/Material.h"
-#include "Scene.h"
+#include "../model/Material.h"
+#include "../scene/Scene.h"
 #include "SurfaceInfo.h"
 
 struct RenderContext {

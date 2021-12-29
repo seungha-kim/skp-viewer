@@ -1,8 +1,8 @@
-#include "../Shader.h"
+#include "Shader.h"
 #include "OutlinePass.h"
-#include "../OffscreenRenderTarget.h"
-#include "../TextureRenderer.h"
-#include "../checkError.h"
+#include "OffscreenRenderTarget.h"
+#include "TextureRenderer.h"
+#include "checkError.h"
 
 // 흠...
 // - [] outlinepass 의 내용을 채워보자

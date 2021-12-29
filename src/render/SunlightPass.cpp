@@ -1,8 +1,8 @@
 #include "SunlightPass.h"
-#include "../Shader.h"
-#include "../DepthTexture.h"
-#include "../ColorTexture.h"
-#include "../OffscreenRenderTarget.h"
+#include "Shader.h"
+#include "DepthTexture.h"
+#include "ColorTexture.h"
+#include "OffscreenRenderTarget.h"
 
 class SunlightPassPimpl {
     friend class SunlightPass;

@@ -1,10 +1,10 @@
 #pragma once
 #include <memory>
-#include "../DepthTexture.h"
-#include "../ColorTexture.h"
-#include "../SurfaceInfo.h"
-#include "../RenderContext.h"
-#include "../graphics/Mesh.h"
+#include "DepthTexture.h"
+#include "ColorTexture.h"
+#include "SurfaceInfo.h"
+#include "RenderContext.h"
+#include "../model/Mesh.h"
 #include "BasePass.h"
 
 struct OutlinePassInput {

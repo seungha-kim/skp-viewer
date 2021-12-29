@@ -1,5 +1,5 @@
 #include "Renderer.h"
-#include "../checkError.h"
+#include "checkError.h"
 
 Renderer::Renderer(const SurfaceInfo& surfaceInfo)
     : m_sunlightPass(surfaceInfo)

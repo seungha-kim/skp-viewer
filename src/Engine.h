@@ -2,10 +2,10 @@
 
 #include "export.h"
 #include "PlaybackState.h"
-#include "SceneManager.h"
+#include "scene/SceneManager.h"
 #include "../dev-shell/InputController.h"
-#include "SurfaceInfo.h"
-#include "graphics/Material.h"
+#include "render/SurfaceInfo.h"
+#include "model/Material.h"
 #include "render/Renderer.h"
 
 class DLL_EXPORT Engine {

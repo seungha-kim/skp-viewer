@@ -1,6 +1,6 @@
 #include "GaussianBlurPass.h"
-#include "../OffscreenRenderTarget.h"
-#include "../TextureRenderer.h"
+#include "OffscreenRenderTarget.h"
+#include "TextureRenderer.h"
 
 class GaussianBlurPassPimpl {
     friend class GaussianBlurPass;

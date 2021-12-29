@@ -80,41 +80,40 @@ add_compile_definitions(GLFW_INCLUDE_NONE)
 # Target - Renderer
 add_library(renderer
         STATIC # TODO: SHARED 로 하니까 윈도에서 에러 - "Windows fatal exception: access violation"
-        src/checkError.cpp
-        src/checkError.h
-        src/Shader.cpp
-        src/Shader.h
+        src/render/checkError.cpp
+        src/render/checkError.h
+        src/render/Shader.cpp
+        src/render/Shader.h
         src/lib.cpp
-        src/CameraState.h
+        src/scene/CameraState.h
         src/PlaybackState.h
-        src/SceneManager.cpp
-        src/SceneManager.h
+        src/scene/SceneManager.cpp
+        src/scene/SceneManager.h
         src/ContinuousRenderSession.h
-        src/graphics/Mesh.cpp
-        src/graphics/Mesh.h
-        src/graphics/Vertex.cpp
-        src/graphics/Vertex.h
-        src/graphics/Material.h
-        src/graphics/DirectionalLight.cpp
-        src/graphics/DirectionalLight.h
-        src/Scene.cpp src/Scene.h
-        src/SurfaceInfo.h
-        src/Program.h
+        src/model/Mesh.cpp
+        src/model/Mesh.h
+        src/model/Vertex.cpp
+        src/model/Vertex.h
+        src/model/Material.h
+        src/scene/DirectionalLight.cpp
+        src/scene/DirectionalLight.h
+        src/scene/Scene.cpp src/scene/Scene.h
+        src/render/SurfaceInfo.h
         src/render/Renderer.cpp
         src/render/Renderer.h
         src/render/SunlightPass.cpp
         src/render/SunlightPass.h
         src/render/MainPass.cpp
         src/render/MainPass.h
-        src/RenderContext.h
-        src/DepthTexture.cpp
-        src/DepthTexture.h
-        src/ColorTexture.cpp
-        src/ColorTexture.h
-        src/OffscreenRenderTarget.cpp
-        src/OffscreenRenderTarget.h
-        src/TextureRenderer.cpp
-        src/TextureRenderer.h
+        src/render/RenderContext.h
+        src/render/DepthTexture.cpp
+        src/render/DepthTexture.h
+        src/render/ColorTexture.cpp
+        src/render/ColorTexture.h
+        src/render/OffscreenRenderTarget.cpp
+        src/render/OffscreenRenderTarget.h
+        src/render/TextureRenderer.cpp
+        src/render/TextureRenderer.h
         src/render/ColorBalancePass.cpp
         src/render/ColorBalancePass.h
         src/render/GaussianBlurPass.cpp
@@ -150,7 +149,3 @@ target_link_libraries(binding_test
 # Resources
 set(RESOURCES_SOURCE "${CMAKE_CURRENT_LIST_DIR}/resources")
 set(RESOURCES_DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/resources")
-
-# Assimp Test
-add_executable(assimp_test src/assimp_test.cpp)
-target_link_libraries(assimp_test assimp)

@@ -1,7 +1,7 @@
-#include "../Shader.h"
+#include "Shader.h"
 #include "ToneMapPass.h"
-#include "../OffscreenRenderTarget.h"
-#include "../TextureRenderer.h"
+#include "OffscreenRenderTarget.h"
+#include "TextureRenderer.h"
 
 class ToneMapPassPimpl {
     friend class ToneMapPass;

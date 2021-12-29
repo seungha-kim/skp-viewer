@@ -1,10 +1,10 @@
 #pragma once
 #include <memory>
-#include "../RenderContext.h"
-#include "../graphics/Mesh.h"
-#include "../SurfaceInfo.h"
-#include "../ColorTexture.h"
-#include "../DepthTexture.h"
+#include "RenderContext.h"
+#include "../model/Mesh.h"
+#include "SurfaceInfo.h"
+#include "ColorTexture.h"
+#include "DepthTexture.h"
 #include "BasePass.h"
 
 struct MainPassInput {
