@@ -1,7 +1,7 @@
-#include "../../Shader.h"
+#include "../Shader.h"
 #include "ColorBalancePass.h"
-#include "../../OffscreenRenderTarget.h"
-#include "../../TextureRenderer.h"
+#include "../OffscreenRenderTarget.h"
+#include "../TextureRenderer.h"
 
 class ColorBalancePassPimpl {
     friend class ColorBalancePass;

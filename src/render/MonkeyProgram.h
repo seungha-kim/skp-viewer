@@ -1,11 +1,11 @@
 #pragma once
 #include <glad/glad.h>
-#include "../../Program.h"
+#include "../Program.h"
 #include <memory>
-#include "../../SurfaceInfo.h"
+#include "../SurfaceInfo.h"
 #include "SunlightPass.h"
 #include "MainPass.h"
-#include "../../TextureRenderer.h"
+#include "../TextureRenderer.h"
 #include "ColorBalancePass.h"
 #include "GaussianBlurPass.h"
 #include "AdditiveBlendPass.h"
@@ -18,7 +18,6 @@ public:
     explicit MonkeyProgram(const SurfaceInfo& surfaceInfo);
     ~MonkeyProgram() override = default;
 
-private:
     void render(RenderContext &ctx) override;
     void processGui(GuiContext &ctx) override;
     void resizeResources(const SurfaceInfo &surfaceInfo) override;

@@ -1,7 +1,7 @@
 #include "MonkeyProgram.h"
 #include <imgui.h>
-#include "../../../dev-shell/guiCommon.h"
-#include "../../checkError.h"
+#include "../../dev-shell/guiCommon.h"
+#include "../checkError.h"
 
 MonkeyProgram::MonkeyProgram(const SurfaceInfo& surfaceInfo)
     : m_sunlightPass(surfaceInfo)

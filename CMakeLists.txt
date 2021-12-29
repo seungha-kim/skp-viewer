@@ -90,13 +90,9 @@ add_library(renderer
         src/lib.cpp
         src/CameraState.h
         src/PlaybackState.h
-        src/TestProgram.cpp
-        src/TestProgram.h
         src/SceneManager.cpp
         src/SceneManager.h
         src/ContinuousRenderSession.h
-        src/ProgramSelector.cpp
-        src/ProgramSelector.h
         src/graphics/Mesh.cpp
         src/graphics/Mesh.h
         src/graphics/Vertex.cpp
@@ -107,12 +103,12 @@ add_library(renderer
         src/Scene.cpp src/Scene.h
         src/SurfaceInfo.h
         src/Program.h
-        src/programs/monkey/MonkeyProgram.cpp
-        src/programs/monkey/MonkeyProgram.h
-        src/programs/monkey/SunlightPass.cpp
-        src/programs/monkey/SunlightPass.h
-        src/programs/monkey/MainPass.cpp
-        src/programs/monkey/MainPass.h
+        src/render/MonkeyProgram.cpp
+        src/render/MonkeyProgram.h
+        src/render/SunlightPass.cpp
+        src/render/SunlightPass.h
+        src/render/MainPass.cpp
+        src/render/MainPass.h
         src/RenderContext.h
         src/DepthTexture.cpp
         src/DepthTexture.h
@@ -122,18 +118,18 @@ add_library(renderer
         src/OffscreenRenderTarget.h
         src/TextureRenderer.cpp
         src/TextureRenderer.h
-        src/programs/monkey/ColorBalancePass.cpp
-        src/programs/monkey/ColorBalancePass.h
-        src/programs/monkey/GaussianBlurPass.cpp
-        src/programs/monkey/GaussianBlurPass.h
-        src/programs/monkey/AdditiveBlendPass.cpp
-        src/programs/monkey/AdditiveBlendPass.h
-        src/programs/monkey/BrightFilterPass.cpp
-        src/programs/monkey/BrightFilterPass.h
-        src/programs/monkey/ToneMapPass.cpp
-        src/programs/monkey/ToneMapPass.h
-        src/programs/monkey/OutlinePass.cpp
-        src/programs/monkey/OutlinePass.h
+        src/render/ColorBalancePass.cpp
+        src/render/ColorBalancePass.h
+        src/render/GaussianBlurPass.cpp
+        src/render/GaussianBlurPass.h
+        src/render/AdditiveBlendPass.cpp
+        src/render/AdditiveBlendPass.h
+        src/render/BrightFilterPass.cpp
+        src/render/BrightFilterPass.h
+        src/render/ToneMapPass.cpp
+        src/render/ToneMapPass.h
+        src/render/OutlinePass.cpp
+        src/render/OutlinePass.h
         src/Engine.cpp
         src/Engine.h
         src/export.h

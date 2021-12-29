@@ -15,7 +15,7 @@ Engine::Engine(SurfaceInfo surfaceInfo)
         .shininess = 32.0f,
     }
     , m_sceneManager(surfaceInfo)
-    , m_selector(surfaceInfo) {
+    , m_renderer(surfaceInfo) {
     glEnable(GL_DEPTH_TEST);
 }
 
@@ -48,12 +48,11 @@ void Engine::render(float playbackValue) {
             .globalMaterial = m_globalMaterial,
             .surfaceInfo = m_surfaceInfo,
     };
-    m_selector.currentProgram().render(renderCtx);
+    m_renderer.render(renderCtx);
 }
 
 void Engine::renderGui() {
     GuiContext guiCtx {
-            .programSelector = m_selector,
             .sceneManager = sceneManagerMut(),
             .playbackState = m_playbackState,
             .inputController = m_inputController,
@@ -61,7 +60,7 @@ void Engine::renderGui() {
             .surfaceInfo = surfaceInfo(),
     };
 #ifdef ENABLE_IMGUI
-    m_selector.currentProgram().processGui(guiCtx);
+    m_renderer.processGui(guiCtx);
     m_gui.process(guiCtx);
 #endif
 }
@@ -82,7 +81,7 @@ void Engine::updateTextures() {
     auto& cam = m_sceneManager.activeSceneMut().cameraStateMut();
     cam.aspectWidth = (float)m_surfaceInfo.logicalWidth;
     cam.aspectHeight = (float)m_surfaceInfo.logicalHeight;
-    m_selector.currentProgram().resizeResources(m_surfaceInfo);
+    m_renderer.resizeResources(m_surfaceInfo);
 }
 
 void Engine::onMouseMove(float mousePosX, float mousePosY) {

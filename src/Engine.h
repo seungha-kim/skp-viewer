@@ -5,9 +5,9 @@
 #include "SceneManager.h"
 #include "../dev-shell/InputController.h"
 #include "SurfaceInfo.h"
-#include "ProgramSelector.h"
 #include "graphics/Material.h"
 #include "../dev-shell/Gui.h"
+#include "render/MonkeyProgram.h"
 
 class DLL_EXPORT Engine {
 public:
@@ -44,8 +44,7 @@ private:
 
     PlaybackState m_playbackState;
     SurfaceInfo m_surfaceInfo;
-
-    ProgramSelector m_selector;
+    MonkeyProgram m_renderer;
 
     Material m_globalMaterial;
 

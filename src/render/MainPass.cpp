@@ -1,7 +1,7 @@
-#include "../../Shader.h"
+#include "../Shader.h"
 #include "MainPass.h"
-#include "../../OffscreenRenderTarget.h"
-#include "../../checkError.h"
+#include "../OffscreenRenderTarget.h"
+#include "../checkError.h"
 
 class MainPassPimpl {
     friend class MainPass;

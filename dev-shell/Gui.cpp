@@ -25,16 +25,10 @@ Gui::~Gui() {
 void Gui::processMainMenuBar(GuiContext &ctx) {
     if (ImGui::BeginMainMenuBar())
     {
-        if (ImGui::BeginMenu("Program"))
+        if (ImGui::BeginMenu("File"))
         {
-            if (ImGui::MenuItem("Test")) {
-                ctx.programSelector.changeProgram(ctx.surfaceInfo, ProgramKind::Test);
-            }
-            if (ImGui::MenuItem("Test2")) {
-                ctx.programSelector.changeProgram(ctx.surfaceInfo, ProgramKind::Test2);
-            }
-            if (ImGui::MenuItem("Monkey")) {
-                ctx.programSelector.changeProgram(ctx.surfaceInfo, ProgramKind::Monkey);
+            if (ImGui::MenuItem("Todo")) {
+                printf("TODO\n");
             }
             ImGui::EndMenu();
         }

@@ -1,7 +1,7 @@
 #include "AdditiveBlendPass.h"
-#include "../../Shader.h"
-#include "../../OffscreenRenderTarget.h"
-#include "../../TextureRenderer.h"
+#include "../Shader.h"
+#include "../OffscreenRenderTarget.h"
+#include "../TextureRenderer.h"
 
 static const char* kindToShader(BlendPassKind kind) {
     switch (kind) {

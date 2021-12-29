@@ -1,8 +1,8 @@
 #pragma once
 #include <memory>
-#include "../../ColorTexture.h"
-#include "../../SurfaceInfo.h"
-#include "../../RenderContext.h"
+#include "../ColorTexture.h"
+#include "../SurfaceInfo.h"
+#include "../RenderContext.h"
 #include "BasePass.h"
 
 struct GaussianBlurPassInput {
