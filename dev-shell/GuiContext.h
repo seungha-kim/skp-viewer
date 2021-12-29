@@ -5,6 +5,7 @@
 #include "InputController.h"
 #include "../src/graphics/Material.h"
 #include "../src/SurfaceInfo.h"
+#include "../src/render/Renderer.h"
 
 struct GuiContext {
     SceneManager& sceneManager;
@@ -12,4 +13,5 @@ struct GuiContext {
     InputController& inputController;
     Material& globalMaterial;
     const SurfaceInfo& surfaceInfo;
+    RenderOptions& renderOptions;
 };

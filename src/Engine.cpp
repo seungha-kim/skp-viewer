@@ -5,9 +5,6 @@
 
 Engine::Engine(SurfaceInfo surfaceInfo)
     : m_surfaceInfo(surfaceInfo)
-#ifdef ENABLE_IMGUI
-    , m_gui()
-#endif
     , m_globalMaterial{
         .ambient = glm::vec3(0.1f, 0.1f, 0.1f),
         .diffuse = glm::vec3(0.3f, 0.6f, 0.2f),
@@ -49,20 +46,6 @@ void Engine::render(float playbackValue) {
             .surfaceInfo = m_surfaceInfo,
     };
     m_renderer.render(renderCtx);
-}
-
-void Engine::renderGui() {
-    GuiContext guiCtx {
-            .sceneManager = sceneManagerMut(),
-            .playbackState = m_playbackState,
-            .inputController = m_inputController,
-            .globalMaterial = m_globalMaterial,
-            .surfaceInfo = surfaceInfo(),
-    };
-#ifdef ENABLE_IMGUI
-    m_renderer.processGui(guiCtx);
-    m_gui.process(guiCtx);
-#endif
 }
 
 void Engine::setRandomGlobalDiffuse() {
@@ -134,4 +117,20 @@ void Engine::updateTime(float time) {
 
 bool Engine::shouldContinuouslyRender() const {
     return m_playbackState.continuousRenderSession.has_value();
+}
+
+InputController& Engine::inputControllerMut() {
+    return m_inputController;
+}
+
+Material& Engine::globalMaterialMut() {
+    return m_globalMaterial;
+}
+
+PlaybackState& Engine::playbackStateMut() {
+    return m_playbackState;
+}
+
+Renderer& Engine::rendererMut() {
+    return m_renderer;
 }

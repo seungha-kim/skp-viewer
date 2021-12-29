@@ -16,6 +16,7 @@ private:
 
     void processMainMenuBar(GuiContext& ctx);
     void processRenderInfo(GuiContext& ctx);
+    void processRenderOptions(GuiContext &ctx);
     void processSceneControl(GuiContext& ctx) const;
     static float deltasHistogram(void* data, int i);
 };

@@ -16,6 +16,7 @@ void Gui::process(GuiContext& ctx) {
     processRenderInfo(ctx);
     processSceneControl(ctx);
     processMainMenuBar(ctx);
+    processRenderOptions(ctx);
 }
 
 Gui::~Gui() {
@@ -109,3 +110,32 @@ float Gui::deltasHistogram(void *data, int i) {
     return that->m_deltas[(that->m_deltasPivot + i) % 100];
 }
 
+void Gui::processRenderOptions(GuiContext &ctx) {
+    auto& renderOptions = ctx.renderOptions;
+    auto assistant = 0; // TODO: m_sunlightPass.depthTexture();
+    ImGui::Begin("Assistant View", nullptr, windowFlag(ctx));
+    ImGui::Image((void*)(intptr_t)assistant, ImVec2(512,512), ImVec2(0, 1), ImVec2(1, 0));
+    ImGui::End();
+
+    ImGui::Begin("Program Setting", nullptr, windowFlag(ctx));
+    ImGui::SliderFloat("Bright Filter Threshold", &renderOptions.brightFilterThreshold, 0.0f, 1.0f);
+    ImGui::Checkbox("Gaussian Blur", &renderOptions.enableGaussianBlur);
+    if (renderOptions.enableGaussianBlur) {
+        ImGui::SliderInt("Iteration", &renderOptions.gaussianBlurIteration, 1, 50);
+    }
+    ImGui::Checkbox("Tone Mapping", &renderOptions.toneMapEnabled);
+    if (renderOptions.toneMapEnabled) {
+        ImGui::SliderFloat("Exposure", &renderOptions.toneMapExposure, 0.1f, 5.0f);
+        ImGui::SliderFloat("Gamma", &renderOptions.toneMapGamma, 0.1f, 5.0f);
+    }
+    ImGui::Text("Color Balance");
+    ImGui::SliderFloat("Red", &renderOptions.colorBalance.r, 0.1f, 10.0f);
+    ImGui::SliderFloat("Green", &renderOptions.colorBalance.g, 0.1f, 10.0f);
+    ImGui::SliderFloat("Blue", &renderOptions.colorBalance.b, 0.1f, 10.0f);
+
+    ImGui::Text("Outline");
+    ImGui::SliderFloat("Width", &renderOptions.outlineWidth, 0.0f, 10.0f);
+    ImGui::SliderFloat("DepthThreshold", &renderOptions.outlineDepthThreshold, 0.0f, 100.0f);
+
+    ImGui::End();
+}

@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "../src/Engine.h"
+#include "Gui.h"
 #include <memory>
 
 class Window {
@@ -35,5 +36,6 @@ public:
 private:
     GLFWwindow* m_glfwWindow = nullptr;
     std::unique_ptr<Engine> m_engine;
+    Gui m_gui;
     KeyCommandSet m_keyCommandSet;
 };

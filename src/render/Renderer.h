@@ -13,14 +13,30 @@
 #include "ToneMapPass.h"
 #include "OutlinePass.h"
 
+struct RenderOptions {
+    glm::vec3 colorBalance{1.0};
+    bool enableGaussianBlur{false};
+
+    float toneMapExposure = 2.0f;
+    float toneMapGamma = 0.7f;
+    bool toneMapEnabled = true;
+
+    int gaussianBlurIteration = 5;
+    float brightFilterThreshold = 0.7f;
+
+    float outlineWidth = 1.0f;
+    float outlineDepthThreshold = 20.0f;
+};
+
 class Renderer final: public Program {
 public:
     explicit Renderer(const SurfaceInfo& surfaceInfo);
     ~Renderer() override = default;
 
     void render(RenderContext &ctx) override;
-    void processGui(GuiContext &ctx) override;
     void resizeResources(const SurfaceInfo &surfaceInfo) override;
+
+    RenderOptions& renderOptionsMut();
 
 private:
     SunlightPass m_sunlightPass;
@@ -34,17 +50,5 @@ private:
     AdditiveBlendPass m_outlineMultiplicativeBlendPass;
     std::vector<std::unique_ptr<Mesh>> m_meshes;
     TextureRenderer m_textureRenderer;
-
-    glm::vec3 m_colorBalance{1.0};
-    bool m_enableGaussianBlur{false};
-
-    float m_toneMapExposure = 2.0f;
-    float m_toneMapGamma = 0.7f;
-    bool m_toneMapEnabled = true;
-
-    int m_gaussianBlurIteration = 5;
-    float m_brightFilterThreshold = 0.7f;
-
-    float m_outlineWidth = 1.0f;
-    float m_outlineDepthThreshold = 20.0f;
+    RenderOptions m_renderOptions;
 };

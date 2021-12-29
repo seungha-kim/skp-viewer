@@ -6,7 +6,6 @@
 #include "../dev-shell/InputController.h"
 #include "SurfaceInfo.h"
 #include "graphics/Material.h"
-#include "../dev-shell/Gui.h"
 #include "render/Renderer.h"
 
 class DLL_EXPORT Engine {
@@ -14,16 +13,20 @@ public:
     explicit Engine(SurfaceInfo surfaceInfo);
 
     [[nodiscard]] const PlaybackState& playbackState() const;
+    PlaybackState& playbackStateMut();
 
     [[nodiscard]] const SceneManager& sceneManager() const;
     SceneManager& sceneManagerMut();
 
     [[nodiscard]] const SurfaceInfo& surfaceInfo() const;
+    InputController& inputControllerMut();
+    Material& globalMaterialMut();
+
+    Renderer& rendererMut();
 
     void setRandomGlobalDiffuse();
 
     void render(float playbackValue);
-    void renderGui();
     void resize(const SurfaceInfo& surfaceInfo);
 
     void onMouseMove(float mousePosX, float mousePosY);
@@ -60,9 +63,4 @@ private:
     bool m_sizeUpdated = false;
 
     void updateTextures();
-
-#ifdef ENABLE_IMGUI
-    Gui m_gui;
-#endif
-
 };

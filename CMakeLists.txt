@@ -4,9 +4,6 @@ project(learn_opengl)
 
 set(CMAKE_CXX_STANDARD 20)
 add_compile_definitions(GL_SILENCE_DEPRECATION)
-if (ENABLE_IMGUI)
-    add_compile_definitions(ENABLE_IMGUI)
-endif()
 
 # Extern - pybind11
 add_subdirectory(extern/pybind11)

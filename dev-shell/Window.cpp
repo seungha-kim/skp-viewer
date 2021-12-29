@@ -190,11 +190,18 @@ void Window::mainLoop() {
         updateCamera();
         m_engine->render(playbackValue());
 
-#ifdef ENABLE_IMGUI
         beginGui();
-        m_engine->renderGui();
+        GuiContext guiCtx {
+                .sceneManager = m_engine->sceneManagerMut(),
+                .playbackState = m_engine->playbackStateMut(),
+                .inputController = m_engine->inputControllerMut(),
+                .globalMaterial = m_engine->globalMaterialMut(),
+                .surfaceInfo = m_engine->surfaceInfo(),
+                .renderOptions = m_engine->rendererMut().renderOptionsMut(),
+        };
+        m_gui.process(guiCtx);
         endGui();
-#endif
+
         swapBuffers();
         waitEvents();
     }

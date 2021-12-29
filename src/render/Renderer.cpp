@@ -1,6 +1,4 @@
 #include "Renderer.h"
-#include <imgui.h>
-#include "../../dev-shell/guiCommon.h"
 #include "../checkError.h"
 
 Renderer::Renderer(const SurfaceInfo& surfaceInfo)
@@ -45,14 +43,14 @@ void Renderer::render(RenderContext &ctx) {
 
     const BrightFilterPassInput brightFilterPassInput {
         .colorTexture = mainPassOutput.colorTexture,
-        .threshold = m_brightFilterThreshold,
+        .threshold = m_renderOptions.brightFilterThreshold,
     };
     const auto brightFilterPassOutput = m_brightFilterPass.render(ctx, brightFilterPassInput);
 
-    m_gaussianBlurPass.setEnabled(m_enableGaussianBlur);
+    m_gaussianBlurPass.setEnabled(m_renderOptions.enableGaussianBlur);
     const GaussianBlurPassInput gaussianBlurPassInput {
             .colorTexture = brightFilterPassOutput.brightColorTexture,
-            .iteration = m_gaussianBlurIteration,
+            .iteration = m_renderOptions.gaussianBlurIteration,
     };
     const auto gaussianBlurPassOutput = m_gaussianBlurPass.render(ctx, gaussianBlurPassInput);
 
@@ -64,23 +62,23 @@ void Renderer::render(RenderContext &ctx) {
 
     const ToneMapPassInput toneMapPassInput {
         .colorTexture = additivePassOutput.colorTexture,
-        .exposure = m_toneMapExposure,
-        .gamma = m_toneMapGamma,
-        .enabled = m_toneMapEnabled,
+        .exposure = m_renderOptions.toneMapExposure,
+        .gamma = m_renderOptions.toneMapGamma,
+        .enabled = m_renderOptions.toneMapEnabled,
     };
     const auto toneMapPassOutput = m_toneMapPass.render(ctx, toneMapPassInput);
 
     const ColorBalancePassInput colorBalancePassInput {
             .colorTexture = toneMapPassOutput.colorTexture,
     };
-    m_colorBalancePass.setColorBalance(m_colorBalance);
+    m_colorBalancePass.setColorBalance(m_renderOptions.colorBalance);
     const auto colorBalancePassOutput = m_colorBalancePass.render(ctx, colorBalancePassInput);
 
     const OutlinePassInput outlinePassInput {
         .meshes = m_meshes,
         .depthTexture = mainPassOutput.depthTexture,
-        .outlineWidth = m_outlineWidth,
-        .outlineDepthThreshold = m_outlineDepthThreshold,
+        .outlineWidth = m_renderOptions.outlineWidth,
+        .outlineDepthThreshold = m_renderOptions.outlineDepthThreshold,
     };
     const auto outlinePassOutput = m_outlinePass.render(ctx, outlinePassInput);
 
@@ -94,35 +92,6 @@ void Renderer::render(RenderContext &ctx) {
     m_textureRenderer.render(ctx);
 }
 
-void Renderer::processGui(GuiContext &ctx) {
-    auto assistant = m_sunlightPass.depthTexture();
-    ImGui::Begin("Assistant View", nullptr, windowFlag(ctx));
-    ImGui::Image((void*)(intptr_t)assistant, ImVec2(512,512), ImVec2(0, 1), ImVec2(1, 0));
-    ImGui::End();
-
-    ImGui::Begin("Program Setting", nullptr, windowFlag(ctx));
-    ImGui::SliderFloat("Bright Filter Threshold", &m_brightFilterThreshold, 0.0f, 1.0f);
-    ImGui::Checkbox("Gaussian Blur", &m_enableGaussianBlur);
-    if (m_enableGaussianBlur) {
-        ImGui::SliderInt("Iteration", &m_gaussianBlurIteration, 1, 50);
-    }
-    ImGui::Checkbox("Tone Mapping", &m_toneMapEnabled);
-    if (m_toneMapEnabled) {
-        ImGui::SliderFloat("Exposure", &m_toneMapExposure, 0.1f, 5.0f);
-        ImGui::SliderFloat("Gamma", &m_toneMapGamma, 0.1f, 5.0f);
-    }
-    ImGui::Text("Color Balance");
-    ImGui::SliderFloat("Red", &m_colorBalance.r, 0.1f, 10.0f);
-    ImGui::SliderFloat("Green", &m_colorBalance.g, 0.1f, 10.0f);
-    ImGui::SliderFloat("Blue", &m_colorBalance.b, 0.1f, 10.0f);
-
-    ImGui::Text("Outline");
-    ImGui::SliderFloat("Width", &m_outlineWidth, 0.0f, 10.0f);
-    ImGui::SliderFloat("DepthThreshold", &m_outlineDepthThreshold, 0.0f, 100.0f);
-
-    ImGui::End();
-}
-
 void Renderer::resizeResources(const SurfaceInfo &surfaceInfo) {
     m_sunlightPass.resizeResources(surfaceInfo);
     m_mainPass.resizeResources(surfaceInfo);
@@ -133,4 +102,8 @@ void Renderer::resizeResources(const SurfaceInfo &surfaceInfo) {
     m_toneMapPass.resizeResources(surfaceInfo);
     m_outlinePass.resizeResources(surfaceInfo);
     m_outlineMultiplicativeBlendPass.resizeResources(surfaceInfo);
+}
+
+RenderOptions &Renderer::renderOptionsMut() {
+    return m_renderOptions;
 }
