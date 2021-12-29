@@ -1,9 +1,9 @@
-#include "MonkeyProgram.h"
+#include "Renderer.h"
 #include <imgui.h>
 #include "../../dev-shell/guiCommon.h"
 #include "../checkError.h"
 
-MonkeyProgram::MonkeyProgram(const SurfaceInfo& surfaceInfo)
+Renderer::Renderer(const SurfaceInfo& surfaceInfo)
     : m_sunlightPass(surfaceInfo)
     , m_mainPass(surfaceInfo)
     , m_gaussianBlurPass(surfaceInfo)
@@ -27,7 +27,7 @@ MonkeyProgram::MonkeyProgram(const SurfaceInfo& surfaceInfo)
     }
 }
 
-void MonkeyProgram::render(RenderContext &ctx) {
+void Renderer::render(RenderContext &ctx) {
     glClearColor(0.2f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -94,7 +94,7 @@ void MonkeyProgram::render(RenderContext &ctx) {
     m_textureRenderer.render(ctx);
 }
 
-void MonkeyProgram::processGui(GuiContext &ctx) {
+void Renderer::processGui(GuiContext &ctx) {
     auto assistant = m_sunlightPass.depthTexture();
     ImGui::Begin("Assistant View", nullptr, windowFlag(ctx));
     ImGui::Image((void*)(intptr_t)assistant, ImVec2(512,512), ImVec2(0, 1), ImVec2(1, 0));
@@ -123,7 +123,7 @@ void MonkeyProgram::processGui(GuiContext &ctx) {
     ImGui::End();
 }
 
-void MonkeyProgram::resizeResources(const SurfaceInfo &surfaceInfo) {
+void Renderer::resizeResources(const SurfaceInfo &surfaceInfo) {
     m_sunlightPass.resizeResources(surfaceInfo);
     m_mainPass.resizeResources(surfaceInfo);
     m_colorBalancePass.resizeResources(surfaceInfo);

@@ -103,8 +103,8 @@ add_library(renderer
         src/Scene.cpp src/Scene.h
         src/SurfaceInfo.h
         src/Program.h
-        src/render/MonkeyProgram.cpp
-        src/render/MonkeyProgram.h
+        src/render/Renderer.cpp
+        src/render/Renderer.h
         src/render/SunlightPass.cpp
         src/render/SunlightPass.h
         src/render/MainPass.cpp

@@ -15,7 +15,7 @@ class SunlightPassPimpl {
 public:
     ~SunlightPassPimpl() = default;
     explicit SunlightPassPimpl(const SurfaceInfo& surfaceInfo)
-        : m_subShader(std::make_unique<Shader>("monkey_sub.vert", "monkey_sub.frag")) {
+        : m_subShader(std::make_unique<Shader>("sub.vert", "sub.frag")) {
         resizeResources(surfaceInfo);
     }
 

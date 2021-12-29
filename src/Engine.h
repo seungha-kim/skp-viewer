@@ -7,7 +7,7 @@
 #include "SurfaceInfo.h"
 #include "graphics/Material.h"
 #include "../dev-shell/Gui.h"
-#include "render/MonkeyProgram.h"
+#include "render/Renderer.h"
 
 class DLL_EXPORT Engine {
 public:
@@ -44,7 +44,7 @@ private:
 
     PlaybackState m_playbackState;
     SurfaceInfo m_surfaceInfo;
-    MonkeyProgram m_renderer;
+    Renderer m_renderer;
 
     Material m_globalMaterial;
 

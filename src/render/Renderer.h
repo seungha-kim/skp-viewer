@@ -13,10 +13,10 @@
 #include "ToneMapPass.h"
 #include "OutlinePass.h"
 
-class MonkeyProgram final: public Program {
+class Renderer final: public Program {
 public:
-    explicit MonkeyProgram(const SurfaceInfo& surfaceInfo);
-    ~MonkeyProgram() override = default;
+    explicit Renderer(const SurfaceInfo& surfaceInfo);
+    ~Renderer() override = default;
 
     void render(RenderContext &ctx) override;
     void processGui(GuiContext &ctx) override;

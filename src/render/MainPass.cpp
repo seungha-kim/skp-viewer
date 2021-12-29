@@ -12,7 +12,7 @@ class MainPassPimpl {
 
 public:
     explicit MainPassPimpl(const SurfaceInfo& surfaceInfo)
-        : m_mainShader(std::make_unique<Shader>("monkey.vert", "monkey.frag")) {
+        : m_mainShader(std::make_unique<Shader>("main.vert", "main.frag")) {
         resizeResources(surfaceInfo);
     }
 
