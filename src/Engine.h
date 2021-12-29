@@ -3,11 +3,11 @@
 #include "export.h"
 #include "PlaybackState.h"
 #include "SceneManager.h"
-#include "InputController.h"
+#include "../dev-shell/InputController.h"
 #include "SurfaceInfo.h"
 #include "ProgramSelector.h"
 #include "graphics/Material.h"
-#include "Gui.h"
+#include "../dev-shell/Gui.h"
 
 class DLL_EXPORT Engine {
 public:

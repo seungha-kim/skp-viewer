@@ -1,6 +1,6 @@
 #include "MonkeyProgram.h"
 #include <imgui.h>
-#include "../../guiCommon.h"
+#include "../../../dev-shell/guiCommon.h"
 #include "../../checkError.h"
 
 MonkeyProgram::MonkeyProgram(const SurfaceInfo& surfaceInfo)

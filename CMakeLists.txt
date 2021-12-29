@@ -88,26 +88,15 @@ add_library(renderer
         src/Shader.cpp
         src/Shader.h
         src/lib.cpp
-        src/Gui.cpp
-        src/Gui.h
         src/CameraState.h
         src/PlaybackState.h
         src/TestProgram.cpp
         src/TestProgram.h
         src/SceneManager.cpp
         src/SceneManager.h
-        src/InputController.cpp
-        src/InputController.h
-        src/InputContext.h
-        src/InputContext.cpp
-        src/ObjectEditContext.cpp
-        src/ObjectEditContext.h
-        src/FlyCameraContext.cpp
-        src/FlyCameraContext.h
         src/ContinuousRenderSession.h
         src/ProgramSelector.cpp
         src/ProgramSelector.h
-        src/GuiContext.h
         src/graphics/Mesh.cpp
         src/graphics/Mesh.h
         src/graphics/Vertex.cpp
@@ -120,8 +109,6 @@ add_library(renderer
         src/Program.h
         src/programs/monkey/MonkeyProgram.cpp
         src/programs/monkey/MonkeyProgram.h
-        src/guiCommon.h
-        src/guiCommon.cpp
         src/programs/monkey/SunlightPass.cpp
         src/programs/monkey/SunlightPass.h
         src/programs/monkey/MainPass.cpp
@@ -150,9 +137,6 @@ add_library(renderer
         src/Engine.cpp
         src/Engine.h
         src/export.h
-        src/KeyCommandSet.cpp
-        src/KeyCommandSet.h
-        src/KeyCommand.h
         )
 
 target_link_libraries(renderer

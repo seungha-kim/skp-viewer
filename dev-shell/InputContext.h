@@ -2,8 +2,8 @@
 
 #include <variant>
 #include <optional>
-#include "SceneManager.h"
-#include "PlaybackState.h"
+#include "../src/SceneManager.h"
+#include "../src/PlaybackState.h"
 #include "KeyCommand.h"
 #include "KeyCommandSet.h"
 #include <bitset>

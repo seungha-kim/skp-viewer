@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SceneManager.h"
+#include "../src/SceneManager.h"
 #include "InputContext.h"
 #include "FlyCameraContext.h"
 #include "ObjectEditContext.h"
