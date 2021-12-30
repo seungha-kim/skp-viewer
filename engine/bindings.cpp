@@ -2,7 +2,7 @@
 #include "Engine.h"
 #include "render/checkError.h"
 #include <glad/glad.h>
-#include "../dev-shell/KeyCommandSet.h"
+#include "../dev-shell/input/KeyCommandSet.h"
 #include "scene/CameraState.h"
 
 namespace py = pybind11;

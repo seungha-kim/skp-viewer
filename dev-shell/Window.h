@@ -4,7 +4,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "../engine/Engine.h"
-#include "Gui.h"
+#include "gui/Gui.h"
 #include <memory>
 
 class Window {

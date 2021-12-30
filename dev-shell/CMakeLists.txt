@@ -1,23 +1,23 @@
 # Target - Main
 add_executable(dev-shell
-        KeyCommandSet.cpp
-        KeyCommandSet.h
-        KeyCommand.h
-        InputController.cpp
-        InputController.h
-        InputContext.h
-        InputContext.cpp
+        input/KeyCommandSet.cpp
+        input/KeyCommandSet.h
+        input/KeyCommand.h
+        input/InputController.cpp
+        input/InputController.h
+        input/InputContext.h
+        input/InputContext.cpp
         PlaybackState.h
         ContinuousRenderSession.h
-        FlyCameraContext.cpp
-        FlyCameraContext.h
-        ObjectEditContext.cpp
-        ObjectEditContext.h
-        Gui.cpp
-        Gui.h
-        GuiContext.h
-        guiCommon.h
-        guiCommon.cpp
+        input/FlyCameraContext.cpp
+        input/FlyCameraContext.h
+        input/ObjectEditContext.cpp
+        input/ObjectEditContext.h
+        gui/Gui.cpp
+        gui/Gui.h
+        gui/GuiContext.h
+        gui/guiCommon.h
+        gui/guiCommon.cpp
         Window.cpp
         Window.h
         main.cpp)
