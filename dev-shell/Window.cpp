@@ -124,7 +124,7 @@ void Window::updateCamera() {
     cam.aspectHeight = (float)surfaceInfo.logicalHeight;
 }
 
-void Window::processKeyboardInput() {
+void Window::updateKeyCommandSet() {
     m_keyCommandSet.setPressed(
             KeyCommand::FLY_MODE_TOGGLE,
             glfwGetKey(m_glfwWindow, GLFW_KEY_SPACE) == GLFW_PRESS
@@ -183,7 +183,7 @@ float Window::playbackValue() {
 
 void Window::mainLoop() {
     while (!shouldClose()) {
-        processKeyboardInput();
+        updateKeyCommandSet();
         handleInput();
 
         updateTime();

@@ -23,7 +23,7 @@ public:
     bool shouldClose();
     void updateTime();
     void updateCamera();
-    void processKeyboardInput();
+    void updateKeyCommandSet();
     void swapBuffers();
     void waitEvents();
     float playbackValue();
