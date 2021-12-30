@@ -2,7 +2,6 @@
 #include "Engine.h"
 #include "render/checkError.h"
 #include <glad/glad.h>
-#include "../dev-shell/input/KeyCommandSet.h"
 #include "scene/CameraState.h"
 
 namespace py = pybind11;
@@ -33,28 +32,9 @@ PYBIND11_MODULE(binding_test, m) {
                 return std::make_unique<SurfaceInfo>(value);
             }));
 
-    py::enum_<KeyCommand>(m, "KeyCommand")
-            .value("EXIT", KeyCommand::EXIT)
-            .value("FLY_MODE_TOGGLE", KeyCommand::FLY_MODE_TOGGLE)
-            .value("FLY_MODE_FORWARD", KeyCommand::FLY_MODE_FORWARD)
-            .value("FLY_MODE_BACKWARD", KeyCommand::FLY_MODE_BACKWARD)
-            .value("FLY_MODE_LEFT", KeyCommand::FLY_MODE_LEFT)
-            .value("FLY_MODE_RIGHT", KeyCommand::FLY_MODE_RIGHT)
-            .value("FLY_MODE_UPWARD", KeyCommand::FLY_MODE_UPWARD)
-            .value("FLY_MODE_DOWNWARD", KeyCommand::FLY_MODE_DOWNWARD);
-
-    py::class_<KeyCommandSet>(m, "KeyCommandSet")
-            .def(py::init<>())
-            .def("setPressed", &KeyCommandSet::setPressed)
-            .def("getPressed", &KeyCommandSet::getPressed);
-
     py::class_<Engine>(m, "Engine")
             .def(py::init<SurfaceInfo>())
             .def("render", &Engine::render)
-            .def("handleInput", &Engine::handleInput)
-            .def("updateTime", &Engine::updateTime)
-            .def("onKeyboardStateChange", &Engine::onKeyboardStateChange)
-            .def("shouldContinuouslyRender", &Engine::shouldContinuouslyRender)
             .def("resize", &Engine::resize)
             .def("setRandomGlobalDiffuse", &Engine::setRandomGlobalDiffuse);
 
