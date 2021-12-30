@@ -2,7 +2,7 @@
 
 #include <variant>
 #include <optional>
-#include "../src/scene/SceneManager.h"
+#include "../engine/scene/SceneManager.h"
 #include "PlaybackState.h"
 #include "KeyCommand.h"
 #include "KeyCommandSet.h"

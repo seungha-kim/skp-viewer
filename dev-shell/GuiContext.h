@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../src/scene/SceneManager.h"
+#include "../engine/scene/SceneManager.h"
 #include "PlaybackState.h"
 #include "InputController.h"
-#include "../src/model/Material.h"
-#include "../src/render/SurfaceInfo.h"
-#include "../src/render/Renderer.h"
+#include "../engine/model/Material.h"
+#include "../engine/render/SurfaceInfo.h"
+#include "../engine/render/Renderer.h"
 
 struct GuiContext {
     SceneManager& sceneManager;

@@ -77,67 +77,12 @@ target_include_directories(python INTERFACE ${PYTHON_INCLUDE_DIRS})
 # Settings after building dependencies
 add_compile_definitions(GLFW_INCLUDE_NONE)
 
-# Target - Renderer
-add_library(renderer
-        STATIC # TODO: SHARED 로 하니까 윈도에서 에러 - "Windows fatal exception: access violation"
-        src/render/checkError.cpp
-        src/render/checkError.h
-        src/render/Shader.cpp
-        src/render/Shader.h
-        src/lib.cpp
-        src/scene/CameraState.h
-        src/scene/SceneManager.cpp
-        src/scene/SceneManager.h
-        src/model/Mesh.cpp
-        src/model/Mesh.h
-        src/model/Vertex.cpp
-        src/model/Vertex.h
-        src/model/Material.h
-        src/scene/DirectionalLight.cpp
-        src/scene/DirectionalLight.h
-        src/scene/Scene.cpp src/scene/Scene.h
-        src/render/SurfaceInfo.h
-        src/render/Renderer.cpp
-        src/render/Renderer.h
-        src/render/SunlightPass.cpp
-        src/render/SunlightPass.h
-        src/render/MainPass.cpp
-        src/render/MainPass.h
-        src/render/RenderContext.h
-        src/render/DepthTexture.cpp
-        src/render/DepthTexture.h
-        src/render/ColorTexture.cpp
-        src/render/ColorTexture.h
-        src/render/OffscreenRenderTarget.cpp
-        src/render/OffscreenRenderTarget.h
-        src/render/TextureRenderer.cpp
-        src/render/TextureRenderer.h
-        src/render/ColorBalancePass.cpp
-        src/render/ColorBalancePass.h
-        src/render/GaussianBlurPass.cpp
-        src/render/GaussianBlurPass.h
-        src/render/AdditiveBlendPass.cpp
-        src/render/AdditiveBlendPass.h
-        src/render/BrightFilterPass.cpp
-        src/render/BrightFilterPass.h
-        src/render/ToneMapPass.cpp
-        src/render/ToneMapPass.h
-        src/render/OutlinePass.cpp
-        src/render/OutlinePass.h
-        src/Engine.cpp
-        src/Engine.h
-        src/export.h
-        )
-
-target_link_libraries(renderer
-        PUBLIC
-        assimp glad imgui)
-
+add_subdirectory(engine)
 add_subdirectory(dev-shell)
 
 # Target - Binding
 pybind11_add_module(binding_test
-        src/bindings.cpp)
+        engine/bindings.cpp)
 target_link_libraries(binding_test
         PRIVATE
         renderer

@@ -3,7 +3,7 @@
 #include <vector>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "../src/Engine.h"
+#include "../engine/Engine.h"
 #include "Gui.h"
 #include <memory>
 
