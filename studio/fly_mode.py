@@ -1,3 +1,4 @@
+from abc import *
 from dataclasses import dataclass
 from enum import Flag, auto
 import time
@@ -19,15 +20,17 @@ class FlyModeKeyCommand(Flag):
     DOWNWARD = auto()
     UPWARD = auto()
 
+    EXIT = auto()
+
 
 fly_mode_key_map = KeyMap((
-    # (Qt.Key_Space, Qt.NoModifier, FlyModeKeyCommand.TOGGLE),
     (Qt.Key_W, Qt.NoModifier, FlyModeKeyCommand.FORWARD),
     (Qt.Key_S, Qt.NoModifier, FlyModeKeyCommand.BACKWARD),
     (Qt.Key_A, Qt.NoModifier, FlyModeKeyCommand.LEFT),
     (Qt.Key_D, Qt.NoModifier, FlyModeKeyCommand.RIGHT),
     (Qt.Key_Q, Qt.NoModifier, FlyModeKeyCommand.DOWNWARD),
     (Qt.Key_E, Qt.NoModifier, FlyModeKeyCommand.UPWARD),
+    (Qt.Key_Escape, Qt.NoModifier, FlyModeKeyCommand.EXIT),
 ))
 
 
@@ -48,6 +51,23 @@ class FlyModeController:
     _state: AnyState = IdleState()
     _speed = 10
 
+    class Delegate(ABC):
+        @abstractmethod
+        def get_camera(self) -> CameraState:
+            pass
+
+        def on_exit(self) -> None:
+            pass
+
+        def on_moving_state_transition(self) -> None:
+            pass
+
+        def on_idle_state_transition(self) -> None:
+            pass
+
+    def __init__(self, delegate: Delegate):
+        self._delegate = delegate
+
     def handle_key(self, key: Qt.Key, modifiers: Qt.KeyboardModifiers, is_pressed: bool) -> bool:
         if matched := fly_mode_key_map.match(modifiers, key):
             self._handle_command(matched, is_pressed)
@@ -58,15 +78,19 @@ class FlyModeController:
     def should_continuously_render(self) -> bool:
         return isinstance(self._state, MovingState)
 
-    def update(self, camera_state: CameraState) -> None:
-        if self._running:
+    def update(self) -> None:
+        if self._running & FlyModeKeyCommand.EXIT:
+            self._delegate.on_exit()
+        elif self._running:
             current_time = time.time()
             if isinstance(self._state, IdleState):
                 self._state = MovingState(current_time)
-            self._move_camera(camera_state, current_time)
+                self._delegate.on_moving_state_transition()
+            self._move_camera(current_time)
             self._state.last_time = current_time
         else:
             self._state = IdleState()
+            self._delegate.on_idle_state_transition()
 
     def _handle_command(self, command: FlyModeKeyCommand, is_pressed: bool) -> None:
         if is_pressed:
@@ -74,10 +98,11 @@ class FlyModeController:
         else:
             self._running &= ~command
 
-    def _move_camera(self, camera_state: CameraState, current_time: float) -> None:
+    def _move_camera(self, current_time: float) -> None:
         assert isinstance(self._state, MovingState)
         delta_time = current_time - self._state.last_time
         delta = self._speed * delta_time
+        camera_state = self._delegate.get_camera()
         if self._running & FlyModeKeyCommand.FORWARD:
             camera_state.pos += delta * camera_state.front()
         if self._running & FlyModeKeyCommand.BACKWARD:

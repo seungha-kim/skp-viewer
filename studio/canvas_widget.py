@@ -1,20 +1,29 @@
-from typing import Optional, Any, cast
+from abc import *
+from typing import Optional, cast
 
 import binding_test
-from PySide6.QtCore import Qt, Signal, SignalInstance
+from PySide6.QtCore import Qt
 import PySide6.QtGui
 from PySide6.QtOpenGLWidgets import QOpenGLWidget
 
+from binding_test import CameraState
 from studio.fly_mode import FlyModeController
 
 
 class CanvasWidget(QOpenGLWidget):
     engine: binding_test.Engine
     fly_mode_controller: Optional[FlyModeController] = None
-    fly_mode_toggled: Any = Signal(bool)
 
-    def __init__(self) -> None:
+    class Delegate(ABC):
+        def on_fly_mode_on(self):
+            pass
+
+        def on_fly_mode_off(self):
+            pass
+
+    def __init__(self, delegate: Delegate) -> None:
         super().__init__()
+        self._delegate = delegate
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.setUpdateBehavior(QOpenGLWidget.UpdateBehavior.NoPartialUpdate)
 
@@ -24,7 +33,7 @@ class CanvasWidget(QOpenGLWidget):
 
     def paintGL(self) -> None:
         if fmc := self.fly_mode_controller:
-            fmc.update(self.engine.currentCameraStateMut())
+            fmc.update()
             if fmc.should_continuously_render():
                 self.update()
         self.engine.render(0)
@@ -57,12 +66,23 @@ class CanvasWidget(QOpenGLWidget):
         self.update()
 
     def turn_on_fly_mode(self) -> None:
-        self.fly_mode_controller = FlyModeController()
-        self.fly_mode_toggled.emit(True)
+        self.fly_mode_controller = FlyModeController(FlyModeControllerDelegateImpl(self))
+        self._delegate.on_fly_mode_on()
 
     def turn_off_fly_mode(self) -> None:
         self.fly_mode_controller = None
-        self.fly_mode_toggled.emit(False)
+        self._delegate.on_fly_mode_off()
 
     def is_in_fly_mode(self) -> bool:
         return self.fly_mode_controller is not None
+
+
+class FlyModeControllerDelegateImpl(FlyModeController.Delegate):
+    def __init__(self, canvas_widget: CanvasWidget):
+        self._canvas_widget = canvas_widget
+
+    def get_camera(self) -> CameraState:
+        return self._canvas_widget.engine.currentCameraStateMut()
+
+    def on_exit(self) -> None:
+        self._canvas_widget.turn_off_fly_mode()

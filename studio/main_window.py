@@ -14,7 +14,7 @@ class MainWindow(QMainWindow):
         layout = QVBoxLayout()
         widget.setLayout(layout)
 
-        canvas = CanvasWidget()
+        canvas = CanvasWidget(CanvasWidgetDelegateImpl(self))
         layout.addWidget(canvas)
 
         button = QPushButton("Press Me!")
@@ -23,9 +23,9 @@ class MainWindow(QMainWindow):
 
         self.sizeHint = lambda: QSize(1366, 800)  # type: ignore
 
-        fly_mode_toggle_button = QPushButton("Toggle")
-        layout.addWidget(fly_mode_toggle_button)
-        fly_mode_toggle_button.clicked.connect(self._handle_fly_mode_toggle_button_click)
+        self.fly_mode_toggle_button = FlyModeToggleButton()
+        layout.addWidget(self.fly_mode_toggle_button)
+        self.fly_mode_toggle_button.clicked.connect(self._handle_fly_mode_toggle_button_click)
 
         # Set the central widget of the Window.
         self.setCentralWidget(widget)
@@ -40,3 +40,29 @@ class MainWindow(QMainWindow):
             self.canvas.turn_off_fly_mode()
         else:
             self.canvas.turn_on_fly_mode()
+
+
+class FlyModeToggleButton(QPushButton):
+    label_turn_on = "Fly Mode On"
+    label_turn_off = "Fly Mode Off"
+
+    def __init__(self):
+        super().__init__()
+        self.setText(self.label_turn_on)
+
+    def change_text(self, on: bool):
+        if on:
+            self.setText(self.label_turn_on)
+        else:
+            self.setText(self.label_turn_off)
+
+
+class CanvasWidgetDelegateImpl(CanvasWidget.Delegate):
+    def __init__(self, main_window: MainWindow):
+        self._main_window = main_window
+
+    def on_fly_mode_on(self):
+        self._main_window.fly_mode_toggle_button.change_text(on=False)
+
+    def on_fly_mode_off(self):
+        self._main_window.fly_mode_toggle_button.change_text(on=True)
