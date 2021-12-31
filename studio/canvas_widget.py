@@ -1,4 +1,5 @@
 from abc import *
+from dataclasses import dataclass
 from enum import Flag, auto
 from typing import cast
 
@@ -13,9 +14,23 @@ from .key_controller import AbstractKeyController, KeyControllerOverriding
 from .keymap import KeyMap
 
 
-class CanvasWidget(QOpenGLWidget):
-    engine: binding_test.Engine
+class State:
+    class Base(ABC):
+        key_controller: AbstractKeyController
 
+    @dataclass()
+    class Default(Base):
+        key_controller: AbstractKeyController
+
+    class FlyMode(Base):
+        def __init__(self, canvas_widget: 'CanvasWidget', parent_key_controller: AbstractKeyController):
+            self.key_controller = KeyControllerOverriding(
+                overrider=FlyModeController(FlyModeControllerDelegateImpl(canvas_widget)),
+                overridden=parent_key_controller,
+            )
+
+
+class CanvasWidget(QOpenGLWidget):
     class Delegate(ABC):
         def on_fly_mode_on(self):
             pass
@@ -23,11 +38,13 @@ class CanvasWidget(QOpenGLWidget):
         def on_fly_mode_off(self):
             pass
 
+    engine: binding_test.Engine
+
     def __init__(self, delegate: Delegate) -> None:
         super().__init__()
         self._delegate = delegate
         self._default_key_controller = CanvasKeyController(self)
-        self._key_controller = self._default_key_controller
+        self._state: State.Base = State.Default(self._default_key_controller)
 
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.setUpdateBehavior(QOpenGLWidget.UpdateBehavior.NoPartialUpdate)
@@ -37,8 +54,8 @@ class CanvasWidget(QOpenGLWidget):
         self.engine = binding_test.Engine(self.surface_info())
 
     def paintGL(self) -> None:
-        self._key_controller.update()
-        if self._key_controller.should_render_continuously():
+        self._state.key_controller.update()
+        if self._state.key_controller.should_render_continuously():
             self.update()
         self.engine.render(0)
 
@@ -61,26 +78,25 @@ class CanvasWidget(QOpenGLWidget):
         self._dispatch_key_event(event.modifiers(), cast(Qt.Key, event.key()), False)
 
     def _dispatch_key_event(self, modifiers: Qt.KeyboardModifiers, key: Qt.Key, pressed: bool) -> None:
-        self._key_controller.handle_key(key, modifiers, pressed)
-        self.update()
+        if self._state.key_controller.handle_key(key, modifiers, pressed):
+            self.update()
 
     def set_random_global_diffuse(self) -> None:
         self.engine.setRandomGlobalDiffuse()
         self.update()
 
     def turn_on_fly_mode(self) -> None:
-        self._key_controller = KeyControllerOverriding(
-            overridden=self._default_key_controller,
-            overrider=FlyModeController(FlyModeControllerDelegateImpl(self)),
-        )
+        if isinstance(self._state, State.Default):
+            self._state = State.FlyMode(self, self._default_key_controller)
         self._delegate.on_fly_mode_on()
 
     def turn_off_fly_mode(self) -> None:
-        self._key_controller = self._default_key_controller
+        if isinstance(self._state, State.FlyMode):
+            self._state = State.Default(self._default_key_controller)
         self._delegate.on_fly_mode_off()
 
     def is_in_fly_mode(self) -> bool:
-        return isinstance(self._key_controller, FlyModeController)
+        return isinstance(self._state, State.FlyMode)
 
 
 class FlyModeControllerDelegateImpl(FlyModeController.Delegate):
