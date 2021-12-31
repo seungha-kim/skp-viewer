@@ -1,11 +1,13 @@
 from collections import defaultdict
-from typing import Optional, Iterable
+from typing import Optional, Iterable, Generic, TypeVar
 
 from PySide6.QtCore import Qt
-from binding_test import KeyCommand
 
 
-class KeyMap:
+KeyCommand = TypeVar('KeyCommand')
+
+
+class KeyMap(Generic[KeyCommand]):
     # NOTE: Qt.KeyboardModifiers 가 hashable 이 아니기 때문에 부득이 이런 구조로 함
     index: dict[Qt.Key, list[tuple[Qt.KeyboardModifier, KeyCommand]]]
 
@@ -20,15 +22,3 @@ class KeyMap:
                 if mod == modifiers:
                     return command
         return None
-
-    @classmethod
-    def default(cls) -> 'KeyMap':
-        return cls((
-            (Qt.Key_Space, Qt.NoModifier, KeyCommand.FLY_MODE_TOGGLE),
-            (Qt.Key_W, Qt.NoModifier, KeyCommand.FLY_MODE_FORWARD),
-            (Qt.Key_S, Qt.NoModifier, KeyCommand.FLY_MODE_BACKWARD),
-            (Qt.Key_A, Qt.NoModifier, KeyCommand.FLY_MODE_LEFT),
-            (Qt.Key_D, Qt.NoModifier, KeyCommand.FLY_MODE_RIGHT),
-            (Qt.Key_Q, Qt.NoModifier, KeyCommand.FLY_MODE_DOWNWARD),
-            (Qt.Key_E, Qt.NoModifier, KeyCommand.FLY_MODE_UPWARD),
-        ))

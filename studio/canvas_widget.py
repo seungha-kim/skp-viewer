@@ -1,21 +1,18 @@
 import binding_test
-from PySide6.QtCore import QElapsedTimer, Qt
+from PySide6.QtCore import Qt
 import PySide6.QtGui
 from PySide6.QtOpenGLWidgets import QOpenGLWidget
 
-from .keymap import KeyMap
+from studio.fly_mode import FlyModeController
 
 
 class CanvasWidget(QOpenGLWidget):
     engine = None
-    key_command_set = binding_test.KeyCommandSet()
-    timer = QElapsedTimer()
-    keymap = KeyMap.default()
 
     def __init__(self):
         super().__init__()
+        self.fly_controller = FlyModeController()
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        self.timer.start()
         self.setUpdateBehavior(QOpenGLWidget.UpdateBehavior.NoPartialUpdate)
 
     def initializeGL(self) -> None:
@@ -23,11 +20,10 @@ class CanvasWidget(QOpenGLWidget):
         self.engine = binding_test.Engine(self.surface_info())
 
     def paintGL(self) -> None:
-        self.engine.handleInput()
-        self.engine.updateTime(float(self.timer.elapsed() / 1000))
-        self.engine.render(0)
-        if self.engine.shouldContinuouslyRender():
+        self.fly_controller.update(self.engine.currentCameraStateMut())
+        if self.fly_controller.should_continuously_render():
             self.update()
+        self.engine.render(0)
 
     def resizeGL(self, w: int, h: int) -> None:
         self.engine.resize(self.surface_info())
@@ -48,10 +44,8 @@ class CanvasWidget(QOpenGLWidget):
         self._dispatch_key_event(event.modifiers(), event.key(), False)
 
     def _dispatch_key_event(self, modifiers: Qt.KeyboardModifiers, key: Qt.Key, pressed: bool):
-        if command := self.keymap.match(modifiers, key):
-            self.key_command_set.setPressed(command, pressed)
-            self.engine.onKeyboardStateChange(self.key_command_set)
-            self.update()
+        self.fly_controller.handle_key(key, modifiers, pressed)
+        self.update()
 
     def set_random_global_diffuse(self):
         self.engine.setRandomGlobalDiffuse()

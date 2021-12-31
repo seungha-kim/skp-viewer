@@ -1,4 +1,5 @@
 #include <pybind11/pybind11.h>
+#include <pybind11/operators.h>
 #include "Engine.h"
 #include "render/checkError.h"
 #include <glad/glad.h>
@@ -36,10 +37,13 @@ PYBIND11_MODULE(binding_test, m) {
             .def(py::init<SurfaceInfo>())
             .def("render", &Engine::render)
             .def("resize", &Engine::resize)
+            .def("currentCameraStateMut", &Engine::currentCameraStateMut, py::return_value_policy::reference)
             .def("setRandomGlobalDiffuse", &Engine::setRandomGlobalDiffuse);
 
     py::class_<CameraState>(m, "CameraState")
             .def(py::init<>())
+            .def("front", &CameraState::front)
+            .def("left", &CameraState::left)
             .def_readwrite("fovyDeg", &CameraState::fovyDeg)
             .def_readwrite("aspectWidth", &CameraState::aspectWidth)
             .def_readwrite("aspectHeight", &CameraState::aspectHeight)
@@ -53,6 +57,11 @@ PYBIND11_MODULE(binding_test, m) {
 
     py::class_<glm::vec3>(m, "Vec3")
             .def(py::init<>())
+            .def(py::self + py::self)
+            .def(py::self - py::self)
+            .def(-py::self)
+            .def(float() * py::self)
+            .def(py::self * float())
             .def_readwrite("x", &glm::vec3::x)
             .def_readwrite("y", &glm::vec3::y)
             .def_readwrite("z", &glm::vec3::z);

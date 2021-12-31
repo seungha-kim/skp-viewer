@@ -18,6 +18,8 @@ public:
 
     Renderer& rendererMut();
 
+    CameraState& currentCameraStateMut();
+
     void setRandomGlobalDiffuse();
 
     void render(float playbackValue);

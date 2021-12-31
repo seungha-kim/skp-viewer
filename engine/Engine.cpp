@@ -70,3 +70,7 @@ Material& Engine::globalMaterialMut() {
 Renderer& Engine::rendererMut() {
     return m_renderer;
 }
+
+CameraState& Engine::currentCameraStateMut() {
+    return m_sceneManager.activeSceneMut().cameraStateMut();
+}

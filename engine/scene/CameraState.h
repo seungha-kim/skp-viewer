@@ -22,6 +22,10 @@ struct CameraState {
         return result;
     }
 
+    [[nodiscard]] glm::vec3 left() const {
+        return glm::cross(up, front());
+    }
+
     [[nodiscard]] glm::mat4 viewMatrix() const {
         return glm::lookAt(pos, pos + front(), up);
     }
