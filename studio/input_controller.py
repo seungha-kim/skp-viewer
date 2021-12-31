@@ -2,8 +2,7 @@ from abc import *
 from PySide6.QtCore import Qt
 
 
-class AbstractKeyController(ABC):
-    @abstractmethod
+class AbstractInputController(ABC):
     def handle_key(self, key: Qt.Key, modifiers: Qt.KeyboardModifiers, is_pressed: bool) -> bool:
         pass
 
@@ -14,8 +13,8 @@ class AbstractKeyController(ABC):
         return False
 
 
-class KeyControllerOverriding(AbstractKeyController):
-    def __init__(self, overridden: AbstractKeyController, overrider: AbstractKeyController):
+class InputControllerOverriding(AbstractInputController):
+    def __init__(self, overridden: AbstractInputController, overrider: AbstractInputController):
         self._overridden = overridden
         self._overrider = overrider
 
@@ -33,5 +32,5 @@ class KeyControllerOverriding(AbstractKeyController):
         return self._overrider.should_render_continuously() or self._overridden.should_render_continuously()
 
     @property
-    def overridden(self) -> AbstractKeyController:
+    def overridden(self) -> AbstractInputController:
         return self._overridden

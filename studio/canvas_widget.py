@@ -10,23 +10,23 @@ from PySide6.QtOpenGLWidgets import QOpenGLWidget
 
 from binding_test import CameraState
 from .fly_mode import FlyModeController
-from .key_controller import AbstractKeyController, KeyControllerOverriding
+from .input_controller import AbstractInputController, InputControllerOverriding
 from .keymap import KeyMap
 
 
 class State:
     class Base(ABC):
-        key_controller: AbstractKeyController
+        input_controller: AbstractInputController
 
     @dataclass()
     class Default(Base):
-        key_controller: AbstractKeyController
+        input_controller: AbstractInputController
 
     class FlyMode(Base):
-        def __init__(self, canvas_widget: 'CanvasWidget', parent_key_controller: AbstractKeyController):
-            self.key_controller = KeyControllerOverriding(
+        def __init__(self, canvas_widget: 'CanvasWidget', parent: AbstractInputController):
+            self.input_controller = InputControllerOverriding(
                 overrider=FlyModeController(FlyModeControllerDelegateImpl(canvas_widget)),
-                overridden=parent_key_controller,
+                overridden=parent,
             )
 
 
@@ -43,8 +43,8 @@ class CanvasWidget(QOpenGLWidget):
     def __init__(self, delegate: Delegate) -> None:
         super().__init__()
         self._delegate = delegate
-        self._default_key_controller = CanvasKeyController(self)
-        self._state: State.Base = State.Default(self._default_key_controller)
+        self._default_input_controller = CanvasInputController(self)
+        self._state: State.Base = State.Default(self._default_input_controller)
 
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.setUpdateBehavior(QOpenGLWidget.UpdateBehavior.NoPartialUpdate)
@@ -54,8 +54,8 @@ class CanvasWidget(QOpenGLWidget):
         self.engine = binding_test.Engine(self.surface_info())
 
     def paintGL(self) -> None:
-        self._state.key_controller.update()
-        if self._state.key_controller.should_render_continuously():
+        self._state.input_controller.update()
+        if self._state.input_controller.should_render_continuously():
             self.update()
         self.engine.render(0)
 
@@ -78,7 +78,7 @@ class CanvasWidget(QOpenGLWidget):
         self._dispatch_key_event(event.modifiers(), cast(Qt.Key, event.key()), False)
 
     def _dispatch_key_event(self, modifiers: Qt.KeyboardModifiers, key: Qt.Key, pressed: bool) -> None:
-        if self._state.key_controller.handle_key(key, modifiers, pressed):
+        if self._state.input_controller.handle_key(key, modifiers, pressed):
             self.update()
 
     def set_random_global_diffuse(self) -> None:
@@ -87,12 +87,12 @@ class CanvasWidget(QOpenGLWidget):
 
     def turn_on_fly_mode(self) -> None:
         if isinstance(self._state, State.Default):
-            self._state = State.FlyMode(self, self._default_key_controller)
+            self._state = State.FlyMode(self, self._default_input_controller)
         self._delegate.on_fly_mode_on()
 
     def turn_off_fly_mode(self) -> None:
         if isinstance(self._state, State.FlyMode):
-            self._state = State.Default(self._default_key_controller)
+            self._state = State.Default(self._default_input_controller)
         self._delegate.on_fly_mode_off()
 
     def is_in_fly_mode(self) -> bool:
@@ -116,7 +116,7 @@ class CanvasKeyCommand(Flag):
     FLY_MODE = auto()
 
 
-class CanvasKeyController(AbstractKeyController):
+class CanvasInputController(AbstractInputController):
     _keymap = KeyMap((
         (Qt.Key_AsciiTilde, Qt.ShiftModifier, CanvasKeyCommand.FLY_MODE),
     ))

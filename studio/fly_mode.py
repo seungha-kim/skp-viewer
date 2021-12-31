@@ -7,7 +7,7 @@ from typing import Union
 from PySide6.QtCore import Qt
 from binding_test import CameraState
 
-from .key_controller import AbstractKeyController
+from .input_controller import AbstractInputController
 from .keymap import KeyMap
 
 
@@ -35,7 +35,7 @@ class State:
     Any = Union[Idle, Moving]
 
 
-class FlyModeController(AbstractKeyController):
+class FlyModeController(AbstractInputController):
     class Delegate(ABC):
         @abstractmethod
         def get_camera(self) -> CameraState:
