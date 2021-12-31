@@ -1,7 +1,7 @@
 from typing import Optional, Any, cast
 
 import binding_test
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Signal, SignalInstance
 import PySide6.QtGui
 from PySide6.QtOpenGLWidgets import QOpenGLWidget
 
@@ -9,11 +9,12 @@ from studio.fly_mode import FlyModeController
 
 
 class CanvasWidget(QOpenGLWidget):
-    engine = None
+    engine: binding_test.Engine
+    fly_mode_controller: Optional[FlyModeController] = None
+    fly_mode_toggled: Any = Signal(bool)
 
     def __init__(self) -> None:
         super().__init__()
-        self.fly_controller = FlyModeController()
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.setUpdateBehavior(QOpenGLWidget.UpdateBehavior.NoPartialUpdate)
 
@@ -22,9 +23,10 @@ class CanvasWidget(QOpenGLWidget):
         self.engine = binding_test.Engine(self.surface_info())
 
     def paintGL(self) -> None:
-        self.fly_controller.update(self.engine.currentCameraStateMut())
-        if self.fly_controller.should_continuously_render():
-            self.update()
+        if fmc := self.fly_mode_controller:
+            fmc.update(self.engine.currentCameraStateMut())
+            if fmc.should_continuously_render():
+                self.update()
         self.engine.render(0)
 
     def resizeGL(self, w: int, h: int) -> None:
@@ -50,6 +52,17 @@ class CanvasWidget(QOpenGLWidget):
             fmc.handle_key(key, modifiers, pressed)
         self.update()
 
-    def set_random_global_diffuse(self):
+    def set_random_global_diffuse(self) -> None:
         self.engine.setRandomGlobalDiffuse()
         self.update()
+
+    def turn_on_fly_mode(self) -> None:
+        self.fly_mode_controller = FlyModeController()
+        self.fly_mode_toggled.emit(True)
+
+    def turn_off_fly_mode(self) -> None:
+        self.fly_mode_controller = None
+        self.fly_mode_toggled.emit(False)
+
+    def is_in_fly_mode(self) -> bool:
+        return self.fly_mode_controller is not None
