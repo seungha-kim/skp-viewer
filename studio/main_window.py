@@ -5,7 +5,7 @@ from .canvas_widget import CanvasWidget
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
         self.setWindowTitle("My App")
@@ -21,7 +21,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(button)
         button.clicked.connect(self.handle_button_click)
 
-        self.sizeHint = lambda: QSize(1366, 800)
+        self.sizeHint = lambda: QSize(1366, 800)  # type: ignore
 
         # Set the central widget of the Window.
         self.setCentralWidget(widget)

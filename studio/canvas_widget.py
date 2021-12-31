@@ -1,3 +1,5 @@
+from typing import Optional, Any, cast
+
 import binding_test
 from PySide6.QtCore import Qt
 import PySide6.QtGui
@@ -9,7 +11,7 @@ from studio.fly_mode import FlyModeController
 class CanvasWidget(QOpenGLWidget):
     engine = None
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.fly_controller = FlyModeController()
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
@@ -28,7 +30,7 @@ class CanvasWidget(QOpenGLWidget):
     def resizeGL(self, w: int, h: int) -> None:
         self.engine.resize(self.surface_info())
 
-    def surface_info(self):
+    def surface_info(self) -> binding_test.SurfaceInfo:
         w = self.size().width()
         h = self.size().height()
         screen = self.screen()
@@ -38,13 +40,14 @@ class CanvasWidget(QOpenGLWidget):
         return binding_test.SurfaceInfo(w, h, pw, ph, device_pixel_ratio, device_pixel_ratio)
 
     def keyPressEvent(self, event: PySide6.QtGui.QKeyEvent) -> None:
-        self._dispatch_key_event(event.modifiers(), event.key(), True)
+        self._dispatch_key_event(event.modifiers(), cast(Qt.Key, event.key()), True)
 
     def keyReleaseEvent(self, event: PySide6.QtGui.QKeyEvent) -> None:
-        self._dispatch_key_event(event.modifiers(), event.key(), False)
+        self._dispatch_key_event(event.modifiers(), cast(Qt.Key, event.key()), False)
 
-    def _dispatch_key_event(self, modifiers: Qt.KeyboardModifiers, key: Qt.Key, pressed: bool):
-        self.fly_controller.handle_key(key, modifiers, pressed)
+    def _dispatch_key_event(self, modifiers: Qt.KeyboardModifiers, key: Qt.Key, pressed: bool) -> None:
+        if fmc := self.fly_mode_controller:
+            fmc.handle_key(key, modifiers, pressed)
         self.update()
 
     def set_random_global_diffuse(self):

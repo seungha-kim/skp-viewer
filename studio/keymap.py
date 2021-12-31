@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Optional, Iterable, Generic, TypeVar
+from typing import Optional, Iterable, Generic, TypeVar, Any
 
 from PySide6.QtCore import Qt
 
@@ -16,7 +16,7 @@ class KeyMap(Generic[KeyCommand]):
         for key, modifier, command in keymap_list:
             self.index[key].append((modifier, command))
 
-    def match(self, modifiers: Qt.KeyboardModifiers, key: Qt.Key) -> Optional[KeyCommand]:
+    def match(self, modifiers: Any, key: Any) -> Optional[KeyCommand]:
         if matched_tup := self.index.get(key):
             for mod, command in matched_tup:
                 if mod == modifiers:

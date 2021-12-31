@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from enum import Flag, auto
 import time
-from typing import Union
+from typing import Union, Any
 
 from PySide6.QtCore import Qt
 from binding_test import CameraState
@@ -55,16 +55,16 @@ class FlyModeController:
         else:
             return False
 
-    def _handle_command(self, command: FlyModeKeyCommand, is_pressed: bool):
+    def _handle_command(self, command: FlyModeKeyCommand, is_pressed: bool) -> None:
         if is_pressed:
             self._running |= command
         else:
             self._running &= ~command
 
-    def should_continuously_render(self):
+    def should_continuously_render(self) -> bool:
         return isinstance(self._state, MovingState)
 
-    def update(self, camera_state: CameraState):
+    def update(self, camera_state: CameraState) -> None:
         if self._running:
             current_time = time.time()
             if isinstance(self._state, IdleState):
@@ -74,7 +74,7 @@ class FlyModeController:
         else:
             self._state = IdleState()
 
-    def _move_camera(self, camera_state: CameraState, current_time: float):
+    def _move_camera(self, camera_state: CameraState, current_time: float) -> None:
         assert isinstance(self._state, MovingState)
         delta_time = current_time - self._state.last_time
         delta = self._speed * delta_time
