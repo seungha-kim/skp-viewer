@@ -55,12 +55,6 @@ class FlyModeController:
         else:
             return False
 
-    def _handle_command(self, command: FlyModeKeyCommand, is_pressed: bool) -> None:
-        if is_pressed:
-            self._running |= command
-        else:
-            self._running &= ~command
-
     def should_continuously_render(self) -> bool:
         return isinstance(self._state, MovingState)
 
@@ -73,6 +67,12 @@ class FlyModeController:
             self._state.last_time = current_time
         else:
             self._state = IdleState()
+
+    def _handle_command(self, command: FlyModeKeyCommand, is_pressed: bool) -> None:
+        if is_pressed:
+            self._running |= command
+        else:
+            self._running &= ~command
 
     def _move_camera(self, camera_state: CameraState, current_time: float) -> None:
         assert isinstance(self._state, MovingState)

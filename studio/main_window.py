@@ -19,7 +19,7 @@ class MainWindow(QMainWindow):
 
         button = QPushButton("Press Me!")
         layout.addWidget(button)
-        button.clicked.connect(self.handle_button_click)
+        button.clicked.connect(self._handle_button_click)
 
         self.sizeHint = lambda: QSize(1366, 800)  # type: ignore
 
@@ -32,7 +32,7 @@ class MainWindow(QMainWindow):
 
         self.canvas = canvas
 
-    def handle_button_click(self):
+    def _handle_button_click(self):
         self.canvas.set_random_global_diffuse()
 
     def _handle_fly_mode_toggle_button_click(self) -> None:
