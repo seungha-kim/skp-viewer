@@ -2,11 +2,12 @@ from abc import *
 from dataclasses import dataclass
 from enum import Flag, auto
 import time
-from typing import Union, Any
+from typing import Union
 
 from PySide6.QtCore import Qt
 from binding_test import CameraState
 
+from .key_controller import AbstractKeyController
 from .keymap import KeyMap
 
 
@@ -46,7 +47,7 @@ class MovingState:
 AnyState = Union[IdleState, MovingState]
 
 
-class FlyModeController:
+class FlyModeController(AbstractKeyController):
     _running = FlyModeKeyCommand.NONE
     _state: AnyState = IdleState()
     _speed = 10
@@ -69,13 +70,13 @@ class FlyModeController:
         self._delegate = delegate
 
     def handle_key(self, key: Qt.Key, modifiers: Qt.KeyboardModifiers, is_pressed: bool) -> bool:
-        if matched := fly_mode_key_map.match(modifiers, key):
+        if matched := fly_mode_key_map.match(key, modifiers):
             self._handle_command(matched, is_pressed)
             return True
         else:
             return False
 
-    def should_continuously_render(self) -> bool:
+    def should_render_continuously(self) -> bool:
         return isinstance(self._state, MovingState)
 
     def update(self) -> None:

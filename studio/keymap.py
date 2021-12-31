@@ -16,7 +16,7 @@ class KeyMap(Generic[KeyCommand]):
         for key, modifier, command in keymap_list:
             self.index[key].append((modifier, command))
 
-    def match(self, modifiers: Any, key: Any) -> Optional[KeyCommand]:
+    def match(self, key: Any, modifiers: Any) -> Optional[KeyCommand]:
         if matched_tup := self.index.get(key):
             for mod, command in matched_tup:
                 if mod == modifiers:

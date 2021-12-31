@@ -1,5 +1,6 @@
 from abc import *
-from typing import Optional, cast
+from enum import Flag, auto
+from typing import cast
 
 import binding_test
 from PySide6.QtCore import Qt
@@ -7,12 +8,13 @@ import PySide6.QtGui
 from PySide6.QtOpenGLWidgets import QOpenGLWidget
 
 from binding_test import CameraState
-from studio.fly_mode import FlyModeController
+from .fly_mode import FlyModeController
+from .key_controller import AbstractKeyController, KeyControllerOverriding
+from .keymap import KeyMap
 
 
 class CanvasWidget(QOpenGLWidget):
     engine: binding_test.Engine
-    fly_mode_controller: Optional[FlyModeController] = None
 
     class Delegate(ABC):
         def on_fly_mode_on(self):
@@ -24,6 +26,9 @@ class CanvasWidget(QOpenGLWidget):
     def __init__(self, delegate: Delegate) -> None:
         super().__init__()
         self._delegate = delegate
+        self._default_key_controller = CanvasKeyController(self)
+        self._key_controller = self._default_key_controller
+
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.setUpdateBehavior(QOpenGLWidget.UpdateBehavior.NoPartialUpdate)
 
@@ -32,10 +37,9 @@ class CanvasWidget(QOpenGLWidget):
         self.engine = binding_test.Engine(self.surface_info())
 
     def paintGL(self) -> None:
-        if fmc := self.fly_mode_controller:
-            fmc.update()
-            if fmc.should_continuously_render():
-                self.update()
+        self._key_controller.update()
+        if self._key_controller.should_render_continuously():
+            self.update()
         self.engine.render(0)
 
     def resizeGL(self, w: int, h: int) -> None:
@@ -57,8 +61,7 @@ class CanvasWidget(QOpenGLWidget):
         self._dispatch_key_event(event.modifiers(), cast(Qt.Key, event.key()), False)
 
     def _dispatch_key_event(self, modifiers: Qt.KeyboardModifiers, key: Qt.Key, pressed: bool) -> None:
-        if fmc := self.fly_mode_controller:
-            fmc.handle_key(key, modifiers, pressed)
+        self._key_controller.handle_key(key, modifiers, pressed)
         self.update()
 
     def set_random_global_diffuse(self) -> None:
@@ -66,15 +69,18 @@ class CanvasWidget(QOpenGLWidget):
         self.update()
 
     def turn_on_fly_mode(self) -> None:
-        self.fly_mode_controller = FlyModeController(FlyModeControllerDelegateImpl(self))
+        self._key_controller = KeyControllerOverriding(
+            overridden=self._default_key_controller,
+            overrider=FlyModeController(FlyModeControllerDelegateImpl(self)),
+        )
         self._delegate.on_fly_mode_on()
 
     def turn_off_fly_mode(self) -> None:
-        self.fly_mode_controller = None
+        self._key_controller = self._default_key_controller
         self._delegate.on_fly_mode_off()
 
     def is_in_fly_mode(self) -> bool:
-        return self.fly_mode_controller is not None
+        return isinstance(self._key_controller, FlyModeController)
 
 
 class FlyModeControllerDelegateImpl(FlyModeController.Delegate):
@@ -86,3 +92,26 @@ class FlyModeControllerDelegateImpl(FlyModeController.Delegate):
 
     def on_exit(self) -> None:
         self._canvas_widget.turn_off_fly_mode()
+
+
+class CanvasKeyCommand(Flag):
+    NONE = 0
+
+    FLY_MODE = auto()
+
+
+class CanvasKeyController(AbstractKeyController):
+    _keymap = KeyMap((
+        (Qt.Key_AsciiTilde, Qt.ShiftModifier, CanvasKeyCommand.FLY_MODE),
+    ))
+
+    def __init__(self, canvas: CanvasWidget):
+        self._canvas = canvas
+
+    def handle_key(self, key: Qt.Key, modifiers: Qt.KeyboardModifiers, is_pressed: bool) -> bool:
+        if matched := self._keymap.match(key, modifiers):
+            if matched == CanvasKeyCommand.FLY_MODE and is_pressed:
+                self._canvas.turn_on_fly_mode()
+            return True
+        else:
+            return False
