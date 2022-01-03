@@ -3,6 +3,6 @@ pybind11_add_module(binding_test
         bindings.cpp)
 target_link_libraries(binding_test
         PRIVATE
-        renderer
+        engine
         pybind11_headers
         python)

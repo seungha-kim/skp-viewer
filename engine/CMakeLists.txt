@@ -1,5 +1,5 @@
 # Target - Renderer
-add_library(renderer
+add_library(engine
         STATIC # TODO: SHARED 로 하니까 윈도에서 에러 - "Windows fatal exception: access violation"
         render/checkError.cpp
         render/checkError.h
@@ -49,6 +49,6 @@ add_library(renderer
         export.h
         )
 
-target_link_libraries(renderer
+target_link_libraries(engine
         PUBLIC
         assimp glad imgui)

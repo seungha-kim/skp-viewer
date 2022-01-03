@@ -23,6 +23,6 @@ add_executable(dev-shell
         main.cpp)
 target_link_libraries(dev-shell
         PRIVATE
-        renderer
+        engine
         glfw
         )
