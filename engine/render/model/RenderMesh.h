@@ -9,11 +9,11 @@
 glm::vec3 vec3AssimpToGlm(aiVector3D ai);
 glm::mat4 mat4AssimpToGlm(aiMatrix4x4 ai);
 
-class Mesh {
+class RenderMesh {
 public:
-    Mesh(aiMesh &mesh, aiMatrix4x4 transform);
+    RenderMesh(aiMesh &mesh, aiMatrix4x4 transform);
 
-    ~Mesh();
+    ~RenderMesh();
 
     [[nodiscard]] glm::mat4 transform() const;
     [[nodiscard]] int verticesCount() const;

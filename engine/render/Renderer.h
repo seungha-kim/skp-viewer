@@ -47,7 +47,7 @@ private:
     ToneMapPass m_toneMapPass;
     OutlinePass m_outlinePass;
     AdditiveBlendPass m_outlineMultiplicativeBlendPass;
-    std::vector<std::unique_ptr<Mesh>> m_meshes;
+    std::vector<std::unique_ptr<RenderMesh>> m_meshes;
     TextureRenderer m_textureRenderer;
     RenderOptions m_renderOptions;
 };

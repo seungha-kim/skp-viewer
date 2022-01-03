@@ -21,7 +21,7 @@ Renderer::Renderer(const SurfaceInfo& surfaceInfo)
 
     for (int i = 0; i < scene->mNumMeshes; i++) {
         // TODO: transform stack
-        m_meshes.push_back(std::make_unique<Mesh>(*scene->mMeshes[i], scene->mRootNode->mTransformation));
+        m_meshes.push_back(std::make_unique<RenderMesh>(*scene->mMeshes[i], scene->mRootNode->mTransformation));
     }
 }
 

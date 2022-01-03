@@ -3,7 +3,7 @@
 #include "export.h"
 #include "scene/SceneManager.h"
 #include "render/SurfaceInfo.h"
-#include "model/Material.h"
+#include "render/model/RenderMaterial.h"
 #include "render/Renderer.h"
 
 class DLL_EXPORT Engine {
@@ -14,7 +14,7 @@ public:
     SceneManager& sceneManagerMut();
 
     [[nodiscard]] const SurfaceInfo& surfaceInfo() const;
-    Material& globalMaterialMut();
+    RenderMaterial& globalMaterialMut();
 
     Renderer& rendererMut();
 
@@ -30,7 +30,7 @@ private:
 
     SurfaceInfo m_surfaceInfo;
     Renderer m_renderer;
-    Material m_globalMaterial;
+    RenderMaterial m_globalMaterial;
 
     bool m_sizeUpdated = false;
 

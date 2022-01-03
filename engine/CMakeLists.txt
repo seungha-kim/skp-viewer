@@ -9,11 +9,10 @@ add_library(renderer
         scene/CameraState.h
         scene/SceneManager.cpp
         scene/SceneManager.h
-        model/Mesh.cpp
-        model/Mesh.h
-        model/Vertex.cpp
-        model/Vertex.h
-        model/Material.h
+        render/model/RenderMesh.cpp
+        render/model/RenderMesh.h
+        render/model/RenderVertex.h
+        render/model/RenderMaterial.h
         scene/DirectionalLight.cpp
         scene/DirectionalLight.h
         scene/Scene.cpp scene/Scene.h

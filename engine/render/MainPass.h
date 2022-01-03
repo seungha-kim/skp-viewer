@@ -1,14 +1,14 @@
 #pragma once
 #include <memory>
 #include "RenderContext.h"
-#include "../model/Mesh.h"
+#include "model/RenderMesh.h"
 #include "SurfaceInfo.h"
 #include "ColorTexture.h"
 #include "DepthTexture.h"
 #include "BasePass.h"
 
 struct MainPassInput {
-    const std::vector<std::unique_ptr<Mesh>>& meshes;
+    const std::vector<std::unique_ptr<RenderMesh>>& meshes;
     const glm::mat4 lightSpaceMatrix;
     const DepthTexture& shadowDepthTexture;
 };

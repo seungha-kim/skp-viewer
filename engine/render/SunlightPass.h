@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include "SurfaceInfo.h"
-#include "../model/Mesh.h"
+#include "model/RenderMesh.h"
 #include <glm/glm.hpp>
 #include <glad/glad.h>
 #include "RenderContext.h"
@@ -10,7 +10,7 @@
 
 struct SunlightPassInput {
     // TODO: meshes 말고 rootObject 를 받는 것이 적절
-    const std::vector<std::unique_ptr<Mesh>>& meshes;
+    const std::vector<std::unique_ptr<RenderMesh>>& meshes;
 };
 
 struct SunlightPassOutput {

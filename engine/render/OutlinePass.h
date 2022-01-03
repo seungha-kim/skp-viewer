@@ -4,11 +4,11 @@
 #include "ColorTexture.h"
 #include "SurfaceInfo.h"
 #include "RenderContext.h"
-#include "../model/Mesh.h"
+#include "model/RenderMesh.h"
 #include "BasePass.h"
 
 struct OutlinePassInput {
-    const std::vector<std::unique_ptr<Mesh>>& meshes;
+    const std::vector<std::unique_ptr<RenderMesh>>& meshes;
     const DepthTexture& depthTexture;
     const float outlineWidth;
     const float outlineDepthThreshold;

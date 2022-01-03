@@ -1,10 +1,10 @@
-#include "Mesh.h"
-#include "Vertex.h"
-#include "../render/checkError.h"
+#include "RenderMesh.h"
+#include "RenderVertex.h"
+#include "../checkError.h"
 #include <glm/geometric.hpp>
 
-Mesh::Mesh(aiMesh &mesh, aiMatrix4x4 transform) {
-    std::vector<Vertex> vertices;
+RenderMesh::RenderMesh(aiMesh &mesh, aiMatrix4x4 transform) {
+    std::vector<RenderVertex> vertices;
 
     for (int i = 0; i < mesh.mNumFaces; i++) {
         auto &face = mesh.mFaces[i];
@@ -16,9 +16,9 @@ Mesh::Mesh(aiMesh &mesh, aiMatrix4x4 transform) {
         auto normal2 = vec3AssimpToGlm(mesh.mNormals[face.mIndices[1]]);
         auto normal3 = vec3AssimpToGlm(mesh.mNormals[face.mIndices[2]]);
 //        auto normal = glm::normalize(glm::cross(vertex2 - vertex1, vertex3 - vertex1));
-        vertices.push_back(Vertex{vertex1, normal1});
-        vertices.push_back(Vertex{vertex2, normal2});
-        vertices.push_back(Vertex{vertex3, normal3});
+        vertices.push_back(RenderVertex{vertex1, normal1});
+        vertices.push_back(RenderVertex{vertex2, normal2});
+        vertices.push_back(RenderVertex{vertex3, normal3});
     }
     m_verticesCount = vertices.size();
 
@@ -31,30 +31,30 @@ Mesh::Mesh(aiMesh &mesh, aiMatrix4x4 transform) {
     glBindVertexArray(m_VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(RenderVertex) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(RenderVertex), nullptr);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(float) * 3));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(RenderVertex), (void*)(sizeof(float) * 3));
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 }
 
-Mesh::~Mesh() {
+RenderMesh::~RenderMesh() {
     glDeleteVertexArrays(1, &m_VAO);
     glDeleteBuffers(1, &m_VBO);
 }
 
-glm::mat4 Mesh::transform() const {
+glm::mat4 RenderMesh::transform() const {
     return m_transform;
 }
 
-int Mesh::verticesCount() const {
+int RenderMesh::verticesCount() const {
     return m_verticesCount;
 }
 
-GLuint Mesh::VAO() const {
+GLuint RenderMesh::VAO() const {
     return m_VAO;
 }
 

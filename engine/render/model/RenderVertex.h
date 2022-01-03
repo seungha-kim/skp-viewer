@@ -1,7 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 
-struct Vertex {
+struct RenderVertex {
     glm::vec3 pos;
     glm::vec3 normal;
 };

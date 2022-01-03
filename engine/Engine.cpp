@@ -63,7 +63,7 @@ void Engine::updateTextures() {
     m_renderer.resizeResources(m_surfaceInfo);
 }
 
-Material& Engine::globalMaterialMut() {
+RenderMaterial& Engine::globalMaterialMut() {
     return m_globalMaterial;
 }
 
