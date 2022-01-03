@@ -3,7 +3,7 @@ from PySide6.QtCore import Qt
 
 
 class AbstractInputController(ABC):
-    def handle_key(self, key: Qt.Key, modifiers: Qt.KeyboardModifiers, is_pressed: bool) -> bool:
+    def handle_key(self, key: Qt.Key, modifiers: Qt.KeyboardModifiers, pressed: bool) -> bool:
         pass
 
     def update(self) -> None:
@@ -18,10 +18,10 @@ class InputControllerOverriding(AbstractInputController):
         self._overridden = overridden
         self._overrider = overrider
 
-    def handle_key(self, key: Qt.Key, modifiers: Qt.KeyboardModifiers, is_pressed: bool) -> bool:
+    def handle_key(self, key: Qt.Key, modifiers: Qt.KeyboardModifiers, pressed: bool) -> bool:
         return (
-                self._overrider.handle_key(key, modifiers, is_pressed)
-                or self._overridden.handle_key(key, modifiers, is_pressed)
+                self._overrider.handle_key(key, modifiers, pressed)
+                or self._overridden.handle_key(key, modifiers, pressed)
         )
 
     def update(self) -> None:

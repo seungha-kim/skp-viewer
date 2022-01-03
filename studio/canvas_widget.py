@@ -5,7 +5,7 @@ from typing import cast
 
 import binding_test
 from PySide6.QtCore import Qt
-import PySide6.QtGui
+from PySide6.QtGui import QKeyEvent
 from PySide6.QtOpenGLWidgets import QOpenGLWidget
 
 from binding_test import CameraState
@@ -71,10 +71,10 @@ class CanvasWidget(QOpenGLWidget):
         ph = int(h * device_pixel_ratio)
         return binding_test.SurfaceInfo(w, h, pw, ph, device_pixel_ratio, device_pixel_ratio)
 
-    def keyPressEvent(self, event: PySide6.QtGui.QKeyEvent) -> None:
+    def keyPressEvent(self, event: QKeyEvent) -> None:
         self._dispatch_key_event(event.modifiers(), cast(Qt.Key, event.key()), True)
 
-    def keyReleaseEvent(self, event: PySide6.QtGui.QKeyEvent) -> None:
+    def keyReleaseEvent(self, event: QKeyEvent) -> None:
         self._dispatch_key_event(event.modifiers(), cast(Qt.Key, event.key()), False)
 
     def _dispatch_key_event(self, modifiers: Qt.KeyboardModifiers, key: Qt.Key, pressed: bool) -> None:
@@ -124,9 +124,9 @@ class CanvasInputController(AbstractInputController):
     def __init__(self, canvas: CanvasWidget):
         self._canvas = canvas
 
-    def handle_key(self, key: Qt.Key, modifiers: Qt.KeyboardModifiers, is_pressed: bool) -> bool:
+    def handle_key(self, key: Qt.Key, modifiers: Qt.KeyboardModifiers, pressed: bool) -> bool:
         if matched := self._keymap.match(key, modifiers):
-            if matched == CanvasKeyCommand.FLY_MODE and is_pressed:
+            if matched == CanvasKeyCommand.FLY_MODE and pressed:
                 self._canvas.turn_on_fly_mode()
             return True
         else:
