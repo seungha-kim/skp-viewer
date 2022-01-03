@@ -79,15 +79,7 @@ add_compile_definitions(GLFW_INCLUDE_NONE)
 
 add_subdirectory(engine)
 add_subdirectory(dev-shell)
-
-# Target - Binding
-pybind11_add_module(binding_test
-        engine/bindings.cpp)
-target_link_libraries(binding_test
-        PRIVATE
-        renderer
-        pybind11_headers
-        python)
+add_subdirectory(bindings)
 
 # Resources
 set(RESOURCES_SOURCE "${CMAKE_CURRENT_LIST_DIR}/resources")
