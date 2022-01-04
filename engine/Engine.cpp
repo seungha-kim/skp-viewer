@@ -12,7 +12,8 @@ Engine::Engine(SurfaceInfo surfaceInfo)
         .shininess = 32.0f,
     }
     , m_sceneManager(surfaceInfo)
-    , m_renderer(surfaceInfo) {
+    , m_model("resources/monkey.obj")
+    , m_renderer(surfaceInfo, m_model) {
     glEnable(GL_DEPTH_TEST);
 }
 

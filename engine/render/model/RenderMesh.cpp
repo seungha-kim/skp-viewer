@@ -3,27 +3,26 @@
 #include "../checkError.h"
 #include <glm/geometric.hpp>
 
-RenderMesh::RenderMesh(aiMesh &mesh, aiMatrix4x4 transform) {
-    std::vector<RenderVertex> vertices;
+static RenderVertex convertVertex(const Vertex& vertex) {
+    return {
+        .pos = vertex.position,
+        .normal = vertex.normal,
+    };
+}
 
-    for (int i = 0; i < mesh.mNumFaces; i++) {
-        auto &face = mesh.mFaces[i];
-        assert(face.mNumIndices == 3);
-        auto vertex1 = vec3AssimpToGlm(mesh.mVertices[face.mIndices[0]]);
-        auto vertex2 = vec3AssimpToGlm(mesh.mVertices[face.mIndices[1]]);
-        auto vertex3 = vec3AssimpToGlm(mesh.mVertices[face.mIndices[2]]);
-        auto normal1 = vec3AssimpToGlm(mesh.mNormals[face.mIndices[0]]);
-        auto normal2 = vec3AssimpToGlm(mesh.mNormals[face.mIndices[1]]);
-        auto normal3 = vec3AssimpToGlm(mesh.mNormals[face.mIndices[2]]);
-//        auto normal = glm::normalize(glm::cross(vertex2 - vertex1, vertex3 - vertex1));
-        vertices.push_back(RenderVertex{vertex1, normal1});
-        vertices.push_back(RenderVertex{vertex2, normal2});
-        vertices.push_back(RenderVertex{vertex3, normal3});
+RenderMesh::RenderMesh(const AbstractReader& model, UnitId id, glm::mat4 transform) {
+    std::vector<RenderVertex> vertices;
+    unsigned faceCount = model.getUnitFaceCount(id);
+    for (int i = 0; i < faceCount; i++) {
+        auto face = model.getUnitFace(id, i);
+        for (const auto& vertex : face.vertices) {
+            vertices.push_back(convertVertex(vertex));
+        }
     }
     m_verticesCount = vertices.size();
 
     // TODO: transform stack
-    m_transform = mat4AssimpToGlm(transform);
+    m_transform = transform;
 
     glGenVertexArrays(1, &m_VAO);
     glGenBuffers(1, &m_VBO);
@@ -56,13 +55,4 @@ int RenderMesh::verticesCount() const {
 
 GLuint RenderMesh::VAO() const {
     return m_VAO;
-}
-
-glm::vec3 vec3AssimpToGlm(aiVector3D ai) {
-    return {ai.x, ai.y, ai.z};
-}
-
-glm::mat4 mat4AssimpToGlm(aiMatrix4x4 ai) {
-    glm::mat4 result{1.0f};
-    return result; // TODO
 }

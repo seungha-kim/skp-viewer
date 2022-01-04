@@ -47,6 +47,9 @@ add_library(engine
         Engine.cpp
         Engine.h
         export.h
+        reader/AbstractReader.h
+        reader/AssimpReader.cpp
+        reader/AssimpReader.h
         )
 
 target_link_libraries(engine

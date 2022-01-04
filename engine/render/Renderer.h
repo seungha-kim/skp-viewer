@@ -29,7 +29,7 @@ struct RenderOptions {
 
 class Renderer final {
 public:
-    explicit Renderer(const SurfaceInfo& surfaceInfo);
+    explicit Renderer(const SurfaceInfo& surfaceInfo, const AbstractReader& model);
     ~Renderer() = default;
 
     void render(RenderContext &ctx);

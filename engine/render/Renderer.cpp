@@ -1,7 +1,8 @@
 #include "Renderer.h"
 #include "checkError.h"
+#include <stack>
 
-Renderer::Renderer(const SurfaceInfo& surfaceInfo)
+Renderer::Renderer(const SurfaceInfo& surfaceInfo, const AbstractReader& model)
     : m_sunlightPass(surfaceInfo)
     , m_mainPass(surfaceInfo)
     , m_gaussianBlurPass(surfaceInfo)
@@ -11,17 +12,24 @@ Renderer::Renderer(const SurfaceInfo& surfaceInfo)
     , m_outlinePass(surfaceInfo)
     , m_outlineMultiplicativeBlendPass(surfaceInfo, BlendPassKind::multiplicative)
     , m_colorBalancePass(surfaceInfo) {
-    Assimp::Importer importer;
-    const aiScene *scene = importer.ReadFile("resources/monkey.obj",
-                                             aiProcess_CalcTangentSpace |
-                                             aiProcess_Triangulate |
-                                             aiProcess_JoinIdenticalVertices |
-                                             aiProcess_SortByPType);
 
+    std::stack<ObjectId> dfsStack({AbstractReader::ROOT_OBJECT_ID});
+    while (!dfsStack.empty()) {
+        auto object = dfsStack.top();
+        dfsStack.pop();
 
-    for (int i = 0; i < scene->mNumMeshes; i++) {
-        // TODO: transform stack
-        m_meshes.push_back(std::make_unique<RenderMesh>(*scene->mMeshes[i], scene->mRootNode->mTransformation));
+        auto transform = model.getObjectTransform(object);
+
+        auto unitCount = model.getObjectUnitCount(object);
+        for (int i = 0; i < unitCount; i++) {
+            auto unit = model.getObjectUnit(object, i);
+            m_meshes.push_back(std::make_unique<RenderMesh>(model, unit, transform));
+        }
+
+        auto childCount = model.getObjectChildrenCount(object);
+        for (int i = 0; i < childCount; i++) {
+            dfsStack.push(model.getObjectChild(object, i));
+        }
     }
 }
 
