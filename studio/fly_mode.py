@@ -137,6 +137,6 @@ class FlyModeController(AbstractInputController):
         if self._running & FlyModeKeyCommand.PITCH_DOWN:
             camera_state.pitch -= rotation_delta
         if self._running & FlyModeKeyCommand.YAW_LEFT:
-            camera_state.yaw -= rotation_delta
-        if self._running & FlyModeKeyCommand.YAW_RIGHT:
             camera_state.yaw += rotation_delta
+        if self._running & FlyModeKeyCommand.YAW_RIGHT:
+            camera_state.yaw -= rotation_delta

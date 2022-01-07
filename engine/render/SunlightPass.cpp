@@ -45,8 +45,10 @@ public:
         float bottom = -top;
         float left = -right;
         // TODO: proper pos considering view frustum
-        auto sunlightPos = glm::vec3(10.0f, 10.0f, 10.0f);
-        auto view = glm::lookAt(sunlightPos, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        auto sunlightPos = glm::vec3(10.0f, -10.0f, 10.0f);
+        auto sunlightUp = glm::vec3(0.0f, 0.0f, 1.0f);
+
+        auto view = glm::lookAt(sunlightPos, glm::vec3(0.0f, 0.0f, 0.0f), sunlightUp);
         auto projection = glm::ortho(left, right, bottom, top, 0.1f, 100.0f);
         m_lightSpaceMatrix = projection * view;
 

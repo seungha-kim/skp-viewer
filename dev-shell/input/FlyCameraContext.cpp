@@ -11,7 +11,7 @@ void FlyCameraContext::handleMouseInput(InputContext &ctx, const MouseMoveEvent&
     float xOffset = xPos - m_lastMouseX, yOffset = yPos - m_lastMouseY;
 
     auto& cam = ctx.cameraManager.activeSceneMut().cameraStateMut();
-    cam.yaw += xOffset * m_sensitivity;
+    cam.yaw -= xOffset * m_sensitivity;
     cam.pitch -= yOffset * m_sensitivity;
 
     m_lastMouseX = xPos;

@@ -8,17 +8,17 @@ struct CameraState {
     float aspectHeight = 600.0f;
     float zNear = 0.1f;
     float zFar = 100.0f;
-    glm::vec3 pos = glm::vec3(-3.0f, 4.0f, 6.0f);
-    glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+    glm::vec3 pos = glm::vec3(-3.0f, -4.0f, 6.0f);
+    glm::vec3 up = glm::vec3(0.0f, 0.0f, 1.0f);
     float speed = 2.5f;
-    float pitch = -25.0f;
-    float yaw = -55.0f;
+    float pitch = -55.0f;
+    float yaw = -25.0f;
 
     [[nodiscard]] glm::vec3 front() const {
         glm::vec3 result;
-        result.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
-        result.y = sin(glm::radians(pitch));
-        result.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+        result.x = -cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+        result.y = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
+        result.z = sin(glm::radians(pitch));
         return result;
     }
 
