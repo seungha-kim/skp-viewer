@@ -100,7 +100,7 @@ void Gui::processSceneControl(GuiContext &ctx) const {
         ImGui::SliderFloat("zFar", &cam.zFar, 0.1f, 200.0f);
         ImGui::Text("Cam Pos: (%.2f, %.2f, %.2f)", cam.pos.x, cam.pos.y, cam.pos.z);
         ImGui::Text("Cam Up: (%.2f, %.2f, %.2f)", cam.up.x, cam.up.y, cam.up.z);
-        ImGui::Text("Cam Pitch/Yaw: (%.2f, %.2f)", cam.yaw, cam.pitch);
+        ImGui::Text("Cam Pitch/Yaw: (%.2f, %.2f)", cam.pitch, cam.yaw);
         ImGui::End();
     }
 }
