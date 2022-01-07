@@ -15,22 +15,33 @@ Renderer::Renderer(const SurfaceInfo& surfaceInfo, const AbstractReader& model)
     , m_outlineMultiplicativeBlendPass(surfaceInfo, BlendPassKind::multiplicative)
     , m_colorBalancePass(surfaceInfo) {
 
-    std::stack<ObjectId> dfsStack({AbstractReader::ROOT_OBJECT_ID});
+    struct DfsItem {
+        ObjectId id;
+        glm::mat4 ancestorTransform;
+    };
+
+    std::stack<DfsItem> dfsStack({{
+        .id = AbstractReader::ROOT_OBJECT_ID,
+        .ancestorTransform = glm::mat4(1.0f),
+    }});
     while (!dfsStack.empty()) {
-        auto object = dfsStack.top();
+        auto item = dfsStack.top();
         dfsStack.pop();
 
-        auto transform = model.getObjectTransform(object);
+        auto transform = item.ancestorTransform * model.getObjectTransform(item.id);
 
-        auto unitCount = model.getObjectUnitCount(object);
+        auto unitCount = model.getObjectUnitCount(item.id);
         for (int i = 0; i < unitCount; i++) {
-            auto unit = model.getObjectUnit(object, i);
+            auto unit = model.getObjectUnit(item.id, i);
             m_meshes.push_back(std::make_unique<RenderMesh>(model, unit, transform));
         }
 
-        auto childCount = model.getObjectChildrenCount(object);
+        auto childCount = model.getObjectChildrenCount(item.id);
         for (int i = 0; i < childCount; i++) {
-            dfsStack.push(model.getObjectChild(object, i));
+            dfsStack.push({
+                .id = model.getObjectChild(item.id, i),
+                .ancestorTransform = transform,
+            });
         }
     }
 }
