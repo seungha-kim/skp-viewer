@@ -39,7 +39,7 @@ public:
         for (auto &mesh: input.meshes) {
             glBindVertexArray(mesh->VAO());
 
-            glm::mat4 model = glm::mat4(1.0f);
+            glm::mat4 model = mesh->transform();
             m_mainShader->setMatrix4f("model", model);
 
             glDrawArrays(GL_TRIANGLES, 0, mesh->verticesCount());

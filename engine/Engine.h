@@ -5,7 +5,7 @@
 #include "render/SurfaceInfo.h"
 #include "render/model/RenderMaterial.h"
 #include "render/Renderer.h"
-#include "reader/AssimpReader.h"
+#include "reader/AbstractReader.h"
 
 class DLL_EXPORT Engine {
 public:
@@ -28,7 +28,7 @@ public:
 
 private:
     SceneManager m_sceneManager;
-    AssimpReader m_model; // TODO: persistent model 로 바꾸기
+    std::unique_ptr<AbstractReader> m_model; // TODO: persistent model 로 바꾸기
     SurfaceInfo m_surfaceInfo;
     Renderer m_renderer;
     RenderMaterial m_globalMaterial;

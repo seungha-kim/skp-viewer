@@ -33,13 +33,13 @@ public:
 
     [[nodiscard]] bool hasUnit(UnitId meshId) const override;
 
-    [[nodiscard]] MaterialId getUnitFrontMaterial(UnitId id) const override;
+    [[nodiscard]] std::optional<MaterialId> getUnitFrontMaterial(UnitId id) const override;
 
-    [[nodiscard]] MaterialId getUnitBackMaterial(UnitId id) const override;
+    [[nodiscard]] std::optional<MaterialId> getUnitBackMaterial(UnitId id) const override;
 
-    [[nodiscard]] unsigned getUnitFaceCount(UnitId id) const override;
+    [[nodiscard]] unsigned getUnitTriangleCount(UnitId id) const override;
 
-    [[nodiscard]] Face getUnitFace(UnitId id, int index) const override;
+    [[nodiscard]] Triangle getUnitTriangle(UnitId id, int index) const override;
 
     [[nodiscard]] bool hasMaterial(MaterialId materialId) const override;
 

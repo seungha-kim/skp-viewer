@@ -59,7 +59,7 @@ public:
         for (auto &mesh: input.meshes) {
             glBindVertexArray(mesh->VAO());
 
-            glm::mat4 model = glm::mat4(1.0f);
+            glm::mat4 model = mesh->transform();
             glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(model)));
             m_shader->setMatrix4f("model", model);
             m_shader->setMatrix3f("normalMatrix", normalMatrix);

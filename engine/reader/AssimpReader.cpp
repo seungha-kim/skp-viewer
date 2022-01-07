@@ -71,13 +71,13 @@ bool AssimpReader::hasUnit(UnitId meshId) const {
     return m_meshMap.count(meshId) > 0;
 }
 
-MaterialId AssimpReader::getUnitFrontMaterial(UnitId id) const {
+std::optional<MaterialId> AssimpReader::getUnitFrontMaterial(UnitId id) const {
     const auto* mesh = m_meshMap.at(id);
     const auto* material = m_scene->mMaterials[mesh->mMaterialIndex];
     return m_materialInverse.at(material);
 }
 
-MaterialId AssimpReader::getUnitBackMaterial(UnitId id) const {
+std::optional<MaterialId> AssimpReader::getUnitBackMaterial(UnitId id) const {
     return getUnitFrontMaterial(id);
 }
 
@@ -129,16 +129,16 @@ void AssimpReader::constructMap() {
     }
 }
 
-unsigned AssimpReader::getUnitFaceCount(UnitId id) const {
+unsigned AssimpReader::getUnitTriangleCount(UnitId id) const {
     const auto* mesh = m_meshMap.at(id);
     return mesh->mNumFaces;
 }
 
-Face AssimpReader::getUnitFace(UnitId id, int index) const {
+Triangle AssimpReader::getUnitTriangle(UnitId id, int index) const {
     const auto* mesh = m_meshMap.at(id);
     const auto face = mesh->mFaces[index];
 
-    Face result { .vertices = {} };
+    Triangle result { .vertices = {} };
 
     assert(face.mNumIndices == 3);
     for (int i = 0; i < face.mNumIndices; i++) {

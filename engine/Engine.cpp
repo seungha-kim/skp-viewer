@@ -2,6 +2,8 @@
 #include "render/checkError.h"
 #include <glad/glad.h>
 #include <glm/gtc/random.hpp>
+#include "reader/AssimpReader.h"
+#include "reader/SketchupReader.h"
 
 Engine::Engine(SurfaceInfo surfaceInfo)
     : m_surfaceInfo(surfaceInfo)
@@ -12,8 +14,9 @@ Engine::Engine(SurfaceInfo surfaceInfo)
         .shininess = 32.0f,
     }
     , m_sceneManager(surfaceInfo)
-    , m_model("resources/monkey.obj")
-    , m_renderer(surfaceInfo, m_model) {
+//    , m_model(std::make_unique<AssimpReader>("resources/monkey.obj"))
+    , m_model(std::make_unique<SketchupReader>("resources/test.skp"))
+    , m_renderer(surfaceInfo, *m_model) {
     glEnable(GL_DEPTH_TEST);
 }
 

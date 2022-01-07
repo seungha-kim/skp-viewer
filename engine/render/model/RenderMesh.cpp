@@ -12,9 +12,9 @@ static RenderVertex convertVertex(const Vertex& vertex) {
 
 RenderMesh::RenderMesh(const AbstractReader& model, UnitId id, glm::mat4 transform) {
     std::vector<RenderVertex> vertices;
-    unsigned faceCount = model.getUnitFaceCount(id);
+    unsigned faceCount = model.getUnitTriangleCount(id);
     for (int i = 0; i < faceCount; i++) {
-        auto face = model.getUnitFace(id, i);
+        auto face = model.getUnitTriangle(id, i);
         for (const auto& vertex : face.vertices) {
             vertices.push_back(convertVertex(vertex));
         }

@@ -50,8 +50,27 @@ add_library(engine
         reader/AbstractReader.h
         reader/AssimpReader.cpp
         reader/AssimpReader.h
+        reader/SketchupReader.cpp
+        reader/SketchupReader.h
+        reader/sketchup-specialization.h
         )
+
+find_library(SKETCHUP_LIBRARY
+        NAMES SketchUpAPI
+        HINTS ${CMAKE_CURRENT_LIST_DIR}/../extern/sketchup)
+if (NOT SKETCHUP_LIBRARY)
+    message(FATAL_ERROR "SketchUpAPI not found")
+endif()
+add_library(sketchup-api INTERFACE IMPORTED)
+set_target_properties(sketchup-api PROPERTIES
+        INTERFACE_LINK_LIBRARIES "${SKETCHUP_LIBRARY}")
+
+message(SKETCHUP_LIBRARY ${SKETCHUP_LIBRARY})
 
 target_link_libraries(engine
         PUBLIC
-        assimp glad imgui)
+        assimp
+        glad
+        imgui
+        sketchup-api
+        )
