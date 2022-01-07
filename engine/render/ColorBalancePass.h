@@ -6,6 +6,8 @@
 #include "ColorTexture.h"
 #include "BasePass.h"
 
+namespace acon {
+
 struct ColorBalancePassInput {
     const ColorTexture& colorTexture;
 };
@@ -26,3 +28,5 @@ public:
 private:
     std::unique_ptr<ColorBalancePassPimpl> m_pimpl;
 };
+
+}

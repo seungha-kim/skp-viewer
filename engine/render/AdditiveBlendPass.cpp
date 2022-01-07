@@ -3,6 +3,8 @@
 #include "OffscreenRenderTarget.h"
 #include "TextureRenderer.h"
 
+namespace acon {
+
 static const char* kindToShader(BlendPassKind kind) {
     switch (kind) {
         case BlendPassKind::additive:
@@ -61,4 +63,6 @@ AdditiveBlendPassOutput AdditiveBlendPass::render(RenderContext &ctx, const Addi
 
 void AdditiveBlendPass::resizeResources(const SurfaceInfo &surfaceInfo) {
     m_pimpl->resizeResources(surfaceInfo);
+}
+
 }

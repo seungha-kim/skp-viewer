@@ -1,6 +1,8 @@
 #pragma once
 #include <glad/glad.h>
 
+namespace acon {
+
 class DepthTexture {
 public:
     DepthTexture(int width, int height);
@@ -13,3 +15,5 @@ private:
     const int m_width;
     const int m_height;
 };
+
+}

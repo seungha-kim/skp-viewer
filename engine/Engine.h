@@ -7,6 +7,8 @@
 #include "render/Renderer.h"
 #include "reader/AbstractReader.h"
 
+namespace acon {
+
 class DLL_EXPORT Engine {
 public:
     explicit Engine(SurfaceInfo surfaceInfo);
@@ -37,3 +39,5 @@ private:
 
     void updateTextures();
 };
+
+}

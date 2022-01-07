@@ -2,6 +2,8 @@
 #include "checkError.h"
 #include <stack>
 
+namespace acon {
+
 Renderer::Renderer(const SurfaceInfo& surfaceInfo, const AbstractReader& model)
     : m_sunlightPass(surfaceInfo)
     , m_mainPass(surfaceInfo)
@@ -114,4 +116,6 @@ void Renderer::resizeResources(const SurfaceInfo &surfaceInfo) {
 
 RenderOptions &Renderer::renderOptionsMut() {
     return m_renderOptions;
+}
+
 }

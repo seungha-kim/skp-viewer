@@ -3,6 +3,8 @@
 #include "Scene.h"
 #include "../render/SurfaceInfo.h"
 
+namespace acon {
+
 class SceneManager {
 public:
     explicit SceneManager(const SurfaceInfo& surfaceInfo);
@@ -17,3 +19,5 @@ private:
     std::vector<Scene> m_scenes;
     int m_activeSceneIndex = 0;
 };
+
+}

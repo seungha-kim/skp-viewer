@@ -2,6 +2,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+namespace acon {
+
 struct CameraState {
     float fovyDeg = 45.0f;
     float aspectWidth = 800.0f;
@@ -72,4 +74,4 @@ struct CameraState {
     }
 };
 
-
+}

@@ -1,5 +1,7 @@
 #include "ColorTexture.h"
 
+namespace acon {
+
 ColorTexture::ColorTexture(int width, int height): m_width(width), m_height(height) {
     glGenTextures(1, &m_textureName);
     glBindTexture(GL_TEXTURE_2D, m_textureName);
@@ -28,4 +30,6 @@ int ColorTexture::width() const {
 
 int ColorTexture::height() const {
     return m_height;
+}
+
 }

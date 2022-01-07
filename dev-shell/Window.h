@@ -35,7 +35,7 @@ public:
 
 private:
     GLFWwindow* m_glfwWindow = nullptr;
-    std::unique_ptr<Engine> m_engine;
+    std::unique_ptr<acon::Engine> m_engine;
     Gui m_gui;
 
     // Input

@@ -7,6 +7,8 @@
 #include "model/RenderMesh.h"
 #include "BasePass.h"
 
+namespace acon {
+
 struct OutlinePassInput {
     const std::vector<std::unique_ptr<RenderMesh>>& meshes;
     const DepthTexture& depthTexture;
@@ -28,3 +30,5 @@ public:
 private:
     std::unique_ptr<OutlinePassPimpl> m_pimpl;
 };
+
+}

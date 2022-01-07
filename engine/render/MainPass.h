@@ -7,6 +7,8 @@
 #include "DepthTexture.h"
 #include "BasePass.h"
 
+namespace acon {
+
 struct MainPassInput {
     const std::vector<std::unique_ptr<RenderMesh>>& meshes;
     const glm::mat4 lightSpaceMatrix;
@@ -29,3 +31,5 @@ public:
 private:
     std::unique_ptr<MainPassPimpl> m_pimpl;
 };
+
+}

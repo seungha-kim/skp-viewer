@@ -21,7 +21,7 @@ struct MouseScrollEvent {
 using MouseEvent = std::variant<MouseMoveEvent, MouseScrollEvent>;
 
 struct InputContext {
-    SceneManager& cameraManager;
+    acon::SceneManager& cameraManager;
     PlaybackState& playbackState;
     std::optional<MouseEvent> mouseEvent;
     const KeyCommandSet& keyCommandSet;

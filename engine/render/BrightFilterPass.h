@@ -6,6 +6,8 @@
 #include "ColorTexture.h"
 #include "BasePass.h"
 
+namespace acon {
+
 struct BrightFilterPassInput {
     const ColorTexture& colorTexture;
     const float threshold;
@@ -27,3 +29,5 @@ public:
 private:
     std::unique_ptr<BrightFilterPassPimpl> m_pimpl;
 };
+
+}

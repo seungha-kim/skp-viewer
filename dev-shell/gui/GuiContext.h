@@ -8,10 +8,10 @@
 #include "../../engine/render/Renderer.h"
 
 struct GuiContext {
-    SceneManager& sceneManager;
+    acon::SceneManager& sceneManager;
     PlaybackState& playbackState;
     InputController& inputController;
-    RenderMaterial& globalMaterial;
-    const SurfaceInfo& surfaceInfo;
-    RenderOptions& renderOptions;
+    acon::RenderMaterial& globalMaterial;
+    const acon::SurfaceInfo& surfaceInfo;
+    acon::RenderOptions& renderOptions;
 };

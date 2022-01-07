@@ -3,6 +3,8 @@
 #include "OffscreenRenderTarget.h"
 #include "TextureRenderer.h"
 
+namespace acon {
+
 class ColorBalancePassPimpl {
     friend class ColorBalancePass;
 
@@ -53,4 +55,6 @@ void ColorBalancePass::setColorBalance(glm::vec3 colorBalance) {
 
 void ColorBalancePass::resizeResources(const SurfaceInfo &surfaceInfo) {
     m_pimpl->resizeResources(surfaceInfo);
+}
+
 }

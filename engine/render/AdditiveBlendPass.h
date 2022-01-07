@@ -6,6 +6,8 @@
 #include "ColorTexture.h"
 #include "./BasePass.h"
 
+namespace acon {
+
 enum class BlendPassKind {
     additive, multiplicative,
 };
@@ -33,3 +35,5 @@ public:
 private:
     std::unique_ptr<AdditiveBlendPassPimpl> m_pimpl;
 };
+
+}

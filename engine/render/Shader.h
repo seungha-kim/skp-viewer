@@ -1,13 +1,10 @@
-//
-// Created by Kim Seungha on 2021/11/03.
-//
-
-#ifndef LEARN_OPENGL_SHADER_H
-#define LEARN_OPENGL_SHADER_H
+#pragma once
 
 #include <string>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+namespace acon {
 
 class Shader {
 public:
@@ -31,5 +28,4 @@ public:
     void setVector4fv(const std::string &name, glm::vec4* vs, int count);
 };
 
-
-#endif //LEARN_OPENGL_SHADER_H
+}

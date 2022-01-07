@@ -10,6 +10,8 @@ struct aiMesh;
 struct aiMaterial;
 struct aiTexture;
 
+namespace acon {
+
 class AssimpReader: public AbstractReader {
 public:
     explicit AssimpReader(std::string_view path);
@@ -77,3 +79,5 @@ private:
 
     void constructMap();
 };
+
+}

@@ -72,7 +72,7 @@ Window::Window(int width, int height, const char *title) {
     initGlfw();
     if (auto* windowPtr = glfwCreateWindow(width, height, title, NULL, NULL))
     {
-        SurfaceInfo surfaceInfo;
+        acon::SurfaceInfo surfaceInfo;
         m_glfwWindow = windowPtr;
         bind();
         initGl();
@@ -87,7 +87,7 @@ Window::Window(int width, int height, const char *title) {
         glfwGetWindowSize(windowPtr, &surfaceInfo.logicalWidth, &surfaceInfo.logicalHeight);
         glfwGetWindowContentScale(windowPtr, &surfaceInfo.contentScaleX, &surfaceInfo.contentScaleY);
 
-        m_engine = std::make_unique<Engine>(surfaceInfo);
+        m_engine = std::make_unique<acon::Engine>(surfaceInfo);
     } else {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();

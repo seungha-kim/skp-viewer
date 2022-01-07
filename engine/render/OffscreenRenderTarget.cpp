@@ -1,6 +1,8 @@
 #include "OffscreenRenderTarget.h"
 #include "checkError.h"
 
+namespace acon {
+
 OffscreenRenderTarget::OffscreenRenderTarget() {
     glGenFramebuffers(1, &m_fbo);
 }
@@ -73,4 +75,6 @@ OffscreenRenderTargetBinding::OffscreenRenderTargetBinding(OffscreenRenderTarget
 
 OffscreenRenderTargetBinding::~OffscreenRenderTargetBinding() {
     glBindFramebuffer(GL_FRAMEBUFFER, m_prevFbo);
+}
+
 }

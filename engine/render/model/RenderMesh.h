@@ -4,6 +4,8 @@
 #include <vector>
 #include "../../reader/AbstractReader.h"
 
+namespace acon {
+
 class RenderMesh {
 public:
     RenderMesh(const AbstractReader& model, UnitId id, glm::mat4 transform);
@@ -19,3 +21,5 @@ private:
     int m_verticesCount{};
     GLuint m_VAO{}, m_VBO{};
 };
+
+}

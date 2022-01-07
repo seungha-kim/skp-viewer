@@ -5,6 +5,8 @@
 #include <assimp/postprocess.h>
 #include <glm/gtc/type_ptr.hpp>
 
+namespace acon {
+
 static glm::mat4 convertMatrix4(const aiMatrix4x4& mat);
 static glm::vec3 convertVec3(const aiVector3D& vec);
 static glm::vec2 convertVec3to2(const aiVector3D& vec);
@@ -189,4 +191,6 @@ static glm::vec2 convertVec3to2(const aiVector3D& vec) {
 
 static glm::vec2 convertVec2(const aiVector2D& vec) {
     return {vec.x, vec.y};
+}
+
 }

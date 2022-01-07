@@ -2,6 +2,8 @@
 #include "OffscreenRenderTarget.h"
 #include "TextureRenderer.h"
 
+namespace acon {
+
 class GaussianBlurPassPimpl {
     friend class GaussianBlurPass;
 public:
@@ -67,4 +69,6 @@ void GaussianBlurPass::setEnabled(bool enabled) {
 
 void GaussianBlurPass::resizeResources(const SurfaceInfo &surfaceInfo) {
     m_pimpl->resizeResources(surfaceInfo);
+}
+
 }

@@ -1,5 +1,7 @@
 #include "Scene.h"
 
+namespace acon {
+
 Scene::Scene(const SurfaceInfo &surfaceInfo) {
     m_camera.aspectWidth = surfaceInfo.logicalWidth;
     m_camera.aspectHeight = surfaceInfo.logicalHeight;
@@ -19,4 +21,6 @@ const CameraState &Scene::cameraState() const {
 
 CameraState &Scene::cameraStateMut() {
     return m_camera;
+}
+
 }

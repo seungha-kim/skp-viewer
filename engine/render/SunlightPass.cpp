@@ -4,6 +4,8 @@
 #include "ColorTexture.h"
 #include "OffscreenRenderTarget.h"
 
+namespace acon {
+
 class SunlightPassPimpl {
     friend class SunlightPass;
 
@@ -101,4 +103,6 @@ GLuint SunlightPass::depthTexture() {
 
 void SunlightPass::resizeResources(const SurfaceInfo &surfaceInfo) {
     m_pimpl->resizeResources(surfaceInfo);
+}
+
 }

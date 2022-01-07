@@ -13,7 +13,6 @@ add_library(engine
         render/model/RenderMesh.h
         render/model/RenderVertex.h
         render/model/RenderMaterial.h
-        scene/DirectionalLight.cpp
         scene/DirectionalLight.h
         scene/Scene.cpp scene/Scene.h
         render/SurfaceInfo.h

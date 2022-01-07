@@ -5,6 +5,8 @@
 #include <glm/glm.hpp>
 #include "DepthTexture.h"
 
+namespace acon {
+
 class OffscreenRenderTargetBinding;
 class OffscreenRenderTarget {
     friend class OffscreenRenderTargetBinding;
@@ -31,3 +33,5 @@ public:
 private:
     GLint m_prevFbo = 0;
 };
+
+}

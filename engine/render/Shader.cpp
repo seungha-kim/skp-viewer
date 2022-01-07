@@ -9,6 +9,8 @@
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
 
+namespace acon {
+
 static std::string readResourceAsStr(std::string_view name) {
     static const std::string resourceBasePath = "resources/";
     std::ifstream ifs;
@@ -121,4 +123,6 @@ void Shader::setVector4fv(const std::string &name, glm::vec4* v, int count) {
 void Shader::setMatrix3f(const std::string &name, glm::mat3 m) {
     unsigned loc = glGetUniformLocation(m_ID, name.c_str());
     glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(m));
+}
+
 }

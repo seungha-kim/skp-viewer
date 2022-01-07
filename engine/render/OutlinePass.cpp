@@ -4,8 +4,7 @@
 #include "TextureRenderer.h"
 #include "checkError.h"
 
-// 흠...
-// - [] outlinepass 의 내용을 채워보자
+namespace acon {
 
 class OutlinePassPimpl {
     friend class OutlinePass;
@@ -91,4 +90,6 @@ OutlinePassOutput OutlinePass::render(RenderContext &ctx, const OutlinePassInput
 
 void OutlinePass::resizeResources(const SurfaceInfo &surfaceInfo) {
     m_pimpl->resizeResources(surfaceInfo);
+}
+
 }

@@ -3,6 +3,8 @@
 #include <glm/glm.hpp>
 #include <optional>
 
+namespace acon {
+
 using ObjectId = unsigned;
 using UnitId = unsigned;
 using MaterialId = unsigned;
@@ -59,3 +61,5 @@ public:
     //  -> 이 mismatch 를 어떻게 할 것인가? -> SketchUp 읽어올 때 mesh data 공유하는 정도로만 하는게 어떨까 - 이렇게 되면 이름이 다 같아질듯.
     // TODO: Component override? X 이런거 없다. Object 가 서로 다르기 때문에 Object 속성을 바꾸는게 곧 override 라고 봐도 됨
 };
+
+}

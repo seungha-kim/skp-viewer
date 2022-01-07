@@ -8,6 +8,8 @@
 #include "DepthTexture.h"
 #include "BasePass.h"
 
+namespace acon {
+
 struct SunlightPassInput {
     // TODO: meshes 말고 rootObject 를 받는 것이 적절
     const std::vector<std::unique_ptr<RenderMesh>>& meshes;
@@ -31,3 +33,5 @@ public:
 private:
     std::unique_ptr<SunlightPassPimpl> m_pimpl;
 };
+
+}

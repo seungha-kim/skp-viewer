@@ -5,6 +5,8 @@
 #include "RenderContext.h"
 #include "BasePass.h"
 
+namespace acon {
+
 struct GaussianBlurPassInput {
     const ColorTexture& colorTexture;
     const int iteration;
@@ -25,3 +27,5 @@ public:
 private:
     std::unique_ptr<GaussianBlurPassPimpl> m_pimpl;
 };
+
+}

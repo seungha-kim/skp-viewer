@@ -3,6 +3,8 @@
 #include "OffscreenRenderTarget.h"
 #include "TextureRenderer.h"
 
+namespace acon {
+
 class ToneMapPassPimpl {
     friend class ToneMapPass;
 
@@ -53,4 +55,6 @@ ToneMapPassOutput ToneMapPass::render(RenderContext &ctx, const ToneMapPassInput
 
 void ToneMapPass::resizeResources(const SurfaceInfo &surfaceInfo) {
     m_pimpl->resizeResources(surfaceInfo);
+}
+
 }

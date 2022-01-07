@@ -3,6 +3,8 @@
 #include "OffscreenRenderTarget.h"
 #include "checkError.h"
 
+namespace acon {
+
 class MainPassPimpl {
     friend class MainPass;
     std::unique_ptr<Shader> m_mainShader;
@@ -68,4 +70,6 @@ MainPassOutput MainPass::render(RenderContext &ctx, const MainPassInput& input) 
 
 void MainPass::resizeResources(const SurfaceInfo &surfaceInfo) {
     m_pimpl->resizeResources(surfaceInfo);
+}
+
 }

@@ -5,6 +5,8 @@
 #include "AbstractReader.h"
 #include "sketchup-specialization.h"
 
+namespace acon {
+
 struct SketchupUnitHolder;
 struct SketchupObjectHolder;
 struct SketchupObjectDescription;
@@ -75,3 +77,5 @@ private:
 
     ObjectId processObject(const SketchupObjectDescription& desc);
 };
+
+}

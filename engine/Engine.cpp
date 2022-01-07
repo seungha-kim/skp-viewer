@@ -5,6 +5,8 @@
 #include "reader/AssimpReader.h"
 #include "reader/SketchupReader.h"
 
+namespace acon {
+
 Engine::Engine(SurfaceInfo surfaceInfo)
     : m_surfaceInfo(surfaceInfo)
     , m_globalMaterial{
@@ -14,8 +16,8 @@ Engine::Engine(SurfaceInfo surfaceInfo)
         .shininess = 32.0f,
     }
     , m_sceneManager(surfaceInfo)
-//    , m_model(std::make_unique<AssimpReader>("resources/monkey.obj"))
-    , m_model(std::make_unique<SketchupReader>("resources/test.skp"))
+//    , m_model(std::make_unique<eng::AssimpReader>("resources/monkey.obj"))
+    , m_model(std::make_unique<acon::SketchupReader>("resources/test.skp"))
     , m_renderer(surfaceInfo, *m_model) {
     glEnable(GL_DEPTH_TEST);
 }
@@ -77,4 +79,6 @@ Renderer& Engine::rendererMut() {
 
 CameraState& Engine::currentCameraStateMut() {
     return m_sceneManager.activeSceneMut().cameraStateMut();
+}
+
 }

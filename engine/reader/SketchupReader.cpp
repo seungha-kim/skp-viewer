@@ -4,6 +4,8 @@
 #include <map>
 #include <glm/gtc/type_ptr.hpp>
 
+namespace acon {
+
 struct SketchupUnit {
     std::optional<MaterialId> frontMaterialId;
     std::optional<MaterialId> backMaterialId;
@@ -341,4 +343,6 @@ static glm::mat4 convertTransform(SUTransformation transform) {
     values[14] = m(values[14]);
 
     return glm::make_mat4(values);
+}
+
 }

@@ -12,6 +12,8 @@
 #include "ToneMapPass.h"
 #include "OutlinePass.h"
 
+namespace acon {
+
 struct RenderOptions {
     glm::vec3 colorBalance{1.0};
     bool enableGaussianBlur{false};
@@ -51,3 +53,5 @@ private:
     TextureRenderer m_textureRenderer;
     RenderOptions m_renderOptions;
 };
+
+}

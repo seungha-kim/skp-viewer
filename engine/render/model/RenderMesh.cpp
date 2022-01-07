@@ -3,6 +3,8 @@
 #include "../checkError.h"
 #include <glm/geometric.hpp>
 
+namespace acon {
+
 static RenderVertex convertVertex(const Vertex& vertex) {
     return {
         .pos = vertex.position,
@@ -55,4 +57,6 @@ int RenderMesh::verticesCount() const {
 
 GLuint RenderMesh::VAO() const {
     return m_VAO;
+}
+
 }

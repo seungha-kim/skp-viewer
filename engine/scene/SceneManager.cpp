@@ -1,5 +1,7 @@
 #include "SceneManager.h"
 
+namespace acon {
+
 SceneManager::SceneManager(const SurfaceInfo &surfaceInfo): m_scenes{Scene(surfaceInfo)} {}
 
 const Scene &SceneManager::activeScene() const {
@@ -39,4 +41,6 @@ bool SceneManager::setActiveScene(int index) {
 
 int SceneManager::activeSceneIndex() const {
     return m_activeSceneIndex;
+}
+
 }

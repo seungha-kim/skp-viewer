@@ -3,6 +3,8 @@
 #include "OffscreenRenderTarget.h"
 #include "TextureRenderer.h"
 
+namespace acon {
+
 class BrightFilterPassPimpl {
     friend class BrightFilterPass;
 
@@ -48,4 +50,6 @@ BrightFilterPassOutput BrightFilterPass::render(RenderContext &ctx, const Bright
 
 void BrightFilterPass::resizeResources(const SurfaceInfo &surfaceInfo) {
     m_pimpl->resizeResources(surfaceInfo);
+}
+
 }

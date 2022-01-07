@@ -6,6 +6,8 @@
 #include <memory>
 #include <functional>
 
+namespace acon {
+
 class TextureRenderer {
 public:
     TextureRenderer();
@@ -20,3 +22,5 @@ private:
     GLuint m_textureNames[16] {0};
     int m_maxTextureIndex{};
 };
+
+}

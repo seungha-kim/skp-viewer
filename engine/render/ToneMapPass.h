@@ -6,6 +6,8 @@
 #include "ColorTexture.h"
 #include "BasePass.h"
 
+namespace acon {
+
 struct ToneMapPassInput {
     const ColorTexture& colorTexture;
     const float exposure;
@@ -28,3 +30,5 @@ public:
 private:
     std::unique_ptr<ToneMapPassPimpl> m_pimpl;
 };
+
+}

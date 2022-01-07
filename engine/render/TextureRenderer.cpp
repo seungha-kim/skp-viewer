@@ -1,5 +1,6 @@
-
 #include "TextureRenderer.h"
+
+namespace acon {
 
 static const float vertices[] {
         -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
@@ -63,3 +64,4 @@ void TextureRenderer::render(RenderContext &ctx, const std::function<void(Shader
     glBindVertexArray(0);
 }
 
+}

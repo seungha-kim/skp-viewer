@@ -1,5 +1,7 @@
 #pragma once
 
+namespace acon {
+
 struct SurfaceInfo {
     int logicalWidth{};
     int logicalHeight{};
@@ -8,3 +10,5 @@ struct SurfaceInfo {
     float contentScaleX{};
     float contentScaleY{};
 };
+
+}
