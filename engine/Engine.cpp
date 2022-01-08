@@ -7,7 +7,7 @@
 
 namespace acon {
 
-Engine::Engine(SurfaceInfo surfaceInfo)
+Engine::Engine(SurfaceInfo surfaceInfo, const AbstractReader& model)
     : m_surfaceInfo(surfaceInfo)
     , m_globalMaterial{
         .ambient = glm::vec3(0.1f, 0.1f, 0.1f),
@@ -16,9 +16,7 @@ Engine::Engine(SurfaceInfo surfaceInfo)
         .shininess = 32.0f,
     }
     , m_sceneManager(surfaceInfo)
-//    , m_model(std::make_unique<eng::AssimpReader>("resources/monkey.obj"))
-    , m_model(std::make_unique<acon::SketchupReader>("resources/test.skp"))
-    , m_renderer(surfaceInfo, *m_model) {
+    , m_renderer(surfaceInfo, model) {
     glEnable(GL_DEPTH_TEST);
 }
 

@@ -2,3 +2,4 @@ imgui.ini
 __pycache__
 extern/sketchup
 *~.skp
+cmake-build-*/

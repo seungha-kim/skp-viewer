@@ -3,7 +3,9 @@
 #include "../engine/Engine.h"
 #include "../engine/render/checkError.h"
 #include <glad/glad.h>
-#include "../engine/scene/CameraState.h"
+#include "../engine/reader/AbstractReader.h"
+#include "../engine/reader/AssimpReader.h"
+#include "../engine/reader/SketchupReader.h"
 
 namespace py = pybind11;
 
@@ -12,6 +14,7 @@ void init() {
 }
 
 PYBIND11_MODULE(binding_test, m) {
+    using namespace acon;
     m.doc() = "pybind11 example plugin"; // optional module docstring
 
     m.def("init", &init, "initialize OpenGL");
@@ -34,11 +37,19 @@ PYBIND11_MODULE(binding_test, m) {
             }));
 
     py::class_<Engine>(m, "Engine")
-            .def(py::init<SurfaceInfo>())
+            .def(py::init<SurfaceInfo, const AbstractReader&>())
             .def("render", &Engine::render)
             .def("resize", &Engine::resize)
             .def("currentCameraStateMut", &Engine::currentCameraStateMut, py::return_value_policy::reference)
             .def("setRandomGlobalDiffuse", &Engine::setRandomGlobalDiffuse);
+
+    py::class_<AbstractReader>(m, "AbstractReader");
+
+    py::class_<AssimpReader, AbstractReader>(m, "AssimpReader")
+            .def(py::init<std::string_view>());
+
+    py::class_<SketchupReader, AbstractReader>(m, "SketchupReader")
+            .def(py::init<std::string_view>());
 
     py::class_<CameraState>(m, "CameraState")
             .def(py::init<>())

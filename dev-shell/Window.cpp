@@ -3,6 +3,7 @@
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
+#include "../engine/reader/AssimpReader.h"
 
 void framebuffer_size_callback(GLFWwindow* glfwWindow, int width, int height)
 {
@@ -69,6 +70,8 @@ void Window::initGl() {
 }
 
 Window::Window(int width, int height, const char *title) {
+    m_model = std::make_unique<acon::AssimpReader>("resources/monkey.obj");
+
     initGlfw();
     if (auto* windowPtr = glfwCreateWindow(width, height, title, NULL, NULL))
     {
@@ -87,7 +90,7 @@ Window::Window(int width, int height, const char *title) {
         glfwGetWindowSize(windowPtr, &surfaceInfo.logicalWidth, &surfaceInfo.logicalHeight);
         glfwGetWindowContentScale(windowPtr, &surfaceInfo.contentScaleX, &surfaceInfo.contentScaleY);
 
-        m_engine = std::make_unique<acon::Engine>(surfaceInfo);
+        m_engine = std::make_unique<acon::Engine>(surfaceInfo, *m_model);
     } else {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();

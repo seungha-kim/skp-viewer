@@ -11,7 +11,7 @@ namespace acon {
 
 class DLL_EXPORT Engine {
 public:
-    explicit Engine(SurfaceInfo surfaceInfo);
+    explicit Engine(SurfaceInfo surfaceInfo, const AbstractReader& model);
 
     [[nodiscard]] const SceneManager& sceneManager() const;
     SceneManager& sceneManagerMut();
@@ -30,7 +30,6 @@ public:
 
 private:
     SceneManager m_sceneManager;
-    std::unique_ptr<AbstractReader> m_model; // TODO: persistent model 로 바꾸기
     SurfaceInfo m_surfaceInfo;
     Renderer m_renderer;
     RenderMaterial m_globalMaterial;

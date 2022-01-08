@@ -8,7 +8,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QKeyEvent
 from PySide6.QtOpenGLWidgets import QOpenGLWidget
 
-from binding_test import CameraState
+from binding_test import CameraState, AssimpReader, SketchupReader
 from .fly_mode import FlyModeController
 from .input_controller import AbstractInputController, InputControllerOverriding
 from .keymap import KeyMap
@@ -45,13 +45,14 @@ class CanvasWidget(QOpenGLWidget):
         self._delegate = delegate
         self._default_input_controller = CanvasInputController(self)
         self._state: State.Base = State.Default(self._default_input_controller)
+        self._model = SketchupReader("resources/test.skp")
 
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.setUpdateBehavior(QOpenGLWidget.UpdateBehavior.NoPartialUpdate)
 
     def initializeGL(self) -> None:
         binding_test.init()
-        self.engine = binding_test.Engine(self.surface_info())
+        self.engine = binding_test.Engine(self.surface_info(), self._model)
 
     def paintGL(self) -> None:
         self._state.input_controller.update()
