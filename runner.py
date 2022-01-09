@@ -57,7 +57,7 @@ def build_binding():
 
 
 def main():
-    from studio.main import App
+    from studio.app import App
     command = RunnerCommand.parse()
     if isinstance(command, RunnerCommand.Config):
         config()
