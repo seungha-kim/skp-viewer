@@ -2,10 +2,11 @@ from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QWidget
 
 from .canvas_widget import CanvasWidget
+from .startup_options import StartupOptions
 
 
 class MainWindow(QMainWindow):
-    def __init__(self) -> None:
+    def __init__(self, opts: StartupOptions) -> None:
         super().__init__()
 
         self.setWindowTitle("My App")
@@ -14,7 +15,7 @@ class MainWindow(QMainWindow):
         layout = QVBoxLayout()
         widget.setLayout(layout)
 
-        canvas = CanvasWidget(CanvasWidgetDelegateImpl(self))
+        canvas = CanvasWidget(opts, CanvasWidgetDelegateImpl(self))
         layout.addWidget(canvas)
 
         button = QPushButton("Press Me!")

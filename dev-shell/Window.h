@@ -17,7 +17,7 @@ class Window {
 public:
     static void initGlfw();
     static void initGl();
-    Window(int width, int height, const char* title);
+    Window(int width, int height, const char* title, const acon::AbstractReader& model);
     ~Window();
     void bind();
     bool shouldClose();
@@ -36,7 +36,7 @@ public:
 private:
     GLFWwindow* m_glfwWindow = nullptr;
     std::unique_ptr<acon::Engine> m_engine;
-    std::unique_ptr<acon::AbstractReader> m_model;
+    const acon::AbstractReader& m_model;
     Gui m_gui;
 
     // Input

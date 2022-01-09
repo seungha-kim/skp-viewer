@@ -5,6 +5,9 @@ project(learn_opengl)
 set(CMAKE_CXX_STANDARD 17)
 add_compile_definitions(GL_SILENCE_DEPRECATION)
 
+# Extern - nativefiledialog-extended
+add_subdirectory(extern/nfd)
+
 # Extern - pybind11
 add_subdirectory(extern/pybind11)
 

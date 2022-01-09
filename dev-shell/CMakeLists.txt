@@ -20,9 +20,12 @@ add_executable(dev-shell
         gui/guiCommon.cpp
         Window.cpp
         Window.h
+        util.cpp
+        util.h
         main.cpp)
 target_link_libraries(dev-shell
         PRIVATE
         engine
         glfw
+        nfd
         )

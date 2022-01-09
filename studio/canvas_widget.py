@@ -6,12 +6,15 @@ from typing import cast
 import binding_test
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QKeyEvent
+from PySide6.QtWidgets import QFileDialog
 from PySide6.QtOpenGLWidgets import QOpenGLWidget
 
-from binding_test import CameraState, AssimpReader, SketchupReader
+from binding_test import CameraState
 from .fly_mode import FlyModeController
 from .input_controller import AbstractInputController, InputControllerOverriding
 from .keymap import KeyMap
+from .startup_options import StartupOptions
+from .util import create_reader_by_file_format
 
 
 class State:
@@ -40,15 +43,29 @@ class CanvasWidget(QOpenGLWidget):
 
     engine: binding_test.Engine
 
-    def __init__(self, delegate: Delegate) -> None:
+    def __init__(self, opts: StartupOptions, delegate: Delegate) -> None:
         super().__init__()
         self._delegate = delegate
         self._default_input_controller = CanvasInputController(self)
         self._state: State.Base = State.Default(self._default_input_controller)
-        self._model = SketchupReader("resources/test.skp")
+        self._model = create_reader_by_file_format(opts.model_path or self.__file_path_by_dialog())
 
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.setUpdateBehavior(QOpenGLWidget.UpdateBehavior.NoPartialUpdate)
+
+    def __file_path_by_dialog(self) -> str:
+        supported_formats = {
+            "SketchUp": "*.skp",
+            "Wavefront OBJ": "*.obj"
+        }
+
+        file_filter = ";;".join([
+                                    "All supported formats (" + " ".join(supported_formats.values()) + ")"
+                                ] + [
+                                    f"{desc} ({ext})" for desc, ext in supported_formats.items()
+                                ])
+        file_path, selected_filter = QFileDialog.getOpenFileName(self, "Open File", "./", file_filter)
+        return file_path
 
     def initializeGL(self) -> None:
         binding_test.init()

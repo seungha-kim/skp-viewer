@@ -69,8 +69,7 @@ void Window::initGl() {
     }
 }
 
-Window::Window(int width, int height, const char *title) {
-    m_model = std::make_unique<acon::AssimpReader>("resources/monkey.obj");
+Window::Window(int width, int height, const char *title, const acon::AbstractReader& model): m_model(model) {
 
     initGlfw();
     if (auto* windowPtr = glfwCreateWindow(width, height, title, NULL, NULL))
@@ -90,7 +89,7 @@ Window::Window(int width, int height, const char *title) {
         glfwGetWindowSize(windowPtr, &surfaceInfo.logicalWidth, &surfaceInfo.logicalHeight);
         glfwGetWindowContentScale(windowPtr, &surfaceInfo.contentScaleX, &surfaceInfo.contentScaleY);
 
-        m_engine = std::make_unique<acon::Engine>(surfaceInfo, *m_model);
+        m_engine = std::make_unique<acon::Engine>(surfaceInfo, m_model);
     } else {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
