@@ -15,6 +15,7 @@ uniform vec3 cameraPos;
 uniform vec3 sunLightDir;
 uniform Material material;
 uniform sampler2D shadowMap;
+uniform float shadowMix;
 
 out vec4 FragColor;
 
@@ -54,8 +55,7 @@ void main() {
     vec3 ambientColor = lightColor * material.ambient;
 
     // shadow
-    float shadow = ShadowCalculation(fragPosLightSpace);
-
+    float shadow = shadowMix * ShadowCalculation(fragPosLightSpace);
 
     vec3 result = (1.0 - shadow) * (diffuseColor + specularColor) + ambientColor;
     FragColor = vec4(result, 1.0);

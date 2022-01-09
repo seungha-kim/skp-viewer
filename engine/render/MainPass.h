@@ -13,6 +13,7 @@ struct MainPassInput {
     const std::vector<std::unique_ptr<RenderMesh>>& meshes;
     const glm::mat4 lightSpaceMatrix;
     const DepthTexture& shadowDepthTexture;
+    const float shadowMix;
 };
 
 struct MainPassOutput {

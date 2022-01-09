@@ -59,6 +59,7 @@ void Renderer::render(RenderContext &ctx) {
             .meshes = m_meshes,
             .lightSpaceMatrix = sunlightPassOutput.lightSpaceMatrix,
             .shadowDepthTexture = sunlightPassOutput.depthTexture,
+            .shadowMix = 0.0f, // TODO
     };
     const auto mainPassOutput = m_mainPass.render(ctx, mainPassInput);
 

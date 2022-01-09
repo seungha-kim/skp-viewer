@@ -25,6 +25,7 @@ public:
 
         auto& cam = ctx.scene.cameraState();
         m_mainShader->use();
+        m_mainShader->setFloat("shadowMix", input.shadowMix);
         m_mainShader->setMatrix4f("view", cam.viewMatrix());
         m_mainShader->setMatrix4f("projection", cam.projectionMatrix());
         m_mainShader->setVector3f("cameraPos", cam.pos);
