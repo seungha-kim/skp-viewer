@@ -8,6 +8,8 @@ const unsigned int SCR_HEIGHT = 768;
 
 int main(int argc, char* argv[])
 {
+    NFD_Init();
+
     std::unique_ptr<acon::AbstractReader> model;
 
     if (argc > 1) {
@@ -18,7 +20,6 @@ int main(int argc, char* argv[])
             return 1;
         }
     } else {
-        NFD_Init();
         nfdchar_t *outPath;
         nfdfilteritem_t filterItem[2] = {
                 { "SketchUp", "skp" },
@@ -35,10 +36,10 @@ int main(int argc, char* argv[])
             printf("Error: %s\n", NFD_GetError());
             return 1;
         }
-        NFD_Quit();
     }
     Window window{SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", *model};
     window.mainLoop();
+    NFD_Quit();
     return 0;
 }
 
