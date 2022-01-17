@@ -54,15 +54,27 @@ add_library(engine
         reader/sketchup-specialization.h
         )
 
-find_library(SKETCHUP_LIBRARY
-        NAMES SketchUpAPI
-        HINTS ${CMAKE_CURRENT_LIST_DIR}/../extern/sketchup)
-if (NOT SKETCHUP_LIBRARY)
-    message(FATAL_ERROR "SketchUpAPI not found")
+if (APPLE)
+    find_library(SKETCHUP_LIBRARY
+            NAMES SketchUpAPI
+            HINTS ${CMAKE_CURRENT_LIST_DIR}/../extern/sketchup)
+    if (NOT SKETCHUP_LIBRARY)
+        message(FATAL_ERROR "SketchUpAPI not found")
+    endif()
+    add_library(sketchup-api INTERFACE IMPORTED)
+    set_target_properties(sketchup-api PROPERTIES
+            INTERFACE_LINK_LIBRARIES "${SKETCHUP_LIBRARY}")
 endif()
-add_library(sketchup-api INTERFACE IMPORTED)
-set_target_properties(sketchup-api PROPERTIES
-        INTERFACE_LINK_LIBRARIES "${SKETCHUP_LIBRARY}")
+
+if (WIN32)
+    find_path(SKETCHUP_SDK_ROOT NAMES version.txt PATHS ${CMAKE_CURRENT_LIST_DIR}/../extern/sketchup)
+    message(STATUS "SKETCHUP_SDK_ROOT: ${SKETCHUP_SDK_ROOT}")
+
+    add_library(sketchup-api SHARED IMPORTED)
+    set_property(TARGET sketchup-api PROPERTY IMPORTED_LOCATION ${SKETCHUP_SDK_ROOT}/binaries/sketchup/x64/SketchUpAPI.dll)
+    set_property(TARGET sketchup-api PROPERTY IMPORTED_IMPLIB ${SKETCHUP_SDK_ROOT}/binaries/sketchup/x64/SketchUpAPI.lib)
+    target_include_directories(sketchup-api INTERFACE ${SKETCHUP_SDK_ROOT}/headers)
+endif()
 
 message(SKETCHUP_LIBRARY ${SKETCHUP_LIBRARY})
 

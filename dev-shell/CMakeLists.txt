@@ -29,3 +29,11 @@ target_link_libraries(dev-shell
         glfw
         nfd
         )
+
+# TODO: 자동으로 복사되게 만들어야 함
+#add_custom_command(
+#        TARGET dev-shell
+#        POST_BUILD
+#        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:dev-shell> $<TARGET_FILE_DIR:dev-shell>
+#        COMMAND_EXPAND_LISTS
+#        )
