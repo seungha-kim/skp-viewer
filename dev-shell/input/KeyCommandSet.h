@@ -2,7 +2,7 @@
 #include <bitset>
 #include "KeyCommand.h"
 
-/// 효율적으로 복사됨
+/// 효율적으로 복사됨.
 class KeyCommandSet {
 public:
     void setPressed(KeyCommand keyCommand, bool value);

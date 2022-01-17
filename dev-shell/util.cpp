@@ -1,6 +1,8 @@
 #include "util.h"
 #include "../engine/reader/SketchupReader.h"
 #include "../engine/reader/AssimpReader.h"
+#include <stdexcept>
+#include <memory>
 
 namespace acon {
 

@@ -2,6 +2,9 @@
 
 #include <glm/glm.hpp>
 #include <optional>
+#include <vector>
+#include <string>
+#include <memory>
 
 namespace acon {
 
