@@ -10,12 +10,14 @@ struct Material {
 in vec3 normal;
 in vec3 fragPos;
 in vec4 fragPosLightSpace;
+in vec3 color;
 
 uniform vec3 cameraPos;
 uniform vec3 sunLightDir;
 uniform Material material;
 uniform sampler2D shadowMap;
 uniform float shadowMix;
+uniform float colorMix;
 
 out vec4 FragColor;
 
@@ -43,7 +45,7 @@ void main() {
 
     // diffuse
     float diff = max(dot(norm, toLight), 0.0);
-    vec3 diffuseColor = (diff * material.diffuse) * lightColor;
+    vec3 diffuseColor = (diff * mix(material.diffuse, color, colorMix)) * lightColor;
 
     // specular
     vec3 toFrag = normalize(cameraPos - fragPos);
@@ -57,6 +59,8 @@ void main() {
     // shadow
     float shadow = shadowMix * ShadowCalculation(fragPosLightSpace);
 
-    vec3 result = (1.0 - shadow) * (diffuseColor + specularColor) + ambientColor;
+    // TODO: 일단 비활성화
+    // vec3 result = (1.0 - shadow) * (diffuseColor + specularColor) + ambientColor;
+    vec3 result = diffuseColor;
     FragColor = vec4(result, 1.0);
 }

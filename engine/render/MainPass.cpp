@@ -44,6 +44,9 @@ public:
 
             glm::mat4 model = mesh->transform();
             m_mainShader->setMatrix4f("model", model);
+            m_mainShader->setVector3f("frontColor", mesh->frontColor());
+            m_mainShader->setVector3f("backColor", mesh->backColor());
+            m_mainShader->setFloat("colorMix", 1.0f);
 
             glDrawArrays(GL_TRIANGLES, 0, mesh->verticesCount());
         }

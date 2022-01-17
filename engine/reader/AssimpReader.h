@@ -45,9 +45,9 @@ public:
 
     [[nodiscard]] bool hasMaterial(MaterialId materialId) const override;
 
-    [[nodiscard]] glm::vec3 getMaterialDiffuseRGB(MaterialId id) const override;
+    [[nodiscard]] bool getMaterialHasColor(MaterialId materialId) const override;
 
-    [[nodiscard]] TextureData getMaterialTextureData(MaterialId id) const override;
+    [[nodiscard]] glm::vec3 getMaterialColor(MaterialId id) const override;
 
 private:
     // TODO: assimp 가이드에 웬만하면 이렇게 들고 있지 말라고 해놓았음.

@@ -3,6 +3,7 @@
 #include <vector>
 #include <map>
 #include <glm/gtc/type_ptr.hpp>
+#include <stdexcept>
 
 namespace acon {
 
@@ -218,12 +219,23 @@ bool SketchupReader::hasMaterial(MaterialId materialId) const {
     return m_materialMap.count(materialId) > 0;
 }
 
-glm::vec3 SketchupReader::getMaterialDiffuseRGB(MaterialId id) const {
-    return glm::vec3(); // TODO
+bool SketchupReader::getMaterialHasColor(MaterialId materialId) const {
+    const auto& material = m_materialMap.at(materialId);
+    SUMaterialType type;
+    check(SUMaterialGetType(material, &type));
+    return type == SUMaterialType_Colored || type == SUMaterialType_ColorizedTexture;
 }
 
-TextureData SketchupReader::getMaterialTextureData(MaterialId id) const {
-    return TextureData(); // TODO
+glm::vec3 SketchupReader::getMaterialColor(MaterialId id) const {
+    const auto& material = m_materialMap.at(id);
+    SUColor color{};
+
+    if (getMaterialHasColor(id)) {
+        check(SUMaterialGetColor(material, &color));
+    }
+
+    // TODO: alpha
+    return {float(color.red) / 255.0f, float(color.green) / 255.0f, float(color.blue) / 255.0f};
 }
 
 ObjectId SketchupReader::processObject(const SketchupObjectDescription& desc) {
@@ -284,6 +296,7 @@ ObjectId SketchupReader::processObject(const SketchupObjectDescription& desc) {
 
             for (int i = 0; i < numTriangles; i++) {
                 Triangle triangle{};
+
                 for (int j = 0; j < 3; j++) {
                     size_t index = indices[3 * i + j];
                     triangle.vertices[j] = Vertex {
@@ -292,6 +305,10 @@ ObjectId SketchupReader::processObject(const SketchupObjectDescription& desc) {
                             .texCoord = convertPoint3D(frontTexCoords[index]),
                     };
                 }
+                auto v1 = triangle.vertices[0].position - triangle.vertices[1].position;
+                auto v2 = triangle.vertices[2].position - triangle.vertices[1].position;
+                auto faceNormal = glm::normalize(glm::cross(v2, v1));
+                triangle.vertices[0].faceNormal = triangle.vertices[1].faceNormal = triangle.vertices[2].faceNormal = faceNormal;
                 triangles.push_back(triangle);
             }
             check(SUMeshHelperRelease(&helper));

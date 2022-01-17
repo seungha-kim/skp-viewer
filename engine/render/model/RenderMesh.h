@@ -13,6 +13,8 @@ public:
     ~RenderMesh();
 
     [[nodiscard]] glm::mat4 transform() const;
+    [[nodiscard]] glm::vec3 frontColor() const;
+    [[nodiscard]] glm::vec3 backColor() const;
     [[nodiscard]] int verticesCount() const;
     [[nodiscard]] GLuint VAO() const;
 
@@ -20,6 +22,8 @@ private:
     glm::mat4 m_transform{};
     int m_verticesCount{};
     GLuint m_VAO{}, m_VBO{};
+    glm::vec3 m_frontColor{};
+    glm::vec3 m_backColor{};
 };
 
 }

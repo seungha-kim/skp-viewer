@@ -24,7 +24,6 @@ public:
 
     [[nodiscard]] unsigned int getObjectUnitCount(ObjectId id) const override;
 
-    // TODO: 리더니까 이거 그냥 vector 반환하게 바꿔도 되지 않나?
     [[nodiscard]] UnitId getObjectUnit(ObjectId id, int index) const override;
 
     [[nodiscard]] bool getObjectVisibility(ObjectId id) const override;
@@ -45,9 +44,9 @@ public:
 
     [[nodiscard]] bool hasMaterial(MaterialId materialId) const override;
 
-    [[nodiscard]] glm::vec3 getMaterialDiffuseRGB(MaterialId id) const override;
+    [[nodiscard]] bool getMaterialHasColor(MaterialId materialId) const override;
 
-    [[nodiscard]] TextureData getMaterialTextureData(MaterialId id) const override;
+    [[nodiscard]] glm::vec3 getMaterialColor(MaterialId id) const override;
 
 private:
     SUModelRef m_model;

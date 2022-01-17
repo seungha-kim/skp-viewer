@@ -88,14 +88,15 @@ bool AssimpReader::hasMaterial(MaterialId materialId) const {
     return false;
 }
 
-glm::vec3 AssimpReader::getMaterialDiffuseRGB(MaterialId id) const {
+bool AssimpReader::getMaterialHasColor(MaterialId materialId) const {
     // TODO
-    return glm::vec3();
+    return false;
 }
 
-TextureData AssimpReader::getMaterialTextureData(MaterialId id) const {
+
+glm::vec3 AssimpReader::getMaterialColor(MaterialId id) const {
     // TODO
-    return TextureData();
+    return glm::vec3();
 }
 
 void AssimpReader::constructMap() {
@@ -156,6 +157,11 @@ Triangle AssimpReader::getUnitTriangle(UnitId id, int index) const {
             result.vertices[i].normal = glm::vec3();
         }
     }
+
+    auto v1 = convertVec3(mesh->mVertices[face.mIndices[0]] - mesh->mVertices[face.mIndices[1]]);
+    auto v2 = convertVec3(mesh->mVertices[face.mIndices[2]] - mesh->mVertices[face.mIndices[1]]);
+    auto faceNormal = glm::normalize(glm::cross(v2, v1));
+    result.vertices[0].faceNormal = result.vertices[1].faceNormal = result.vertices[2].faceNormal = faceNormal;
 
     // TODO: multiple texture
     if (mesh->mTextureCoords[0]) {
