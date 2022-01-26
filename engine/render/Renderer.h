@@ -1,6 +1,7 @@
 #pragma once
 #include <glad/glad.h>
 #include <memory>
+#include <functional>
 #include "SurfaceInfo.h"
 #include "SunlightPass.h"
 #include "MainPass.h"
@@ -11,6 +12,7 @@
 #include "BrightFilterPass.h"
 #include "ToneMapPass.h"
 #include "OutlinePass.h"
+#include "model/RenderTexture.h"
 
 namespace acon {
 
@@ -50,6 +52,7 @@ private:
     OutlinePass m_outlinePass;
     AdditiveBlendPass m_outlineMultiplicativeBlendPass;
     std::vector<std::unique_ptr<RenderMesh>> m_meshes;
+    std::unordered_map<GLuint, std::unique_ptr<RenderTexture>> m_textures;
     TextureRenderer m_textureRenderer;
     RenderOptions m_renderOptions;
 };

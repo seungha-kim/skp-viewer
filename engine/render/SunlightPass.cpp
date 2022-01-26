@@ -59,10 +59,7 @@ public:
         m_subShader->setMatrix4f("projection", projection);
         m_subShader->setVector3f("cameraPos", sunlightPos);
         m_subShader->setVector3f("sunLightDir", ctx.scene.sunLight().direction);
-        m_subShader->setVector3f("material.ambient", ctx.globalMaterial.ambient);
-        m_subShader->setVector3f("material.diffuse", ctx.globalMaterial.diffuse);
-        m_subShader->setVector3f("material.specular", ctx.globalMaterial.specular);
-        m_subShader->setFloat("material.shininess", ctx.globalMaterial.shininess);
+        m_subShader->setVector3f("color", glm::vec3(1.0f, 1.0f, 1.0f));
 
         for (auto &mesh: input.meshes) {
             glBindVertexArray(mesh->VAO());

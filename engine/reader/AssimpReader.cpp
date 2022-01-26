@@ -94,9 +94,9 @@ bool AssimpReader::getMaterialHasColor(MaterialId materialId) const {
 }
 
 
-glm::vec3 AssimpReader::getMaterialColor(MaterialId id) const {
+glm::vec4 AssimpReader::getMaterialColor(MaterialId id) const {
     // TODO
-    return glm::vec3();
+    return {};
 }
 
 void AssimpReader::constructMap() {
@@ -166,15 +166,43 @@ Triangle AssimpReader::getUnitTriangle(UnitId id, int index) const {
     // TODO: multiple texture
     if (mesh->mTextureCoords[0]) {
         for (int i = 0; i < face.mNumIndices; i++) {
-            result.vertices[i].texCoord = convertVec3to2(mesh->mTextureCoords[0][face.mIndices[i]]);
+            result.vertices[i].frontTexCoord = convertVec3to2(mesh->mTextureCoords[0][face.mIndices[i]]);
+            result.vertices[i].backTexCoord = result.vertices[i].frontTexCoord;
         }
     } else {
         for (int i = 0; i < face.mNumIndices; i++) {
-            result.vertices[i].texCoord = convertVec3to2(mesh->mTextureCoords[0][face.mIndices[i]]);
+            result.vertices[i].frontTexCoord = convertVec3to2(mesh->mTextureCoords[0][face.mIndices[i]]);
+            result.vertices[i].backTexCoord = result.vertices[i].frontTexCoord;
+            // TODO: 위아래 똑같을 거면 왜 있지?
         }
     }
 
     return result;
+}
+
+bool AssimpReader::getMaterialHasTexture(MaterialId materialId) const {
+    // TODO
+    return false;
+}
+
+TextureId AssimpReader::getMaterialTexture(MaterialId materialId) const {
+    // TODO
+    return 0;
+}
+
+std::unique_ptr<TextureData> AssimpReader::copyTextureData(TextureId textureId) const {
+    // TODO
+    return std::unique_ptr<TextureData>();
+}
+
+int AssimpReader::getTextureWidth(TextureId textureId) const {
+    // TODO
+    return 0;
+}
+
+int AssimpReader::getTextureHeight(TextureId textureId) const {
+    // TODO
+    return 0;
 }
 
 glm::mat4 convertMatrix4(const aiMatrix4x4 &mat) {

@@ -57,10 +57,7 @@ void Gui::processRenderInfo(GuiContext &ctx) {
     ImGui::Checkbox("Demo Window", &show_demo_window);
 
     if (ImGui::TreeNode("Global Material")) {
-        ImGui::ColorEdit3("ambient", (float*)&ctx.globalMaterial.ambient);
-        ImGui::ColorEdit3("diffuse", (float*)&ctx.globalMaterial.diffuse);
-        ImGui::ColorEdit3("specular", (float*)&ctx.globalMaterial.specular);
-        ImGui::SliderFloat("shininess", &ctx.globalMaterial.shininess, 1.0f, 1024.0f);
+        ImGui::ColorEdit3("color", (float*)&ctx.globalMaterial.color);
         ImGui::TreePop();
     }
 

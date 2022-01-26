@@ -10,6 +10,8 @@ namespace acon {
 struct SketchupUnitHolder;
 struct SketchupObjectHolder;
 struct SketchupObjectDescription;
+struct SketchupTextureMeta;
+struct SketchupTextureMetaHolder;
 class SketchupReader: public AbstractReader {
 public:
     explicit SketchupReader(std::string_view path);
@@ -46,7 +48,17 @@ public:
 
     [[nodiscard]] bool getMaterialHasColor(MaterialId materialId) const override;
 
-    [[nodiscard]] glm::vec3 getMaterialColor(MaterialId id) const override;
+    [[nodiscard]] glm::vec4 getMaterialColor(MaterialId id) const override;
+
+    [[nodiscard]] bool getMaterialHasTexture(MaterialId materialId) const override;
+
+    [[nodiscard]] TextureId getMaterialTexture(MaterialId materialId) const override;
+
+    [[nodiscard]] std::unique_ptr<TextureData> copyTextureData(TextureId textureId) const override;
+
+    [[nodiscard]] int getTextureWidth(TextureId textureId) const override;
+
+    [[nodiscard]] int getTextureHeight(TextureId textureId) const override;
 
 private:
     SUModelRef m_model;
@@ -65,12 +77,15 @@ private:
     using TextureInverse = std::unordered_map<SUTextureRef, TextureId>;
     std::unique_ptr<SketchupUnitHolder> m_unitHolder;
     std::unique_ptr<SketchupObjectHolder> m_objectHolder;
+    std::unique_ptr<SketchupTextureMetaHolder> m_textureMetaHolder;
 
     GroupMap m_groupMap;
     GroupInverse m_groupInverse;
     UnitMap m_unitMap;
     MaterialMap m_materialMap;
     MaterialInverse m_materialInverse;
+    std::unordered_map<MaterialId, TextureId> m_materialTextures;
+    std::unordered_map<MaterialId, glm::vec4> m_materialColors;
     TextureMap m_textureMap;
     TextureInverse m_textureInverse;
 

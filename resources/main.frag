@@ -10,14 +10,20 @@ struct Material {
 in vec3 normal;
 in vec3 fragPos;
 in vec4 fragPosLightSpace;
-in vec3 color;
+in vec2 frontTexCoord;
+in vec2 backTexCoord;
 
 uniform vec3 cameraPos;
 uniform vec3 sunLightDir;
 uniform Material material;
 uniform sampler2D shadowMap;
 uniform float shadowMix;
-uniform float colorMix;
+uniform vec3 frontColor;
+uniform vec3 backColor;
+uniform sampler2D frontTexture;
+uniform sampler2D backTexture;
+uniform float frontTextureMix;
+uniform float backTextureMix;
 
 out vec4 FragColor;
 
@@ -43,24 +49,17 @@ void main() {
     vec3 toLight = -normalize(sunLightDir);
     vec3 lightColor = vec3(1.0);
 
-    // diffuse
-    float diff = max(dot(norm, toLight), 0.0);
-    vec3 diffuseColor = (diff * mix(material.diffuse, color, colorMix)) * lightColor;
+    vec3 color; // TODO: vec4 alpha
 
-    // specular
-    vec3 toFrag = normalize(cameraPos - fragPos);
-    vec3 reflection = reflect(toLight, norm);
-    float spec = pow(max(dot(toFrag, -reflection), 0.0), material.shininess);
-    vec3 specularColor = material.specular * spec * lightColor;
+    if (gl_FrontFacing) {
+        color = frontColor;
+        color = mix(color, vec3(texture(frontTexture, frontTexCoord)), frontTextureMix);
+    } else {
+        color = backColor;
+        color = mix(color, vec3(texture(backTexture, backTexCoord)), backTextureMix);
+    }
 
-    // ambient
-    vec3 ambientColor = lightColor * material.ambient;
-
-    // shadow
     float shadow = shadowMix * ShadowCalculation(fragPosLightSpace);
 
-    // TODO: 일단 비활성화
-    // vec3 result = (1.0 - shadow) * (diffuseColor + specularColor) + ambientColor;
-    vec3 result = diffuseColor;
-    FragColor = vec4(result, 1.0);
+    FragColor = (1.0 - shadow) * vec4(color, 1.0);
 }

@@ -13,11 +13,22 @@ using UnitId = unsigned;
 using MaterialId = unsigned;
 using TextureId = unsigned;
 
+class TextureData {
+public:
+    virtual ~TextureData() = default;
+    [[nodiscard]] virtual const unsigned char* data() const = 0;
+    [[nodiscard]] virtual int dataSize() const = 0;
+    [[nodiscard]] virtual int width() const = 0;
+    [[nodiscard]] virtual int height() const = 0;
+    [[nodiscard]] virtual bool hasAlpha() const = 0;
+};
+
 struct Vertex {
     glm::vec3 position;
     glm::vec3 normal;
     glm::vec3 faceNormal;
-    glm::vec2 texCoord;
+    glm::vec2 frontTexCoord{};
+    glm::vec2 backTexCoord{};
 };
 
 struct Triangle {
@@ -51,7 +62,14 @@ public:
     // TODO: multiple texture, multiple material
     [[nodiscard]] virtual bool hasMaterial(MaterialId materialId) const = 0;
     [[nodiscard]] virtual bool getMaterialHasColor(MaterialId materialId) const = 0;
-    [[nodiscard]] virtual glm::vec3 getMaterialColor(MaterialId id) const = 0;
+    [[nodiscard]] virtual glm::vec4 getMaterialColor(MaterialId id) const = 0;
+
+    [[nodiscard]] virtual bool getMaterialHasTexture(MaterialId materialId) const = 0;
+    [[nodiscard]] virtual TextureId getMaterialTexture(MaterialId materialId) const = 0;
+    [[nodiscard]] virtual std::unique_ptr<TextureData> copyTextureData(TextureId textureId) const = 0;
+    [[nodiscard]] virtual int getTextureWidth(TextureId textureId) const = 0;
+    [[nodiscard]] virtual int getTextureHeight(TextureId textureId) const = 0;
+
 
     // TODO: Scene, Object Visibility. Scene ㅇㅔ서 Camera 는 안 가져도라더라도 visibility 는 가져와야..
     // TODO: Layer (or Tag. Tag 가 최신 용어임)

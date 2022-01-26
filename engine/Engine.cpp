@@ -10,10 +10,7 @@ namespace acon {
 Engine::Engine(SurfaceInfo surfaceInfo, const AbstractReader& model)
     : m_surfaceInfo(surfaceInfo)
     , m_globalMaterial{
-        .ambient = glm::vec3(0.1f, 0.1f, 0.1f),
-        .diffuse = glm::vec3(0.3f, 0.6f, 0.2f),
-        .specular = glm::vec3(1.0f, 1.0f, 1.0f),
-        .shininess = 32.0f,
+        .color = glm::vec3(0.3f, 0.6f, 0.2f),
     }
     , m_sceneManager(surfaceInfo)
     , m_renderer(surfaceInfo, model) {
@@ -49,7 +46,7 @@ void Engine::render(float playbackValue) {
 }
 
 void Engine::setRandomGlobalDiffuse() {
-    m_globalMaterial.diffuse = glm::linearRand(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    m_globalMaterial.color = glm::linearRand(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 }
 
 void Engine::resize(const SurfaceInfo &surfaceInfo) {

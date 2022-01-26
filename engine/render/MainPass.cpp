@@ -30,10 +30,6 @@ public:
         m_mainShader->setMatrix4f("projection", cam.projectionMatrix());
         m_mainShader->setVector3f("cameraPos", cam.pos);
         m_mainShader->setVector3f("sunLightDir", ctx.scene.sunLight().direction);
-        m_mainShader->setVector3f("material.ambient", ctx.globalMaterial.ambient);
-        m_mainShader->setVector3f("material.diffuse", ctx.globalMaterial.diffuse);
-        m_mainShader->setVector3f("material.specular", ctx.globalMaterial.specular);
-        m_mainShader->setFloat("material.shininess", ctx.globalMaterial.shininess);
         m_mainShader->setMatrix4f("lightSpaceMatrix", input.lightSpaceMatrix);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, input.shadowDepthTexture.textureName());
@@ -44,12 +40,31 @@ public:
 
             glm::mat4 model = mesh->transform();
             m_mainShader->setMatrix4f("model", model);
+
             m_mainShader->setVector3f("frontColor", mesh->frontColor());
             m_mainShader->setVector3f("backColor", mesh->backColor());
-            m_mainShader->setFloat("colorMix", 1.0f);
+            if (auto frontOpt = mesh->frontTextureName()) {
+                auto frontTexture = frontOpt.value();
+                glActiveTexture(GL_TEXTURE0 + 1);
+                glBindTexture(GL_TEXTURE_2D, frontTexture);
+                m_mainShader->setInt("frontTexture", 1);
+                m_mainShader->setFloat("frontTextureMix", 1.0f);
+            } else {
+                m_mainShader->setFloat("frontTextureMix", 0.0f);
+            };
+            if (auto backOpt = mesh->backTextureName()) {
+                auto backTexture = backOpt.value();
+                glActiveTexture(GL_TEXTURE0 + 2);
+                glBindTexture(GL_TEXTURE_2D, backTexture);
+                m_mainShader->setInt("backTexture", 2);
+                m_mainShader->setFloat("backTextureMix", 1.0f);
+            } else {
+                m_mainShader->setFloat("backTextureMix", 0.0f);
+            }
 
             glDrawArrays(GL_TRIANGLES, 0, mesh->verticesCount());
         }
+        glActiveTexture(GL_TEXTURE0);
 
         return MainPassOutput {
             .colorTexture = *m_colorTexture,

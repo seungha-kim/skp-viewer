@@ -10,21 +10,32 @@ static RenderVertex convertVertex(const Vertex& vertex) {
         .pos = vertex.position,
         .normal = vertex.normal,
         .faceNormal = vertex.faceNormal,
+        .frontTexCoord = vertex.frontTexCoord,
+        .backTexCoord = vertex.backTexCoord,
     };
 }
 
-RenderMesh::RenderMesh(const AbstractReader& model, UnitId id, glm::mat4 transform) {
-    // TODO: Material 처리 조금 더 효율적으로 - 여기서 reader 내용을 바로 읽어오는 것이 아니라, 중간계층을 두고 재사용할 수 있는 것은 재사용하기.
-    bool hasBackColor = false;
-    if (auto backMaterialId = model.getUnitBackMaterial(id)) {
-        m_frontColor = m_backColor = model.getMaterialColor(backMaterialId.value());
-        hasBackColor = true;
-    }
-    if (auto frontMaterialId = model.getUnitFrontMaterial(id)) {
-        m_frontColor = model.getMaterialColor(frontMaterialId.value());
-        if (!hasBackColor) {
-            m_backColor = m_frontColor;
+static inline glm::vec3 defaultMaterialColor() {
+    // TODO: 리더마다 기본값이 다를 수 있음 - e.g. 스케치업 기본 색과 블렌더 기본 색이 다를 수 있음.
+    return {0.7f, 0.7f, 0.7f};
+}
+
+RenderMesh::RenderMesh(const AbstractReader& model, UnitId id, glm::mat4 transform, GLuint frontTextureName, GLuint backTextureName)
+        : m_frontTexture(frontTextureName)
+        , m_backTexture(backTextureName) {
+    if (auto frontMaterialOpt = model.getUnitFrontMaterial(id)) {
+        if (model.getMaterialHasColor(frontMaterialOpt.value())) {
+            m_frontColor = model.getMaterialColor(frontMaterialOpt.value());
         }
+    } else {
+        m_frontColor = defaultMaterialColor();
+    }
+    if (auto backMaterialOpt = model.getUnitBackMaterial(id)) {
+        if (model.getMaterialHasColor(backMaterialOpt.value())) {
+            m_backColor = model.getMaterialColor(backMaterialOpt.value());
+        }
+    } else {
+        m_backColor = defaultMaterialColor();
     }
 
     std::vector<RenderVertex> vertices;
@@ -32,7 +43,9 @@ RenderMesh::RenderMesh(const AbstractReader& model, UnitId id, glm::mat4 transfo
     for (int i = 0; i < faceCount; i++) {
         auto face = model.getUnitTriangle(id, i);
         for (const auto& vertex : face.vertices) {
-            vertices.push_back(convertVertex(vertex));
+            auto renderVertex = convertVertex(vertex);
+
+            vertices.push_back(renderVertex);
         }
     }
     m_verticesCount = vertices.size();
@@ -54,6 +67,10 @@ RenderMesh::RenderMesh(const AbstractReader& model, UnitId id, glm::mat4 transfo
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(RenderVertex), (void*)offsetof(RenderVertex, faceNormal));
     glEnableVertexAttribArray(2);
+    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(RenderVertex), (void*)offsetof(RenderVertex, frontTexCoord));
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, sizeof(RenderVertex), (void*)offsetof(RenderVertex, backTexCoord));
+    glEnableVertexAttribArray(4);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 }
@@ -81,6 +98,22 @@ int RenderMesh::verticesCount() const {
 
 GLuint RenderMesh::VAO() const {
     return m_VAO;
+}
+
+std::optional<GLuint> RenderMesh::frontTextureName() const {
+    if (m_frontTexture) {
+        return m_frontTexture;
+    } else {
+        return {};
+    }
+}
+
+std::optional<GLuint> RenderMesh::backTextureName() const {
+    if (m_backTexture) {
+        return m_backTexture;
+    } else {
+        return {};
+    }
 }
 
 }

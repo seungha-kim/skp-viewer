@@ -24,6 +24,7 @@ Renderer::Renderer(const SurfaceInfo& surfaceInfo, const AbstractReader& model)
         .id = AbstractReader::ROOT_OBJECT_ID,
         .ancestorTransform = glm::mat4(1.0f),
     }});
+
     while (!dfsStack.empty()) {
         auto item = dfsStack.top();
         dfsStack.pop();
@@ -32,8 +33,40 @@ Renderer::Renderer(const SurfaceInfo& surfaceInfo, const AbstractReader& model)
 
         auto unitCount = model.getObjectUnitCount(item.id);
         for (int i = 0; i < unitCount; i++) {
-            auto unit = model.getObjectUnit(item.id, i);
-            m_meshes.push_back(std::make_unique<RenderMesh>(model, unit, transform));
+            GLuint frontTextureName = 0, backTextureName = 0;
+            auto unitId = model.getObjectUnit(item.id, i);
+
+            if (auto backMaterialIdOpt = model.getUnitBackMaterial(unitId)) {
+                auto backMaterialId = backMaterialIdOpt.value();
+                if (model.getMaterialHasTexture(backMaterialId)) {
+                    auto backTextureId = model.getMaterialTexture(backMaterialId);
+                    if (m_textures.contains(backTextureId)) {
+                        backTextureName = m_textures[backTextureId]->textureName();
+                    } else {
+                        const auto textureData = model.copyTextureData(backTextureId);
+                        auto backTexture = std::make_unique<RenderTexture>(*textureData);
+                        backTextureName = backTexture->textureName();
+                        m_textures[backTextureId] = std::move(backTexture);
+                    }
+                }
+            }
+
+            if (auto frontMaterialIdOpt = model.getUnitFrontMaterial(unitId)) {
+                auto frontMaterialId = frontMaterialIdOpt.value();
+                if (model.getMaterialHasTexture(frontMaterialId)) {
+                    auto frontTextureId = model.getMaterialTexture(frontMaterialId);
+                    if (m_textures.contains(frontTextureId)) {
+                        frontTextureName = m_textures[frontTextureId]->textureName();
+                    } else {
+                        const auto textureData = model.copyTextureData(frontTextureId);
+                        auto frontTexture = std::make_unique<RenderTexture>(*textureData);
+                        frontTextureName = frontTexture->textureName();
+                        m_textures[frontTextureId] = std::move(frontTexture);
+                    }
+                }
+            }
+
+            m_meshes.push_back(std::make_unique<RenderMesh>(model, unitId, transform, frontTextureName, backTextureName));
         }
 
         auto childCount = model.getObjectChildrenCount(item.id);
