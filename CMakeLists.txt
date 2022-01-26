@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "" FORCE)
-project(learn_opengl)
+project(skp-viewer)
 
 set(CMAKE_CXX_STANDARD 20)
 
