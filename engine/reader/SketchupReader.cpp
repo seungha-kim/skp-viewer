@@ -401,7 +401,9 @@ ObjectId SketchupReader::processObject(const SketchupObjectDescription& desc) {
 
             size_t numIndices = numTriangles * 3, numIndicesActual;
             std::vector<size_t> indices(numIndices);
-            check(SUMeshHelperGetVertexIndices(helper, numIndices, indices.data(), &numIndicesActual));
+            if (numIndices > 0) {
+                check(SUMeshHelperGetVertexIndices(helper, numIndices, indices.data(), &numIndicesActual));
+            }
 
             size_t numVertices, numVerticesActual;
             check(SUMeshHelperGetNumVertices(helper, &numVertices));
@@ -409,8 +411,10 @@ ObjectId SketchupReader::processObject(const SketchupObjectDescription& desc) {
             std::vector<SUVector3D> normals(numVertices);
             std::vector<SUUVQ> frontTexCoords(numVertices);
             std::vector<SUUVQ> backTexCoords(numVertices);
-            check(SUMeshHelperGetVertices(helper, numVertices, vertices.data(), &numVerticesActual));
-            check(SUMeshHelperGetNormals(helper, numVertices, normals.data(), &numVerticesActual));
+            if (numVertices > 0) {
+                check(SUMeshHelperGetVertices(helper, numVertices, vertices.data(), &numVerticesActual));
+                check(SUMeshHelperGetNormals(helper, numVertices, normals.data(), &numVerticesActual));
+            }
 //            check(SUMeshHelperGetFrontSTQCoords(helper, numVertices, frontTexCoords.data(), &numVerticesActual));
 //            check(SUMeshHelperGetBackSTQCoords(helper, numVertices, backTexCoords.data(), &numVerticesActual));
 //            check(SUTextureWriterGetFrontFaceUVCoords(textureWriter, face, numVertices, vertices.data(), frontTexCoords.data()));
