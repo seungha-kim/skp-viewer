@@ -1,6 +1,6 @@
 #pragma once
 
-#include "model/RenderMaterial.h"
+#include "RenderMaterial.h"
 #include "../scene/Scene.h"
 #include "SurfaceInfo.h"
 

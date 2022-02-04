@@ -1,6 +1,6 @@
 #include "RenderMesh.h"
 #include "RenderVertex.h"
-#include "../checkError.h"
+#include "checkError.h"
 #include <glm/geometric.hpp>
 #include <unordered_map>
 

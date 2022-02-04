@@ -4,7 +4,7 @@
 #include <glm/gtc/random.hpp>
 #include "reader/AssimpReader.h"
 #include "reader/SketchupReader.h"
-#include "render/model/RenderModel.h"
+#include "render/RenderModel.h"
 #include "runtime/RuntimeModel.h"
 
 namespace acon {

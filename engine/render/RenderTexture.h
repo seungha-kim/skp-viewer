@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../reader/AbstractReader.h"
+#include "../reader/AbstractReader.h"
 #include <glad/glad.h>
 
 namespace acon {

@@ -12,7 +12,7 @@
 #include "BrightFilterPass.h"
 #include "ToneMapPass.h"
 #include "OutlinePass.h"
-#include "model/RenderModel.h"
+#include "RenderModel.h"
 
 namespace acon {
 

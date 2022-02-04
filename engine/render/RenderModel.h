@@ -4,8 +4,8 @@
 #include <memory>
 #include "RenderMesh.h"
 #include "RenderTexture.h"
-#include "../../primitives.h"
-#include "../../build.h"
+#include "../primitives.h"
+#include "../build.h"
 
 namespace acon {
 

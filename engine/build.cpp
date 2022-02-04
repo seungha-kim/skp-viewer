@@ -1,6 +1,6 @@
 #include "build.h"
 #include "runtime/RuntimeModel.h"
-#include "render/model/RenderModel.h"
+#include "render/RenderModel.h"
 #include <stack>
 #include <memory>
 

@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include <unordered_map>
-#include "../../build.h"
+#include "../build.h"
 #include "RenderMaterial.h"
 #include "RenderVertex.h"
 #include "RenderTexture.h"

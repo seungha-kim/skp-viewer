@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include "RenderContext.h"
-#include "model/RenderMesh.h"
+#include "RenderMesh.h"
 #include "SurfaceInfo.h"
 #include "ColorTexture.h"
 #include "DepthTexture.h"

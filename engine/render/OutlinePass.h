@@ -4,7 +4,7 @@
 #include "ColorTexture.h"
 #include "SurfaceInfo.h"
 #include "RenderContext.h"
-#include "model/RenderMesh.h"
+#include "RenderMesh.h"
 #include "BasePass.h"
 
 namespace acon {

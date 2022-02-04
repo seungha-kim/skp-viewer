@@ -3,7 +3,7 @@
 #include "export.h"
 #include "scene/SceneManager.h"
 #include "render/SurfaceInfo.h"
-#include "render/model/RenderMaterial.h"
+#include "render/RenderMaterial.h"
 #include "render/Renderer.h"
 #include "reader/AbstractReader.h"
 

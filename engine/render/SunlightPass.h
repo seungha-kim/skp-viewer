@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include "SurfaceInfo.h"
-#include "model/RenderMesh.h"
+#include "RenderMesh.h"
 #include <glm/glm.hpp>
 #include <glad/glad.h>
 #include "RenderContext.h"

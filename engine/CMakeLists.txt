@@ -9,10 +9,10 @@ add_library(engine
         scene/CameraState.h
         scene/SceneManager.cpp
         scene/SceneManager.h
-        render/model/RenderMesh.cpp
-        render/model/RenderMesh.h
-        render/model/RenderVertex.h
-        render/model/RenderMaterial.h
+        render/RenderMesh.cpp
+        render/RenderMesh.h
+        render/RenderVertex.h
+        render/RenderMaterial.h
         scene/DirectionalLight.h
         scene/Scene.cpp scene/Scene.h
         render/SurfaceInfo.h
@@ -52,13 +52,13 @@ add_library(engine
         reader/SketchupReader.cpp
         reader/SketchupReader.h
         reader/sketchup-specialization.h
-        render/model/RenderTexture.cpp
-        render/model/RenderTexture.h
+        render/RenderTexture.cpp
+        render/RenderTexture.h
         runtime/RuntimeModel.h
         primitives.h
         runtime/RuntimeModel.cpp
-        render/model/RenderModel.h
-        render/model/RenderModel.cpp
+        render/RenderModel.h
+        render/RenderModel.cpp
         build.h
         build.cpp
         )
