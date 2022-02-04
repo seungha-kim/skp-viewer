@@ -9,8 +9,10 @@ void InputController::handleMouseInput(InputContext &ctx) {
             m_flyCameraContext.handleMouseInput(ctx, *moveEvent);
         }
     } else if (auto* scrollEvent = std::get_if<MouseScrollEvent>(&mouseEvent)) {
-        auto& cam = ctx.cameraManager.activeSceneMut().cameraStateMut();
-        cam.fovyDeg = glm::clamp(cam.fovyDeg - scrollEvent->offsetY, 10.0f, 170.0f);
+        if (!ctx.disableCameraControlByWheel) {
+            auto& cam = ctx.cameraManager.activeSceneMut().cameraStateMut();
+            cam.fovyDeg = glm::clamp(cam.fovyDeg - scrollEvent->offsetY, 10.0f, 170.0f);
+        }
     }
 }
 

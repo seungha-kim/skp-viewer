@@ -19,6 +19,7 @@ void Gui::process(GuiContext& ctx) {
     processMainMenuBar(ctx);
     processRenderOptions(ctx);
     processOutliner(ctx);
+    ctx.hoveringGui = io.WantCaptureMouse;
 }
 
 Gui::~Gui() {

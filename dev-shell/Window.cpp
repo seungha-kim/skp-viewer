@@ -201,6 +201,7 @@ void Window::mainLoop() {
                 .renderOptions = m_engine->rendererMut().renderOptionsMut(),
                 .runtimeModel = m_engine->runtimeModelMut(),
                 .selectedObjectIdOpt = m_selectedObjectIdOpt,
+                .hoveringGui = m_hoveringGui,
         };
         m_gui.process(guiCtx);
         endGui();
@@ -259,6 +260,7 @@ void Window::handleInput() {
             .showMouseCursor = m_showMouseCursor,
             .mousePosX = m_mousePosX,
             .mousePosY = m_mousePosY,
+            .disableCameraControlByWheel = m_hoveringGui,
     };
     m_inputController.handleKeyboardInput(ctx);
     m_inputController.handleMouseInput(ctx);

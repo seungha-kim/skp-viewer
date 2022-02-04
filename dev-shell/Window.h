@@ -50,6 +50,7 @@ private:
     KeyCommandSet m_prevKeyCommandSet;
     bool m_showMouseCursor = true;
     bool m_shouldClose = false;
+    bool m_hoveringGui = false;
     std::optional<acon::ObjectId> m_selectedObjectIdOpt{};
 
     void onMouseMove(float mousePosX, float mousePosY);

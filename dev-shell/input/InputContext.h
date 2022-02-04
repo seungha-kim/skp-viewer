@@ -30,6 +30,8 @@ struct InputContext {
     bool& showMouseCursor;
     float mousePosX;
     float mousePosY;
+    const bool disableCameraControlByWheel;
+
     bool isBeingPressed(KeyCommand keyCommand);
     bool isJustPressed(KeyCommand keyCommand);
 };
