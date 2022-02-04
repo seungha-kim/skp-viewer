@@ -21,6 +21,8 @@ public:
 
     Renderer& rendererMut();
 
+    RuntimeModel& runtimeModelMut();
+
     CameraState& currentCameraStateMut();
 
     void render(float playbackValue);

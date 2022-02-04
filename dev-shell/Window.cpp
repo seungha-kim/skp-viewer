@@ -199,6 +199,7 @@ void Window::mainLoop() {
                 .inputController = m_inputController,
                 .surfaceInfo = m_engine->surfaceInfo(),
                 .renderOptions = m_engine->rendererMut().renderOptionsMut(),
+                .runtimeModel = m_engine->runtimeModelMut(),
         };
         m_gui.process(guiCtx);
         endGui();

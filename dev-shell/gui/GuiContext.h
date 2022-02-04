@@ -6,6 +6,7 @@
 #include "../../engine/render/RenderMaterial.h"
 #include "../../engine/render/SurfaceInfo.h"
 #include "../../engine/render/Renderer.h"
+#include "../../engine/runtime/RuntimeModel.h"
 
 struct GuiContext {
     acon::SceneManager& sceneManager;
@@ -13,4 +14,5 @@ struct GuiContext {
     InputController& inputController;
     const acon::SurfaceInfo& surfaceInfo;
     acon::RenderOptions& renderOptions;
+    acon::RuntimeModel& runtimeModel;
 };

@@ -17,6 +17,7 @@ void Gui::process(GuiContext& ctx) {
     processSceneControl(ctx);
     processMainMenuBar(ctx);
     processRenderOptions(ctx);
+    processOutliner(ctx);
 }
 
 Gui::~Gui() {
@@ -130,4 +131,64 @@ void Gui::processRenderOptions(GuiContext &ctx) {
     ImGui::SliderFloat("DepthThreshold", &renderOptions.outlineDepthThreshold, 0.0f, 100.0f);
 
     ImGui::End();
+}
+
+void Gui::processOutliner(GuiContext &ctx) {
+    static const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
+    static const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
+
+    struct Node {
+        acon::ObjectId objectId;
+
+        static void displayNode(GuiContext& ctx, Node item) {
+            auto childCount = ctx.runtimeModel.getObjectChildrenCount(item.objectId);
+            auto name = ctx.runtimeModel.getObjectName(item.objectId);
+            auto idString = std::to_string(item.objectId);
+            std::string_view label = name.empty() ? idString : name;
+
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+            const bool is_folder = (childCount > 0);
+            if (is_folder)
+            {
+                bool open = ImGui::TreeNodeEx(label.data(), ImGuiTreeNodeFlags_SpanFullWidth);
+                ImGui::TableNextColumn();
+                ImGui::Text("%d", childCount);
+                if (open)
+                {
+                    for (int i = 0; i < childCount; i++) {
+                        displayNode(ctx, Node {
+                                .objectId = ctx.runtimeModel.getObjectChild(item.objectId, i),
+                        });
+                    }
+                    ImGui::TreePop();
+                }
+            }
+            else
+            {
+                ImGui::TreeNodeEx(label.data(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth);
+                ImGui::TableNextColumn();
+                ImGui::Text("%d", 0);
+            }
+        }
+    };
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {0, 0});
+    ImGui::Begin("Outliner", nullptr, windowFlag(ctx));
+    static ImGuiTableFlags flags = ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_NoBordersInBody;
+
+    if (ImGui::BeginTable("Outliner", 3, flags))
+    {
+        ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoHide);
+        ImGui::TableSetupColumn("Children", ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 12.0f);
+        ImGui::TableHeadersRow();
+
+        Node::displayNode(ctx, Node {
+            .objectId = acon::ROOT_OBJECT_ID,
+        });
+
+        ImGui::EndTable();
+    }
+    ImGui::End();
+    ImGui::PopStyleVar();
 }
