@@ -47,6 +47,9 @@ void mouse_wheel_callback(GLFWwindow* glfwWindow, double xOffset, double yOffset
     double mousePosX, mousePosY;
     glfwGetCursorPos(glfwWindow, &mousePosX, &mousePosY);
     window.onMouseWheel((float) mousePosX, (float) mousePosY, (float) xOffset, (float) yOffset);
+
+    // https://github.com/ocornut/imgui/issues/1759
+    ImGui_ImplGlfw_ScrollCallback(glfwWindow, xOffset, yOffset);
 }
 
 void Window::initGlfw() {
