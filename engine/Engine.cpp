@@ -4,18 +4,22 @@
 #include <glm/gtc/random.hpp>
 #include "reader/AssimpReader.h"
 #include "reader/SketchupReader.h"
+#include "render/model/RenderModel.h"
+#include "runtime/RuntimeModel.h"
 
 namespace acon {
 
-Engine::Engine(SurfaceInfo surfaceInfo, const AbstractReader& model)
+Engine::Engine(SurfaceInfo surfaceInfo, const AbstractReader& reader)
     : m_surfaceInfo(surfaceInfo)
-    , m_globalMaterial{
-        .color = glm::vec3(0.3f, 0.6f, 0.2f),
-    }
-    , m_sceneManager(surfaceInfo)
-    , m_renderer(surfaceInfo, model) {
+    , m_sceneManager(surfaceInfo) {
+    auto [runtimeModel, renderModel] = buildModel(reader);
+    m_runtimeModel = std::move(runtimeModel);
+    m_renderModel = std::move(renderModel);
+    m_renderer = std::make_unique<Renderer>(surfaceInfo, *m_renderModel);
     glEnable(GL_DEPTH_TEST);
 }
+
+Engine::~Engine() = default;
 
 const SceneManager &Engine::sceneManager() const {
     return m_sceneManager;
@@ -39,14 +43,9 @@ void Engine::render(float playbackValue) {
     RenderContext renderCtx {
             .scene = sceneManager().activeScene(),
             .playbackValue = playbackValue,
-            .globalMaterial = m_globalMaterial,
             .surfaceInfo = m_surfaceInfo,
     };
-    m_renderer.render(renderCtx);
-}
-
-void Engine::setRandomGlobalDiffuse() {
-    m_globalMaterial.color = glm::linearRand(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    m_renderer->render(renderCtx);
 }
 
 void Engine::resize(const SurfaceInfo &surfaceInfo) {
@@ -61,15 +60,11 @@ void Engine::updateTextures() {
     auto& cam = m_sceneManager.activeSceneMut().cameraStateMut();
     cam.aspectWidth = (float)m_surfaceInfo.logicalWidth;
     cam.aspectHeight = (float)m_surfaceInfo.logicalHeight;
-    m_renderer.resizeResources(m_surfaceInfo);
-}
-
-RenderMaterial& Engine::globalMaterialMut() {
-    return m_globalMaterial;
+    m_renderer->resizeResources(m_surfaceInfo);
 }
 
 Renderer& Engine::rendererMut() {
-    return m_renderer;
+    return *m_renderer;
 }
 
 CameraState& Engine::currentCameraStateMut() {

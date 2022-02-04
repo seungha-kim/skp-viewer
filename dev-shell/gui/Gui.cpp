@@ -56,11 +56,6 @@ void Gui::processRenderInfo(GuiContext &ctx) {
     ImGui::Checkbox("Scenes", &show_camera_control);
     ImGui::Checkbox("Demo Window", &show_demo_window);
 
-    if (ImGui::TreeNode("Global Material")) {
-        ImGui::ColorEdit3("color", (float*)&ctx.globalMaterial.color);
-        ImGui::TreePop();
-    }
-
     ImGui::End();
 
     m_deltasPivot = (m_deltasPivot + 1) % 100;

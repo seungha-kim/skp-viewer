@@ -197,7 +197,6 @@ void Window::mainLoop() {
                 .sceneManager = m_engine->sceneManagerMut(),
                 .playbackState = m_playbackState,
                 .inputController = m_inputController,
-                .globalMaterial = m_engine->globalMaterialMut(),
                 .surfaceInfo = m_engine->surfaceInfo(),
                 .renderOptions = m_engine->rendererMut().renderOptionsMut(),
         };

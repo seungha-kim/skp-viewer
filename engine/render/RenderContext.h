@@ -9,7 +9,6 @@ namespace acon {
 struct RenderContext {
     const Scene& scene;
     const float playbackValue;
-    const RenderMaterial globalMaterial;
     const SurfaceInfo& surfaceInfo;
 };
 

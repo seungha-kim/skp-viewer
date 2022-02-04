@@ -11,7 +11,6 @@ struct GuiContext {
     acon::SceneManager& sceneManager;
     PlaybackState& playbackState;
     InputController& inputController;
-    acon::RenderMaterial& globalMaterial;
     const acon::SurfaceInfo& surfaceInfo;
     acon::RenderOptions& renderOptions;
 };

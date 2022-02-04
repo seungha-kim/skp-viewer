@@ -12,7 +12,7 @@
 #include "BrightFilterPass.h"
 #include "ToneMapPass.h"
 #include "OutlinePass.h"
-#include "model/RenderTexture.h"
+#include "model/RenderModel.h"
 
 namespace acon {
 
@@ -33,7 +33,7 @@ struct RenderOptions {
 
 class Renderer final {
 public:
-    explicit Renderer(const SurfaceInfo& surfaceInfo, const AbstractReader& model);
+    explicit Renderer(const SurfaceInfo& surfaceInfo, const RenderModel& model);
     ~Renderer() = default;
 
     void render(RenderContext &ctx);
@@ -51,10 +51,9 @@ private:
     ToneMapPass m_toneMapPass;
     OutlinePass m_outlinePass;
     AdditiveBlendPass m_outlineMultiplicativeBlendPass;
-    std::vector<std::unique_ptr<RenderMesh>> m_meshes;
-    std::unordered_map<GLuint, std::unique_ptr<RenderTexture>> m_textures;
     TextureRenderer m_textureRenderer;
     RenderOptions m_renderOptions;
+    const RenderModel& m_renderModel;
 };
 
 }

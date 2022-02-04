@@ -5,13 +5,9 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include "../primitives.h"
 
 namespace acon {
-
-using ObjectId = unsigned;
-using UnitId = unsigned;
-using MaterialId = unsigned;
-using TextureId = unsigned;
 
 class TextureData {
 public:
@@ -23,23 +19,9 @@ public:
     [[nodiscard]] virtual bool hasAlpha() const = 0;
 };
 
-struct Vertex {
-    glm::vec3 position;
-    glm::vec3 normal;
-    glm::vec3 faceNormal;
-    glm::vec2 frontTexCoord{};
-    glm::vec2 backTexCoord{};
-};
-
-struct Triangle {
-    Vertex vertices[3];
-};
-
 class AbstractReader {
 public:
     virtual ~AbstractReader() = default;
-
-    static const ObjectId ROOT_OBJECT_ID = 0;
 
     // Object
     [[nodiscard]] virtual bool hasObject(ObjectId id) const = 0;

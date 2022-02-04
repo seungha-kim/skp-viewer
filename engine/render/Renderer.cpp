@@ -4,7 +4,7 @@
 
 namespace acon {
 
-Renderer::Renderer(const SurfaceInfo& surfaceInfo, const AbstractReader& model)
+Renderer::Renderer(const SurfaceInfo& surfaceInfo, const RenderModel& model)
     : m_sunlightPass(surfaceInfo)
     , m_mainPass(surfaceInfo)
     , m_gaussianBlurPass(surfaceInfo)
@@ -13,83 +13,20 @@ Renderer::Renderer(const SurfaceInfo& surfaceInfo, const AbstractReader& model)
     , m_toneMapPass(surfaceInfo)
     , m_outlinePass(surfaceInfo)
     , m_outlineMultiplicativeBlendPass(surfaceInfo, BlendPassKind::multiplicative)
-    , m_colorBalancePass(surfaceInfo) {
-
-    struct DfsItem {
-        ObjectId id;
-        glm::mat4 ancestorTransform;
-    };
-
-    std::stack<DfsItem> dfsStack({{
-        .id = AbstractReader::ROOT_OBJECT_ID,
-        .ancestorTransform = glm::mat4(1.0f),
-    }});
-
-    while (!dfsStack.empty()) {
-        auto item = dfsStack.top();
-        dfsStack.pop();
-
-        auto transform = item.ancestorTransform * model.getObjectTransform(item.id);
-
-        auto unitCount = model.getObjectUnitCount(item.id);
-        for (int i = 0; i < unitCount; i++) {
-            GLuint frontTextureName = 0, backTextureName = 0;
-            auto unitId = model.getObjectUnit(item.id, i);
-
-            if (auto backMaterialIdOpt = model.getUnitBackMaterial(unitId)) {
-                auto backMaterialId = backMaterialIdOpt.value();
-                if (model.getMaterialHasTexture(backMaterialId)) {
-                    auto backTextureId = model.getMaterialTexture(backMaterialId);
-                    if (m_textures.contains(backTextureId)) {
-                        backTextureName = m_textures[backTextureId]->textureName();
-                    } else {
-                        const auto textureData = model.copyTextureData(backTextureId);
-                        auto backTexture = std::make_unique<RenderTexture>(*textureData);
-                        backTextureName = backTexture->textureName();
-                        m_textures[backTextureId] = std::move(backTexture);
-                    }
-                }
-            }
-
-            if (auto frontMaterialIdOpt = model.getUnitFrontMaterial(unitId)) {
-                auto frontMaterialId = frontMaterialIdOpt.value();
-                if (model.getMaterialHasTexture(frontMaterialId)) {
-                    auto frontTextureId = model.getMaterialTexture(frontMaterialId);
-                    if (m_textures.contains(frontTextureId)) {
-                        frontTextureName = m_textures[frontTextureId]->textureName();
-                    } else {
-                        const auto textureData = model.copyTextureData(frontTextureId);
-                        auto frontTexture = std::make_unique<RenderTexture>(*textureData);
-                        frontTextureName = frontTexture->textureName();
-                        m_textures[frontTextureId] = std::move(frontTexture);
-                    }
-                }
-            }
-
-            m_meshes.push_back(std::make_unique<RenderMesh>(model, unitId, transform, frontTextureName, backTextureName));
-        }
-
-        auto childCount = model.getObjectChildrenCount(item.id);
-        for (int i = 0; i < childCount; i++) {
-            dfsStack.push({
-                .id = model.getObjectChild(item.id, i),
-                .ancestorTransform = transform,
-            });
-        }
-    }
-}
+    , m_colorBalancePass(surfaceInfo)
+    , m_renderModel(model) {}
 
 void Renderer::render(RenderContext &ctx) {
     glClearColor(0.2f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     const SunlightPassInput sunlightPassInput {
-            .meshes = m_meshes,
+            .meshes = m_renderModel.meshes(),
     };
     const auto sunlightPassOutput = m_sunlightPass.render(ctx, sunlightPassInput);
 
     const MainPassInput mainPassInput {
-            .meshes = m_meshes,
+            .meshes = m_renderModel.meshes(),
             .lightSpaceMatrix = sunlightPassOutput.lightSpaceMatrix,
             .shadowDepthTexture = sunlightPassOutput.depthTexture,
             .shadowMix = 0.0f, // TODO
@@ -130,7 +67,7 @@ void Renderer::render(RenderContext &ctx) {
     const auto colorBalancePassOutput = m_colorBalancePass.render(ctx, colorBalancePassInput);
 
     const OutlinePassInput outlinePassInput {
-        .meshes = m_meshes,
+        .meshes = m_renderModel.meshes(),
         .depthTexture = mainPassOutput.depthTexture,
         .outlineWidth = m_renderOptions.outlineWidth,
         .outlineDepthThreshold = m_renderOptions.outlineDepthThreshold,

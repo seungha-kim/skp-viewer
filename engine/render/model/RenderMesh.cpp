@@ -2,52 +2,30 @@
 #include "RenderVertex.h"
 #include "../checkError.h"
 #include <glm/geometric.hpp>
+#include <unordered_map>
 
 namespace acon {
 
-static RenderVertex convertVertex(const Vertex& vertex) {
-    return RenderVertex {
-        .pos = vertex.position,
-        .normal = vertex.normal,
-        .faceNormal = vertex.faceNormal,
-        .frontTexCoord = vertex.frontTexCoord,
-        .backTexCoord = vertex.backTexCoord,
-    };
-}
+RenderMesh::RenderMesh(UnitId id,
+                       const std::vector<RenderVertex>& vertices,
+                       glm::mat4 transform,
+                       RenderMaterial frontMaterial,
+                       RenderMaterial backMaterial,
+                       std::unordered_map<TextureId, std::unique_ptr<RenderTexture>>& textures)
+        : m_id(id) {
 
-static inline glm::vec3 defaultMaterialColor() {
-    // TODO: 리더마다 기본값이 다를 수 있음 - e.g. 스케치업 기본 색과 블렌더 기본 색이 다를 수 있음.
-    return {0.7f, 0.7f, 0.7f};
-}
-
-RenderMesh::RenderMesh(const AbstractReader& model, UnitId id, glm::mat4 transform, GLuint frontTextureName, GLuint backTextureName)
-        : m_frontTexture(frontTextureName)
-        , m_backTexture(backTextureName) {
-    if (auto frontMaterialOpt = model.getUnitFrontMaterial(id)) {
-        if (model.getMaterialHasColor(frontMaterialOpt.value())) {
-            m_frontColor = model.getMaterialColor(frontMaterialOpt.value());
-        }
-    } else {
-        m_frontColor = defaultMaterialColor();
-    }
-    if (auto backMaterialOpt = model.getUnitBackMaterial(id)) {
-        if (model.getMaterialHasColor(backMaterialOpt.value())) {
-            m_backColor = model.getMaterialColor(backMaterialOpt.value());
-        }
-    } else {
-        m_backColor = defaultMaterialColor();
+    if (const auto* frontTextureId = std::get_if<TextureId>(&frontMaterial)) {
+        m_frontTexture = textures.at(*frontTextureId)->textureName();
+    } else if (const auto* frontTextureColor = std::get_if<RenderColor>(&frontMaterial)) {
+        m_frontColor = *frontTextureColor;
     }
 
-    std::vector<RenderVertex> vertices;
-    unsigned faceCount = model.getUnitTriangleCount(id);
-    for (int i = 0; i < faceCount; i++) {
-        auto face = model.getUnitTriangle(id, i);
-        for (const auto& vertex : face.vertices) {
-            auto renderVertex = convertVertex(vertex);
-
-            vertices.push_back(renderVertex);
-        }
+    if (const auto* backTextureId = std::get_if<TextureId>(&backMaterial)) {
+        m_backTexture = textures.at(*backTextureId)->textureName();
+    } else if (const auto* backTextureColor = std::get_if<RenderColor>(&backMaterial)) {
+        m_backColor = *backTextureColor;
     }
+
     m_verticesCount = vertices.size();
 
     // TODO: transform stack

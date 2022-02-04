@@ -54,6 +54,13 @@ add_library(engine
         reader/sketchup-specialization.h
         render/model/RenderTexture.cpp
         render/model/RenderTexture.h
+        runtime/RuntimeModel.h
+        primitives.h
+        runtime/RuntimeModel.cpp
+        render/model/RenderModel.h
+        render/model/RenderModel.cpp
+        build.h
+        build.cpp
         )
 
 if (APPLE)

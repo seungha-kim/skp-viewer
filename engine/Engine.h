@@ -11,19 +11,17 @@ namespace acon {
 
 class DLL_EXPORT Engine {
 public:
-    explicit Engine(SurfaceInfo surfaceInfo, const AbstractReader& model);
+    explicit Engine(SurfaceInfo surfaceInfo, const AbstractReader& reader);
+    ~Engine();
 
     [[nodiscard]] const SceneManager& sceneManager() const;
     SceneManager& sceneManagerMut();
 
     [[nodiscard]] const SurfaceInfo& surfaceInfo() const;
-    RenderMaterial& globalMaterialMut();
 
     Renderer& rendererMut();
 
     CameraState& currentCameraStateMut();
-
-    void setRandomGlobalDiffuse();
 
     void render(float playbackValue);
     void resize(const SurfaceInfo& surfaceInfo);
@@ -31,8 +29,9 @@ public:
 private:
     SceneManager m_sceneManager;
     SurfaceInfo m_surfaceInfo;
-    Renderer m_renderer;
-    RenderMaterial m_globalMaterial;
+    std::unique_ptr<RuntimeModel> m_runtimeModel;
+    std::unique_ptr<RenderModel> m_renderModel;
+    std::unique_ptr<Renderer> m_renderer;
 
     bool m_sizeUpdated = false;
 
