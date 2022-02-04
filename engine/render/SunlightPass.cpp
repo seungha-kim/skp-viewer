@@ -61,13 +61,13 @@ public:
         m_subShader->setVector3f("sunLightDir", ctx.scene.sunLight().direction);
         m_subShader->setVector3f("color", glm::vec3(1.0f, 1.0f, 1.0f));
 
-        for (auto &mesh: input.meshes) {
-            glBindVertexArray(mesh->VAO());
+        for (auto &unit: input.units) {
+            glBindVertexArray(unit->VAO());
 
-            glm::mat4 model = mesh->transform();
+            glm::mat4 model = unit->transform();
             m_subShader->setMatrix4f("model", model);
 
-            glDrawArrays(GL_TRIANGLES, 0, mesh->verticesCount());
+            glDrawArrays(GL_TRIANGLES, 0, unit->verticesCount());
         }
 
         // glDisable(GL_CULL_FACE);

@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include "RenderContext.h"
-#include "RenderMesh.h"
+#include "RenderUnit.h"
 #include "SurfaceInfo.h"
 #include "ColorTexture.h"
 #include "DepthTexture.h"
@@ -10,7 +10,7 @@
 namespace acon {
 
 struct MainPassInput {
-    const std::vector<std::unique_ptr<RenderMesh>>& meshes;
+    const std::vector<std::unique_ptr<RenderUnit>>& units;
     const glm::mat4 lightSpaceMatrix;
     const DepthTexture& shadowDepthTexture;
     const float shadowMix;

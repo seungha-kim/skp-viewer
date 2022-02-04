@@ -7,7 +7,7 @@
 namespace acon {
     class RuntimeModel;
     class RenderModel;
-    class RenderMesh;
+    class RenderUnit;
     using ModelPair = std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>>;
 
     ModelPair buildModel(const AbstractReader& reader);

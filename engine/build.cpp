@@ -95,8 +95,8 @@ std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>> buildMode
 
             std::vector<RenderVertex> vertices;
             buildVertices(reader, unitId, vertices);
-            auto mesh = std::make_unique<RenderMesh>(unitId, vertices, transform, frontMaterial, backMaterial, renderModel->m_textures);
-            renderModel->m_meshes.push_back(std::move(mesh));
+            auto unit = std::make_unique<RenderUnit>(unitId, vertices, transform, frontMaterial, backMaterial, renderModel->m_textures);
+            renderModel->m_units.push_back(std::move(unit));
         }
 
         auto childCount = reader.getObjectChildrenCount(item.id);

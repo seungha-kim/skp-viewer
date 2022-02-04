@@ -10,16 +10,16 @@
 
 namespace acon {
 
-class RenderMesh {
+class RenderUnit {
 public:
-    RenderMesh(UnitId id,
+    RenderUnit(UnitId id,
                const std::vector<RenderVertex>& vertices,
                glm::mat4 transform,
                RenderMaterial frontMaterial,
                RenderMaterial backMaterial,
                std::unordered_map<TextureId, std::unique_ptr<RenderTexture>>& textures);
 
-    ~RenderMesh();
+    ~RenderUnit();
 
     [[nodiscard]] glm::mat4 transform() const;
     [[nodiscard]] glm::vec3 frontColor() const;

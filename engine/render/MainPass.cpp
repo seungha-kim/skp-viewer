@@ -35,15 +35,15 @@ public:
         glBindTexture(GL_TEXTURE_2D, input.shadowDepthTexture.textureName());
         m_mainShader->setInt("shadowMap", 0);
 
-        for (auto &mesh: input.meshes) {
-            glBindVertexArray(mesh->VAO());
+        for (auto &unit: input.units) {
+            glBindVertexArray(unit->VAO());
 
-            glm::mat4 model = mesh->transform();
+            glm::mat4 model = unit->transform();
             m_mainShader->setMatrix4f("model", model);
 
-            m_mainShader->setVector3f("frontColor", mesh->frontColor());
-            m_mainShader->setVector3f("backColor", mesh->backColor());
-            if (auto frontOpt = mesh->frontTextureName()) {
+            m_mainShader->setVector3f("frontColor", unit->frontColor());
+            m_mainShader->setVector3f("backColor", unit->backColor());
+            if (auto frontOpt = unit->frontTextureName()) {
                 auto frontTexture = frontOpt.value();
                 glActiveTexture(GL_TEXTURE0 + 1);
                 glBindTexture(GL_TEXTURE_2D, frontTexture);
@@ -52,7 +52,7 @@ public:
             } else {
                 m_mainShader->setFloat("frontTextureMix", 0.0f);
             };
-            if (auto backOpt = mesh->backTextureName()) {
+            if (auto backOpt = unit->backTextureName()) {
                 auto backTexture = backOpt.value();
                 glActiveTexture(GL_TEXTURE0 + 2);
                 glBindTexture(GL_TEXTURE_2D, backTexture);
@@ -62,7 +62,7 @@ public:
                 m_mainShader->setFloat("backTextureMix", 0.0f);
             }
 
-            glDrawArrays(GL_TRIANGLES, 0, mesh->verticesCount());
+            glDrawArrays(GL_TRIANGLES, 0, unit->verticesCount());
         }
         glActiveTexture(GL_TEXTURE0);
 

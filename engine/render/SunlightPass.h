@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include "SurfaceInfo.h"
-#include "RenderMesh.h"
+#include "RenderUnit.h"
 #include <glm/glm.hpp>
 #include <glad/glad.h>
 #include "RenderContext.h"
@@ -11,8 +11,8 @@
 namespace acon {
 
 struct SunlightPassInput {
-    // TODO: meshes 말고 rootObject 를 받는 것이 적절.
-    const std::vector<std::unique_ptr<RenderMesh>>& meshes;
+    // TODO: units 말고 rootObject 를 받는 것이 적절.
+    const std::vector<std::unique_ptr<RenderUnit>>& units;
 };
 
 struct SunlightPassOutput {

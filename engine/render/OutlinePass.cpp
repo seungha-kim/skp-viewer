@@ -55,17 +55,17 @@ public:
         m_shader->setFloat("width", input.outlineWidth);
         m_shader->setFloat("depthThreshold", input.outlineDepthThreshold);
 
-        for (auto &mesh: input.meshes) {
-            glBindVertexArray(mesh->VAO());
+        for (auto &unit: input.units) {
+            glBindVertexArray(unit->VAO());
 
-            glm::mat4 model = mesh->transform();
+            glm::mat4 model = unit->transform();
             glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(model)));
             m_shader->setMatrix4f("model", model);
             m_shader->setMatrix3f("normalMatrix", normalMatrix);
             m_shader->setMatrix3f("NormalMatrix", normalMatrix);
             m_shader->setMatrix3f("NormalMatrixInverse", glm::inverse(normalMatrix));
 
-            glDrawArrays(GL_TRIANGLES, 0, mesh->verticesCount());
+            glDrawArrays(GL_TRIANGLES, 0, unit->verticesCount());
         }
 
         return {

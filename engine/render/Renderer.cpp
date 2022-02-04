@@ -21,12 +21,12 @@ void Renderer::render(RenderContext &ctx) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     const SunlightPassInput sunlightPassInput {
-            .meshes = m_renderModel.meshes(),
+            .units = m_renderModel.units(),
     };
     const auto sunlightPassOutput = m_sunlightPass.render(ctx, sunlightPassInput);
 
     const MainPassInput mainPassInput {
-            .meshes = m_renderModel.meshes(),
+            .units = m_renderModel.units(),
             .lightSpaceMatrix = sunlightPassOutput.lightSpaceMatrix,
             .shadowDepthTexture = sunlightPassOutput.depthTexture,
             .shadowMix = 0.0f, // TODO
@@ -67,7 +67,7 @@ void Renderer::render(RenderContext &ctx) {
     const auto colorBalancePassOutput = m_colorBalancePass.render(ctx, colorBalancePassInput);
 
     const OutlinePassInput outlinePassInput {
-        .meshes = m_renderModel.meshes(),
+        .units = m_renderModel.units(),
         .depthTexture = mainPassOutput.depthTexture,
         .outlineWidth = m_renderOptions.outlineWidth,
         .outlineDepthThreshold = m_renderOptions.outlineDepthThreshold,

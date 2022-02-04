@@ -9,8 +9,8 @@ add_library(engine
         scene/CameraState.h
         scene/SceneManager.cpp
         scene/SceneManager.h
-        render/RenderMesh.cpp
-        render/RenderMesh.h
+        render/RenderUnit.cpp
+        render/RenderUnit.h
         render/RenderVertex.h
         render/RenderMaterial.h
         scene/DirectionalLight.h

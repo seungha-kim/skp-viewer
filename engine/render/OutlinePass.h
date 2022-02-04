@@ -4,13 +4,13 @@
 #include "ColorTexture.h"
 #include "SurfaceInfo.h"
 #include "RenderContext.h"
-#include "RenderMesh.h"
+#include "RenderUnit.h"
 #include "BasePass.h"
 
 namespace acon {
 
 struct OutlinePassInput {
-    const std::vector<std::unique_ptr<RenderMesh>>& meshes;
+    const std::vector<std::unique_ptr<RenderUnit>>& units;
     const DepthTexture& depthTexture;
     const float outlineWidth;
     const float outlineDepthThreshold;

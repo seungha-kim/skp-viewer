@@ -1,4 +1,4 @@
-#include "RenderMesh.h"
+#include "RenderUnit.h"
 #include "RenderVertex.h"
 #include "checkError.h"
 #include <glm/geometric.hpp>
@@ -6,7 +6,7 @@
 
 namespace acon {
 
-RenderMesh::RenderMesh(UnitId id,
+RenderUnit::RenderUnit(UnitId id,
                        const std::vector<RenderVertex>& vertices,
                        glm::mat4 transform,
                        RenderMaterial frontMaterial,
@@ -53,32 +53,32 @@ RenderMesh::RenderMesh(UnitId id,
     glBindVertexArray(0);
 }
 
-RenderMesh::~RenderMesh() {
+RenderUnit::~RenderUnit() {
     glDeleteVertexArrays(1, &m_VAO);
     glDeleteBuffers(1, &m_VBO);
 }
 
-glm::mat4 RenderMesh::transform() const {
+glm::mat4 RenderUnit::transform() const {
     return m_transform;
 }
 
-glm::vec3 RenderMesh::frontColor() const {
+glm::vec3 RenderUnit::frontColor() const {
     return m_frontColor;
 }
 
-glm::vec3 RenderMesh::backColor() const {
+glm::vec3 RenderUnit::backColor() const {
     return m_backColor;
 }
 
-int RenderMesh::verticesCount() const {
+int RenderUnit::verticesCount() const {
     return m_verticesCount;
 }
 
-GLuint RenderMesh::VAO() const {
+GLuint RenderUnit::VAO() const {
     return m_VAO;
 }
 
-std::optional<GLuint> RenderMesh::frontTextureName() const {
+std::optional<GLuint> RenderUnit::frontTextureName() const {
     if (m_frontTexture) {
         return m_frontTexture;
     } else {
@@ -86,7 +86,7 @@ std::optional<GLuint> RenderMesh::frontTextureName() const {
     }
 }
 
-std::optional<GLuint> RenderMesh::backTextureName() const {
+std::optional<GLuint> RenderUnit::backTextureName() const {
     if (m_backTexture) {
         return m_backTexture;
     } else {

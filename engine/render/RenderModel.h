@@ -2,7 +2,7 @@
 #include <vector>
 #include <unordered_map>
 #include <memory>
-#include "RenderMesh.h"
+#include "RenderUnit.h"
 #include "RenderTexture.h"
 #include "../primitives.h"
 #include "../build.h"
@@ -20,10 +20,10 @@ public:
     ~RenderModel();
     [[nodiscard]] unsigned getObjectUnitCount(ObjectId id) const;
     [[nodiscard]] UnitId getObjectUnit(ObjectId id, int index) const;
-    [[nodiscard]] const std::vector<std::unique_ptr<RenderMesh>>& meshes() const;
+    [[nodiscard]] const std::vector<std::unique_ptr<RenderUnit>>& units() const;
 private:
     std::unordered_map<ObjectId, RenderObjectData> m_objectData{};
-    std::vector<std::unique_ptr<RenderMesh>> m_meshes{};
+    std::vector<std::unique_ptr<RenderUnit>> m_units{};
     std::unordered_map<TextureId, std::unique_ptr<RenderTexture>> m_textures{};
 };
 
