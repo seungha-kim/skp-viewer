@@ -51,7 +51,12 @@ std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>> buildMode
         auto item = dfsStack.top();
         dfsStack.pop();
 
-        auto transform = item.ancestorTransform * reader.getObjectTransform(item.id);
+        RuntimeObjectData objectData;
+        objectData.name = reader.getObjectName(item.id);
+        objectData.visibility = true; // TODO
+        objectData.transform = reader.getObjectTransform(item.id);
+
+        auto worldTransform = item.ancestorTransform * objectData.transform;
 
         auto unitCount = reader.getObjectUnitCount(item.id);
         for (int i = 0; i < unitCount; i++) {
@@ -95,17 +100,21 @@ std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>> buildMode
 
             std::vector<RenderVertex> vertices;
             buildVertices(reader, unitId, vertices);
-            auto unit = std::make_unique<RenderUnit>(unitId, vertices, transform, frontMaterial, backMaterial, renderModel->m_textures);
+            auto unit = std::make_unique<RenderUnit>(unitId, vertices, worldTransform, frontMaterial, backMaterial, renderModel->m_textures);
             renderModel->m_units.push_back(std::move(unit));
         }
 
         auto childCount = reader.getObjectChildrenCount(item.id);
         for (int i = 0; i < childCount; i++) {
+            auto childId = reader.getObjectChild(item.id, i);
             dfsStack.push({
-                    .id = reader.getObjectChild(item.id, i),
-                    .ancestorTransform = transform
+                    .id = childId,
+                    .ancestorTransform = worldTransform
             });
+            objectData.children.push_back(childId);
         }
+
+        runtimeModel->m_objectData.emplace(item.id, std::move(objectData));
     }
 
     return std::make_pair(std::move(runtimeModel), std::move(renderModel));
