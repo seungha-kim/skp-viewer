@@ -13,6 +13,7 @@ namespace acon {
 class RenderUnit {
 public:
     RenderUnit(UnitId id,
+               ObjectId objectId,
                const std::vector<RenderVertex>& vertices,
                glm::mat4 transform,
                RenderMaterial frontMaterial,
@@ -21,6 +22,7 @@ public:
 
     ~RenderUnit();
 
+    [[nodiscard]] const ObjectId& objectId() const;
     [[nodiscard]] glm::mat4 transform() const;
     [[nodiscard]] glm::vec3 frontColor() const;
     [[nodiscard]] glm::vec3 backColor() const;
@@ -31,6 +33,7 @@ public:
 
 private:
     UnitId m_id;
+    ObjectId m_objectId;
     glm::mat4 m_transform{};
     int m_verticesCount{};
     GLuint m_VAO{}, m_VBO{};

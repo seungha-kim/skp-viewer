@@ -1,5 +1,6 @@
 #pragma once
 
+#include <optional>
 #include "../../engine/scene/SceneManager.h"
 #include "../PlaybackState.h"
 #include "../input/InputController.h"
@@ -15,4 +16,5 @@ struct GuiContext {
     const acon::SurfaceInfo& surfaceInfo;
     acon::RenderOptions& renderOptions;
     acon::RuntimeModel& runtimeModel;
+    std::optional<acon::ObjectId>& selectedObjectIdOpt;
 };

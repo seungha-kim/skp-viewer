@@ -25,7 +25,7 @@ public:
 
     CameraState& currentCameraStateMut();
 
-    void render(float playbackValue);
+    void render(float playbackValue, std::optional<ObjectId> selectedObjectIdOpt);
     void resize(const SurfaceInfo& surfaceInfo);
 
 private:

@@ -1,6 +1,7 @@
 #include "Gui.h"
 #include "guiCommon.h"
 #include <imgui.h>
+#include <optional>
 
 void Gui::process(GuiContext& ctx) {
     auto& io = ImGui::GetIO();
@@ -151,7 +152,14 @@ void Gui::processOutliner(GuiContext &ctx) {
             const bool is_folder = (childCount > 0);
             if (is_folder)
             {
-                bool open = ImGui::TreeNodeEx(label.data(), ImGuiTreeNodeFlags_SpanFullWidth);
+                auto nodeFlag = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanFullWidth;
+                if (ctx.selectedObjectIdOpt == item.objectId) {
+                    nodeFlag |= ImGuiTreeNodeFlags_Selected;
+                }
+                bool open = ImGui::TreeNodeEx(label.data(), nodeFlag);
+                if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()) {
+                    ctx.selectedObjectIdOpt = item.objectId;
+                }
                 ImGui::TableNextColumn();
                 ImGui::Text("%d", childCount);
                 if (open)
@@ -166,7 +174,14 @@ void Gui::processOutliner(GuiContext &ctx) {
             }
             else
             {
-                ImGui::TreeNodeEx(label.data(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth);
+                auto nodeFlag = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth;
+                if (ctx.selectedObjectIdOpt == item.objectId) {
+                    nodeFlag |= ImGuiTreeNodeFlags_Selected;
+                }
+                ImGui::TreeNodeEx(label.data(), nodeFlag);
+                if (ImGui::IsItemClicked()) {
+                    ctx.selectedObjectIdOpt = item.objectId;
+                }
                 ImGui::TableNextColumn();
                 ImGui::Text("%d", 0);
             }

@@ -24,6 +24,7 @@ uniform sampler2D frontTexture;
 uniform sampler2D backTexture;
 uniform float frontTextureMix;
 uniform float backTextureMix;
+uniform int selected;
 
 out vec4 FragColor;
 
@@ -45,6 +46,10 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 }
 
 void main() {
+    if (selected > 0) {
+        FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+        return;
+    }
     vec3 norm = normalize(normal);
     vec3 toLight = -normalize(sunLightDir);
     vec3 lightColor = vec3(1.0);

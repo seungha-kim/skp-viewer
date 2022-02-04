@@ -7,12 +7,14 @@
 namespace acon {
 
 RenderUnit::RenderUnit(UnitId id,
+                       ObjectId objectId,
                        const std::vector<RenderVertex>& vertices,
                        glm::mat4 transform,
                        RenderMaterial frontMaterial,
                        RenderMaterial backMaterial,
                        std::unordered_map<TextureId, std::unique_ptr<RenderTexture>>& textures)
-        : m_id(id) {
+        : m_id(id)
+        , m_objectId(objectId) {
 
     if (const auto* frontTextureId = std::get_if<TextureId>(&frontMaterial)) {
         m_frontTexture = textures.at(*frontTextureId)->textureName();
@@ -56,6 +58,10 @@ RenderUnit::RenderUnit(UnitId id,
 RenderUnit::~RenderUnit() {
     glDeleteVertexArrays(1, &m_VAO);
     glDeleteBuffers(1, &m_VBO);
+}
+
+const ObjectId& RenderUnit::objectId() const {
+    return m_objectId;
 }
 
 glm::mat4 RenderUnit::transform() const {

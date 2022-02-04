@@ -4,7 +4,7 @@
 
 namespace acon {
 
-Renderer::Renderer(const SurfaceInfo& surfaceInfo, const RenderModel& model)
+Renderer::Renderer(const SurfaceInfo& surfaceInfo)
     : m_sunlightPass(surfaceInfo)
     , m_mainPass(surfaceInfo)
     , m_gaussianBlurPass(surfaceInfo)
@@ -13,23 +13,23 @@ Renderer::Renderer(const SurfaceInfo& surfaceInfo, const RenderModel& model)
     , m_toneMapPass(surfaceInfo)
     , m_outlinePass(surfaceInfo)
     , m_outlineMultiplicativeBlendPass(surfaceInfo, BlendPassKind::multiplicative)
-    , m_colorBalancePass(surfaceInfo)
-    , m_renderModel(model) {}
+    , m_colorBalancePass(surfaceInfo) {}
 
 void Renderer::render(RenderContext &ctx) {
     glClearColor(0.2f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     const SunlightPassInput sunlightPassInput {
-            .units = m_renderModel.units(),
+            .units = ctx.renderModel.units(),
     };
     const auto sunlightPassOutput = m_sunlightPass.render(ctx, sunlightPassInput);
 
     const MainPassInput mainPassInput {
-            .units = m_renderModel.units(),
+            .units = ctx.renderModel.units(),
             .lightSpaceMatrix = sunlightPassOutput.lightSpaceMatrix,
             .shadowDepthTexture = sunlightPassOutput.depthTexture,
             .shadowMix = 0.0f, // TODO
+            .selectedObjectIdOpt = ctx.selectedObjectIdOpt,
     };
     const auto mainPassOutput = m_mainPass.render(ctx, mainPassInput);
 
@@ -67,7 +67,7 @@ void Renderer::render(RenderContext &ctx) {
     const auto colorBalancePassOutput = m_colorBalancePass.render(ctx, colorBalancePassInput);
 
     const OutlinePassInput outlinePassInput {
-        .units = m_renderModel.units(),
+        .units = ctx.renderModel.units(),
         .depthTexture = mainPassOutput.depthTexture,
         .outlineWidth = m_renderOptions.outlineWidth,
         .outlineDepthThreshold = m_renderOptions.outlineDepthThreshold,

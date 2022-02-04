@@ -6,6 +6,7 @@
 #include "../engine/Engine.h"
 #include "gui/Gui.h"
 #include <memory>
+#include <optional>
 
 class Window {
     friend void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -49,6 +50,7 @@ private:
     KeyCommandSet m_prevKeyCommandSet;
     bool m_showMouseCursor = true;
     bool m_shouldClose = false;
+    std::optional<acon::ObjectId> m_selectedObjectIdOpt{};
 
     void onMouseMove(float mousePosX, float mousePosY);
     void onMouseWheel(float mousePosX, float mousePosY, float wheelOffsetX, float wheelOffsetY);

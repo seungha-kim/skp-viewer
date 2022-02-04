@@ -37,7 +37,8 @@ public:
 
         for (auto &unit: input.units) {
             glBindVertexArray(unit->VAO());
-
+            bool selected = input.selectedObjectIdOpt == unit->objectId();
+            m_mainShader->setInt("selected", selected);
             glm::mat4 model = unit->transform();
             m_mainShader->setMatrix4f("model", model);
 

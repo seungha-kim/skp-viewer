@@ -15,7 +15,7 @@ Engine::Engine(SurfaceInfo surfaceInfo, const AbstractReader& reader)
     auto [runtimeModel, renderModel] = buildModel(reader);
     m_runtimeModel = std::move(runtimeModel);
     m_renderModel = std::move(renderModel);
-    m_renderer = std::make_unique<Renderer>(surfaceInfo, *m_renderModel);
+    m_renderer = std::make_unique<Renderer>(surfaceInfo);
     glEnable(GL_DEPTH_TEST);
 }
 
@@ -33,7 +33,7 @@ const SurfaceInfo &Engine::surfaceInfo() const {
     return m_surfaceInfo;
 }
 
-void Engine::render(float playbackValue) {
+void Engine::render(float playbackValue, std::optional<ObjectId> selectedObjectIdOpt) {
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         printf("WARN - NOT COMPLETE\n");
         return;
@@ -44,6 +44,8 @@ void Engine::render(float playbackValue) {
             .scene = sceneManager().activeScene(),
             .playbackValue = playbackValue,
             .surfaceInfo = m_surfaceInfo,
+            .renderModel = *m_renderModel,
+            .selectedObjectIdOpt = selectedObjectIdOpt,
     };
     m_renderer->render(renderCtx);
 }

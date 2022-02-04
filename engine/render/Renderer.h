@@ -33,7 +33,7 @@ struct RenderOptions {
 
 class Renderer final {
 public:
-    explicit Renderer(const SurfaceInfo& surfaceInfo, const RenderModel& model);
+    explicit Renderer(const SurfaceInfo& surfaceInfo);
     ~Renderer() = default;
 
     void render(RenderContext &ctx);
@@ -53,7 +53,6 @@ private:
     AdditiveBlendPass m_outlineMultiplicativeBlendPass;
     TextureRenderer m_textureRenderer;
     RenderOptions m_renderOptions;
-    const RenderModel& m_renderModel;
 };
 
 }

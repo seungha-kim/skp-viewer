@@ -100,7 +100,7 @@ std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>> buildMode
 
             std::vector<RenderVertex> vertices;
             buildVertices(reader, unitId, vertices);
-            auto unit = std::make_unique<RenderUnit>(unitId, vertices, worldTransform, frontMaterial, backMaterial, renderModel->m_textures);
+            auto unit = std::make_unique<RenderUnit>(unitId, item.id, vertices, worldTransform, frontMaterial, backMaterial, renderModel->m_textures);
             renderModel->m_units.push_back(std::move(unit));
         }
 

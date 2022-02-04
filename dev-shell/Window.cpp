@@ -190,7 +190,7 @@ void Window::mainLoop() {
 
         updateTime();
         updateCamera();
-        m_engine->render(playbackValue());
+        m_engine->render(playbackValue(), m_selectedObjectIdOpt);
 
         beginGui();
         GuiContext guiCtx {
@@ -200,6 +200,7 @@ void Window::mainLoop() {
                 .surfaceInfo = m_engine->surfaceInfo(),
                 .renderOptions = m_engine->rendererMut().renderOptionsMut(),
                 .runtimeModel = m_engine->runtimeModelMut(),
+                .selectedObjectIdOpt = m_selectedObjectIdOpt,
         };
         m_gui.process(guiCtx);
         endGui();
