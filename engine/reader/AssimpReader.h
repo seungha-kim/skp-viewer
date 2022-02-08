@@ -59,6 +59,16 @@ public:
 
     [[nodiscard]] int getTextureHeight(TextureId textureId) const override;
 
+    [[nodiscard]] unsigned getTagCount() const override;
+
+    [[nodiscard]] TagId getTag(int index) const override;
+
+    [[nodiscard]] std::string getTagName(TagId id) const override;
+
+    [[nodiscard]] unsigned getTagObjectCount(TagId id) const override;
+
+    [[nodiscard]] ObjectId getTagObject(TagId id, int index) const override;
+
 private:
     // TODO: assimp 가이드에 웬만하면 이렇게 들고 있지 말라고 해놓았음.
     // 읽기는 이렇게 읽되, 자체 자료구조로 변환하는 방식이 더 좋을듯.

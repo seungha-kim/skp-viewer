@@ -205,6 +205,26 @@ int AssimpReader::getTextureHeight(TextureId textureId) const {
     return 0;
 }
 
+unsigned AssimpReader::getTagCount() const {
+    return 0;
+}
+
+TagId AssimpReader::getTag(int index) const {
+    return 0;
+}
+
+std::string AssimpReader::getTagName(TagId id) const {
+    return {};
+}
+
+unsigned AssimpReader::getTagObjectCount(TagId id) const {
+    return 0;
+}
+
+ObjectId AssimpReader::getTagObject(TagId id, int index) const {
+    return 0;
+}
+
 glm::mat4 convertMatrix4(const aiMatrix4x4 &mat) {
     float arr[] {
         mat.a1, mat.b1, mat.c1, mat.d1,

@@ -33,6 +33,13 @@ public:
     [[nodiscard]] virtual unsigned getObjectChildrenCount(ObjectId id) const = 0;
     [[nodiscard]] virtual ObjectId getObjectChild(ObjectId id, int index) const = 0;
 
+    // Tag
+    [[nodiscard]] virtual unsigned getTagCount() const = 0;
+    [[nodiscard]] virtual TagId getTag(int index) const = 0;
+    [[nodiscard]] virtual std::string getTagName(TagId id) const = 0;
+    [[nodiscard]] virtual unsigned getTagObjectCount(TagId id) const = 0;
+    [[nodiscard]] virtual ObjectId getTagObject(TagId id, int index) const = 0;
+
     // Unit
     [[nodiscard]] virtual bool hasUnit(UnitId unitId) const = 0;
     [[nodiscard]] virtual std::optional<MaterialId> getUnitFrontMaterial(UnitId id) const = 0;

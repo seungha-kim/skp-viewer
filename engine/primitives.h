@@ -7,6 +7,7 @@ using ObjectId = unsigned;
 using UnitId = unsigned;
 using MaterialId = unsigned;
 using TextureId = unsigned;
+using TagId = unsigned;
 
 static const ObjectId ROOT_OBJECT_ID = 0;
 

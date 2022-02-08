@@ -60,6 +60,16 @@ public:
 
     [[nodiscard]] int getTextureHeight(TextureId textureId) const override;
 
+    [[nodiscard]] unsigned getTagCount() const override;
+
+    [[nodiscard]] TagId getTag(int index) const override;
+
+    [[nodiscard]] std::string getTagName(TagId id) const override;
+
+    [[nodiscard]] unsigned getTagObjectCount(TagId id) const override;
+
+    [[nodiscard]] ObjectId getTagObject(TagId id, int index) const override;
+
 private:
     SUModelRef m_model;
 
@@ -67,6 +77,8 @@ private:
     MaterialId m_materialCount = 0;
     UnitId m_unitCount = 0;
     TextureId m_textureCount = 0;
+    TagId m_tagCount = 0;
+    SULayerRef m_defaultLayerRef{};
 
     using GroupMap = std::unordered_map<ObjectId, SUGroupRef>;
     using GroupInverse = std::unordered_map<SUGroupRef, ObjectId>;
@@ -75,6 +87,11 @@ private:
     using MaterialInverse = std::unordered_map<SUMaterialRef, MaterialId>;
     using TextureMap = std::unordered_map<TextureId, SUTextureRef>;
     using TextureInverse = std::unordered_map<SUTextureRef, TextureId>;
+    using TagList = std::vector<TagId>;
+    using TagMap = std::unordered_map<TagId, SULayerRef>;
+    using TagInverse = std::unordered_map<SULayerRef, TagId>;
+    using TagObjects = std::unordered_map<TagId, std::vector<ObjectId>>;
+    // TODO: face, edge 에도 layer 할당될 수 있음. 추후 unit 쪼개는 단위에 layer 추가해서 해결 예정.
     std::unique_ptr<SketchupUnitHolder> m_unitHolder;
     std::unique_ptr<SketchupObjectHolder> m_objectHolder;
     std::unique_ptr<SketchupTextureMetaHolder> m_textureMetaHolder;
@@ -88,8 +105,13 @@ private:
     std::unordered_map<MaterialId, glm::vec4> m_materialColors;
     TextureMap m_textureMap;
     TextureInverse m_textureInverse;
+    TagList m_tagList;
+    TagMap m_tagMap;
+    TagInverse m_tagInverse;
+    TagObjects m_tagObjects;
 
     ObjectId processObject(const SketchupObjectDescription& desc);
+    [[nodiscard]] bool isValidLayer(SULayerRef layerRef) const;
 };
 
 }

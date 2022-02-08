@@ -39,4 +39,16 @@ namespace std {
             return lhs.ptr == rhs.ptr;
         }
     };
+
+    template<> struct hash<SULayerRef> {
+        size_t operator()(const SULayerRef& x) const {
+            return size_t(x.ptr);
+        }
+    };
+    template<> struct equal_to<SULayerRef> {
+        constexpr bool operator()(const SULayerRef &lhs, const SULayerRef &rhs) const
+        {
+            return lhs.ptr == rhs.ptr;
+        }
+    };
 }

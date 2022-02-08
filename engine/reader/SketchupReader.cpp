@@ -15,6 +15,7 @@ static inline glm::vec3 convertVector3D(SUVector3D vector);
 static inline glm::mat4 convertTransform(SUTransformation transform);
 static inline glm::vec4 convertColor(SUColor color);
 static void flipImageVertically(std::vector<unsigned char>& data, int width, int height, int channels);
+static std::string convertAndReleaseString(SUStringRef stringRef);
 
 struct SketchupUnit {
     std::optional<MaterialId> frontMaterialId;
@@ -42,6 +43,7 @@ struct SketchupObjectDescription {
     std::string name;
     glm::mat4 transform;
     std::optional<MaterialId> inheritedMaterialOpt;
+    std::optional<TagId> tagIdOpt;
 };
 
 struct SketchupObjectHolder {
@@ -113,6 +115,23 @@ SketchupReader::SketchupReader(std::string_view path)
     if (status == SUModelLoadStatus_Success_MoreRecent) {
         // TODO: 로그 찍는 것 외에 programmatically 알 수 있게 처리
         printf("WARN: SUModelLoadStatus_Success_MoreRecent\n");
+    }
+
+    // default tag
+    check(SUModelGetDefaultLayer(m_model, &m_defaultLayerRef));
+
+    // tag 전부 얻어오는 작업
+    size_t layerCount;
+    check(SUModelGetNumLayers(m_model, &layerCount));
+    std::vector<SULayerRef> layers(layerCount);
+    check(SUModelGetLayers(m_model, layerCount, layers.data(), &layerCount));
+    for (const auto& layerRef: layers) {
+        if (isValidLayer(layerRef)) {
+            auto tagId = m_tagCount++;
+            m_tagList.push_back(tagId);
+            m_tagMap[tagId] = layerRef;
+            m_tagInverse[layerRef] = tagId;
+        }
     }
 
     // material 전부 얻어오는 작업
@@ -187,6 +206,15 @@ SketchupReader::SketchupReader(std::string_view path)
         }
 
         for (const auto& group: groups) {
+            const auto drawingRef = SUGroupToDrawingElement(group);
+
+            std::optional<TagId> tagIdOpt{};
+            SULayerRef layerRef{};
+            check(SUDrawingElementGetLayer(drawingRef, &layerRef));
+            if (isValidLayer(layerRef)) {
+                tagIdOpt = m_tagInverse.at(layerRef);
+            }
+
             SUEntitiesRef groupEntities{};
             SUStringRef nameRef{};
             SUTransformation transform{};
@@ -195,10 +223,7 @@ SketchupReader::SketchupReader(std::string_view path)
             SUGroupGetName(group, &nameRef);
             SUGroupGetTransform(group, &transform);
 
-            size_t nameLength{}, nameLengthCopied{};
-            SUStringGetUTF8Length(nameRef, &nameLength);
-            std::string name(nameLength, '0');
-            SUStringGetUTF8(nameRef, nameLength, name.data(), &nameLengthCopied);
+            const auto name = convertAndReleaseString(nameRef);
 
             std::optional<MaterialId> inheritedMaterialOpt{};
             auto el = SUGroupToDrawingElement(group);
@@ -214,6 +239,7 @@ SketchupReader::SketchupReader(std::string_view path)
                     .name = name,
                     .transform = convertTransform(transform),
                     .inheritedMaterialOpt = inheritedMaterialOpt,
+                    .tagIdOpt = tagIdOpt,
             });
         }
 
@@ -226,6 +252,15 @@ SketchupReader::SketchupReader(std::string_view path)
         }
 
         for (const auto& instance: instances) {
+            const auto drawingRef = SUComponentInstanceToDrawingElement(instance);
+
+            std::optional<TagId> tagIdOpt{};
+            SULayerRef layerRef{};
+            check(SUDrawingElementGetLayer(drawingRef, &layerRef));
+            if (isValidLayer(layerRef)) {
+                tagIdOpt = m_tagInverse.at(layerRef);
+            }
+
             // TODO: reuse definition - Mesh 단위 추가
             SUComponentDefinitionRef definition{};
             SUEntitiesRef definitionEntities{};
@@ -237,10 +272,7 @@ SketchupReader::SketchupReader(std::string_view path)
             SUComponentInstanceGetName(instance, &nameRef);
             SUComponentInstanceGetTransform(instance, &transform);
 
-            size_t nameLength{}, nameLengthCopied{};
-            SUStringGetUTF8Length(nameRef, &nameLength);
-            std::string name(nameLength, '0');
-            SUStringGetUTF8(nameRef, nameLength, name.data(), &nameLengthCopied);
+            const auto name = convertAndReleaseString(nameRef);
 
             std::optional<MaterialId> inheritedMaterialOpt{};
             auto el = SUComponentInstanceToDrawingElement(instance);
@@ -256,6 +288,7 @@ SketchupReader::SketchupReader(std::string_view path)
                     .name = name,
                     .transform = convertTransform(transform),
                     .inheritedMaterialOpt = inheritedMaterialOpt,
+                    .tagIdOpt = tagIdOpt,
             });
         }
     }
@@ -470,6 +503,11 @@ ObjectId SketchupReader::processObject(const SketchupObjectDescription& desc) {
         .units = units,
         .children = {},
     };
+    if (desc.tagIdOpt) {
+        const auto tagId = desc.tagIdOpt.value();
+        m_tagObjects[tagId].push_back(objectId);
+    }
+
     if (desc.parentObjectId) {
         m_objectHolder->map.at(desc.parentObjectId.value()).children.push_back(objectId);
     }
@@ -513,6 +551,40 @@ int SketchupReader::getTextureWidth(TextureId textureId) const {
 
 int SketchupReader::getTextureHeight(TextureId textureId) const {
     return m_textureMetaHolder->map.at(textureId).height;
+}
+
+unsigned SketchupReader::getTagCount() const {
+    return m_tagMap.size();
+}
+
+TagId SketchupReader::getTag(int index) const {
+    return m_tagList[index];
+}
+
+std::string SketchupReader::getTagName(TagId id) const {
+    const auto layerRef = m_tagMap.at(id);
+    SUStringRef nameRef{};
+    SUStringCreate(&nameRef);
+    check(SULayerGetName(layerRef, &nameRef));
+    return convertAndReleaseString(nameRef);
+}
+
+unsigned SketchupReader::getTagObjectCount(TagId id) const {
+    if (m_tagObjects.contains(id)) {
+        return m_tagObjects.at(id).size();
+    } else {
+        return 0;
+    }
+}
+
+ObjectId SketchupReader::getTagObject(TagId id, int index) const {
+    return m_tagObjects.at(id)[index];
+}
+
+bool SketchupReader::isValidLayer(SULayerRef layerRef) const {
+    // 스케치업의 default layer (Layer0) 은 '레이어 없음' 의미에 가까움.
+    // 따라서, default layer 를 가지고 있는 경우 아예 처리하지 않는 방식을 채택.
+    return layerRef.ptr != m_defaultLayerRef.ptr;
 }
 
 static float m(double length) {
@@ -569,6 +641,15 @@ static void flipImageVertically(std::vector<unsigned char>& data, int width, int
                 data.begin() + lowerStart
         );
     }
+}
+
+std::string convertAndReleaseString(SUStringRef stringRef) {
+    size_t len{};
+    SUStringGetUTF8Length(stringRef, &len);
+    std::string result(len, '0');
+    SUStringGetUTF8(stringRef, len, result.data(), &len);
+    SUStringRelease(&stringRef);
+    return result;
 }
 
 }
