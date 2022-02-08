@@ -4,7 +4,7 @@
 
 class Gui {
 public:
-    Gui() = default;
+    Gui();
     ~Gui();
     void process(GuiContext& ctx);
 private:
@@ -19,5 +19,6 @@ private:
     void processRenderOptions(GuiContext &ctx);
     void processSceneControl(GuiContext& ctx) const;
     void processOutliner(GuiContext& ctx);
+    void processLayerList(GuiContext& ctx);
     static float deltasHistogram(void* data, int i);
 };

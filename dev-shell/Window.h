@@ -7,6 +7,7 @@
 #include "gui/Gui.h"
 #include <memory>
 #include <optional>
+#include <imgui.h>
 
 class Window {
     friend void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -52,6 +53,7 @@ private:
     bool m_shouldClose = false;
     bool m_hoveringGui = false;
     std::optional<acon::ObjectId> m_selectedObjectIdOpt{};
+    ImFont* m_font{};
 
     void onMouseMove(float mousePosX, float mousePosY);
     void onMouseWheel(float mousePosX, float mousePosY, float wheelOffsetX, float wheelOffsetY);

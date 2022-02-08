@@ -3,6 +3,8 @@
 #include <imgui.h>
 #include <optional>
 
+Gui::Gui() = default;
+
 void Gui::process(GuiContext& ctx) {
     auto& io = ImGui::GetIO();
     if (io.WantCaptureKeyboard || io.WantCaptureMouse) {
@@ -19,6 +21,7 @@ void Gui::process(GuiContext& ctx) {
     processMainMenuBar(ctx);
     processRenderOptions(ctx);
     processOutliner(ctx);
+    processLayerList(ctx);
     ctx.hoveringGui = io.WantCaptureMouse;
 }
 
@@ -202,6 +205,38 @@ void Gui::processOutliner(GuiContext &ctx) {
         Node::displayNode(ctx, Node {
             .objectId = acon::ROOT_OBJECT_ID,
         });
+
+        ImGui::EndTable();
+    }
+    ImGui::End();
+    ImGui::PopStyleVar();
+}
+
+void Gui::processLayerList(GuiContext &ctx) {
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {0, 0});
+    ImGui::Begin("Layers", nullptr, windowFlag(ctx));
+    static ImGuiTableFlags flags = ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_NoBordersInBody;
+    if (ImGui::BeginTable("Outliner", 2, flags)) {
+        ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoHide);
+        ImGui::TableSetupColumn("Show", ImGuiTableColumnFlags_NoHide);
+        ImGui::TableHeadersRow();
+
+        const auto tagCount = ctx.runtimeModel.getTagCount();
+
+        for (int i = 0; i < tagCount; i++) {
+            const auto tagId = ctx.runtimeModel.getTag(i);
+            const auto tagName = ctx.runtimeModel.getTagName(tagId);
+            bool checked = ctx.runtimeModel.getTagVisibility(tagId);
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+            ImGui::Text("%s", tagName.data());
+            ImGui::TableNextColumn();
+            ImGui::Checkbox("", &checked);
+            if (ImGui::IsItemClicked()) {
+                ctx.runtimeModel.setTagVisibility(tagId, !checked);
+                ctx.renderModel.setNeedsVisibilityUpdate();
+            }
+        }
 
         ImGui::EndTable();
     }

@@ -74,6 +74,10 @@ RuntimeModel &Engine::runtimeModelMut() {
     return *m_runtimeModel;
 }
 
+RenderModel &Engine::renderModelMut() {
+    return *m_renderModel;
+}
+
 CameraState& Engine::currentCameraStateMut() {
     return m_sceneManager.activeSceneMut().cameraStateMut();
 }

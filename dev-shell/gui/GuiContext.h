@@ -16,6 +16,7 @@ struct GuiContext {
     const acon::SurfaceInfo& surfaceInfo;
     acon::RenderOptions& renderOptions;
     acon::RuntimeModel& runtimeModel;
+    acon::RenderModel& renderModel;
     std::optional<acon::ObjectId>& selectedObjectIdOpt;
     bool& hoveringGui;
 };

@@ -203,6 +203,7 @@ void Window::mainLoop() {
                 .surfaceInfo = m_engine->surfaceInfo(),
                 .renderOptions = m_engine->rendererMut().renderOptionsMut(),
                 .runtimeModel = m_engine->runtimeModelMut(),
+                .renderModel = m_engine->renderModelMut(),
                 .selectedObjectIdOpt = m_selectedObjectIdOpt,
                 .hoveringGui = m_hoveringGui,
         };
@@ -220,6 +221,7 @@ void Window::initGlfwGui() {
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     ImGui::StyleColorsDark();
+    m_font = io.Fonts->AddFontFromFileTTF("./resources/NotoSansKR-Regular.otf", 18.0f, nullptr, io.Fonts->GetGlyphRangesKorean());
 
     ImGui_ImplGlfw_InitForOpenGL(m_glfwWindow, true);
     ImGui_ImplOpenGL3_Init("#version 330");
@@ -229,9 +231,11 @@ void Window::beginGui() {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
+    ImGui::PushFont(m_font);
 }
 
 void Window::endGui() {
+    ImGui::PopFont();
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }

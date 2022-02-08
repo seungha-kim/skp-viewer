@@ -22,6 +22,7 @@ public:
     Renderer& rendererMut();
 
     RuntimeModel& runtimeModelMut();
+    RenderModel& renderModelMut();
 
     CameraState& currentCameraStateMut();
 
