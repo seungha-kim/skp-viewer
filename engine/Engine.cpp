@@ -2,8 +2,6 @@
 #include "render/checkError.h"
 #include <glad/glad.h>
 #include <glm/gtc/random.hpp>
-#include "reader/AssimpReader.h"
-#include "reader/SketchupReader.h"
 #include "render/RenderModel.h"
 #include "runtime/RuntimeModel.h"
 

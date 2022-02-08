@@ -1,11 +1,9 @@
 #include "SketchupReader.h"
-#include <stack>
 #include <vector>
 #include <map>
 #include <glm/gtc/type_ptr.hpp>
 #include <stdexcept>
 #include <algorithm>
-
 
 namespace acon {
 
@@ -35,15 +33,6 @@ struct SketchupObject {
     glm::mat4 transform{};
     std::vector<UnitId> units;
     std::vector<ObjectId> children;
-};
-
-struct SketchupObjectDescription {
-    SUEntitiesRef entities;
-    std::optional<ObjectId> parentObjectId;
-    std::string name;
-    glm::mat4 transform;
-    std::optional<MaterialId> inheritedMaterialOpt;
-    std::optional<TagId> tagIdOpt;
 };
 
 struct SketchupObjectHolder {
@@ -184,16 +173,16 @@ SketchupReader::SketchupReader(std::string_view path)
                 0.0, 0.0, 0.0, 1.0,
         }
     };
-    std::stack<SketchupObjectDescription> dfsStack({SketchupObjectDescription {
-        .entities = rootEntities,
-        .parentObjectId = {},
-        .name = "root",
-        .transform = convertTransform(rootTransform),
-        .inheritedMaterialOpt = {},
-    }});
-    while (!dfsStack.empty()) {
-        const auto desc = dfsStack.top();
-        dfsStack.pop();
+    m_dfsStack.emplace(SketchupObjectDescription {
+            .entities = rootEntities,
+            .parentObjectId = {},
+            .name = "root",
+            .transform = convertTransform(rootTransform),
+            .inheritedMaterialOpt = {},
+    });
+    while (!m_dfsStack.empty()) {
+        const auto desc = m_dfsStack.top();
+        m_dfsStack.pop();
 
         const auto objectId = processObject(desc);
 
@@ -206,41 +195,8 @@ SketchupReader::SketchupReader(std::string_view path)
         }
 
         for (const auto& group: groups) {
-            const auto drawingRef = SUGroupToDrawingElement(group);
-
-            std::optional<TagId> tagIdOpt{};
-            SULayerRef layerRef{};
-            check(SUDrawingElementGetLayer(drawingRef, &layerRef));
-            if (isValidLayer(layerRef)) {
-                tagIdOpt = m_tagInverse.at(layerRef);
-            }
-
-            SUEntitiesRef groupEntities{};
-            SUStringRef nameRef{};
-            SUTransformation transform{};
-            check(SUGroupGetEntities(group, &groupEntities));
-
-            SUGroupGetName(group, &nameRef);
-            SUGroupGetTransform(group, &transform);
-
-            const auto name = convertAndReleaseString(nameRef);
-
-            std::optional<MaterialId> inheritedMaterialOpt{};
-            auto el = SUGroupToDrawingElement(group);
-            SUMaterialRef groupMaterial{};
-            auto result = SUDrawingElementGetMaterial(el, &groupMaterial);
-            if (result == SU_ERROR_NONE) {
-                inheritedMaterialOpt = m_materialInverse.at(groupMaterial);
-            }
-
-            dfsStack.push(SketchupObjectDescription {
-                    .entities = groupEntities,
-                    .parentObjectId = objectId,
-                    .name = name,
-                    .transform = convertTransform(transform),
-                    .inheritedMaterialOpt = inheritedMaterialOpt,
-                    .tagIdOpt = tagIdOpt,
-            });
+            auto instance = SUGroupToComponentInstance(group);
+            pushChildren(objectId, instance);
         }
 
         // component
@@ -252,44 +208,7 @@ SketchupReader::SketchupReader(std::string_view path)
         }
 
         for (const auto& instance: instances) {
-            const auto drawingRef = SUComponentInstanceToDrawingElement(instance);
-
-            std::optional<TagId> tagIdOpt{};
-            SULayerRef layerRef{};
-            check(SUDrawingElementGetLayer(drawingRef, &layerRef));
-            if (isValidLayer(layerRef)) {
-                tagIdOpt = m_tagInverse.at(layerRef);
-            }
-
-            // TODO: reuse definition - Mesh 단위 추가
-            SUComponentDefinitionRef definition{};
-            SUEntitiesRef definitionEntities{};
-            check(SUComponentInstanceGetDefinition(instance, &definition));
-            check(SUComponentDefinitionGetEntities(definition, &definitionEntities));
-
-            SUStringRef nameRef{};
-            SUTransformation transform{};
-            SUComponentInstanceGetName(instance, &nameRef);
-            SUComponentInstanceGetTransform(instance, &transform);
-
-            const auto name = convertAndReleaseString(nameRef);
-
-            std::optional<MaterialId> inheritedMaterialOpt{};
-            auto el = SUComponentInstanceToDrawingElement(instance);
-            SUMaterialRef groupMaterial{};
-            auto result = SUDrawingElementGetMaterial(el, &groupMaterial);
-            if (result == SU_ERROR_NONE) {
-                inheritedMaterialOpt = m_materialInverse.at(groupMaterial);
-            }
-
-            dfsStack.push(SketchupObjectDescription {
-                    .entities = definitionEntities,
-                    .parentObjectId = objectId,
-                    .name = name,
-                    .transform = convertTransform(transform),
-                    .inheritedMaterialOpt = inheritedMaterialOpt,
-                    .tagIdOpt = tagIdOpt,
-            });
+            pushChildren(objectId, instance);
         }
     }
 }
@@ -585,6 +504,47 @@ bool SketchupReader::isValidLayer(SULayerRef layerRef) const {
     // 스케치업의 default layer (Layer0) 은 '레이어 없음' 의미에 가까움.
     // 따라서, default layer 를 가지고 있는 경우 아예 처리하지 않는 방식을 채택.
     return layerRef.ptr != m_defaultLayerRef.ptr;
+}
+
+void SketchupReader::pushChildren(ObjectId id, SUComponentInstanceRef instance) {
+    const auto drawingRef = SUComponentInstanceToDrawingElement(instance);
+
+    std::optional<TagId> tagIdOpt{};
+    SULayerRef layerRef{};
+    check(SUDrawingElementGetLayer(drawingRef, &layerRef));
+    if (isValidLayer(layerRef)) {
+        tagIdOpt = m_tagInverse.at(layerRef);
+    }
+
+    // TODO: reuse definition - Mesh 단위 추가
+    SUComponentDefinitionRef definition{};
+    SUEntitiesRef definitionEntities{};
+    check(SUComponentInstanceGetDefinition(instance, &definition));
+    check(SUComponentDefinitionGetEntities(definition, &definitionEntities));
+
+    SUStringRef nameRef{};
+    SUTransformation transform{};
+    SUComponentInstanceGetName(instance, &nameRef);
+    SUComponentInstanceGetTransform(instance, &transform);
+
+    const auto name = convertAndReleaseString(nameRef);
+
+    std::optional<MaterialId> inheritedMaterialOpt{};
+    auto el = SUComponentInstanceToDrawingElement(instance);
+    SUMaterialRef groupMaterial{};
+    auto result = SUDrawingElementGetMaterial(el, &groupMaterial);
+    if (result == SU_ERROR_NONE) {
+        inheritedMaterialOpt = m_materialInverse.at(groupMaterial);
+    }
+
+    m_dfsStack.emplace(SketchupObjectDescription {
+            .entities = definitionEntities,
+            .parentObjectId = id,
+            .name = name,
+            .transform = convertTransform(transform),
+            .inheritedMaterialOpt = inheritedMaterialOpt,
+            .tagIdOpt = tagIdOpt,
+    });
 }
 
 static float m(double length) {

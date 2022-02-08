@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <unordered_map>
+#include <stack>
 #include <SketchUpAPI/sketchup.h>
 #include "AbstractReader.h"
 #include "sketchup-specialization.h"
@@ -9,9 +10,18 @@ namespace acon {
 
 struct SketchupUnitHolder;
 struct SketchupObjectHolder;
-struct SketchupObjectDescription;
 struct SketchupTextureMeta;
 struct SketchupTextureMetaHolder;
+
+struct SketchupObjectDescription {
+    SUEntitiesRef entities;
+    std::optional<ObjectId> parentObjectId;
+    std::string name;
+    glm::mat4 transform;
+    std::optional<MaterialId> inheritedMaterialOpt;
+    std::optional<TagId> tagIdOpt;
+};
+
 class SketchupReader: public AbstractReader {
 public:
     explicit SketchupReader(std::string_view path);
@@ -109,8 +119,10 @@ private:
     TagMap m_tagMap;
     TagInverse m_tagInverse;
     TagObjects m_tagObjects;
+    std::stack<SketchupObjectDescription> m_dfsStack;
 
     ObjectId processObject(const SketchupObjectDescription& desc);
+    void pushChildren(ObjectId id, SUComponentInstanceRef instance);
     [[nodiscard]] bool isValidLayer(SULayerRef layerRef) const;
 };
 
