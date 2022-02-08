@@ -3,6 +3,7 @@
 #include <string_view>
 #include <memory>
 #include <unordered_map>
+#include <unordered_set>
 #include "../primitives.h"
 #include "../build.h"
 
@@ -13,6 +14,15 @@ struct RuntimeObjectData {
     glm::mat4 transform;
     bool visibility;
     std::vector<ObjectId> children;
+    std::optional<ObjectId> parentIdOpt;
+    std::optional<TagId> tagIdOpt; // TODO: multiple tags for one object
+};
+
+struct RuntimeTagData {
+    TagId id;
+    std::string name;
+    bool visibility;
+    std::unordered_set<ObjectId> objects;
 };
 
 class RuntimeModel {
@@ -26,8 +36,17 @@ public:
     [[nodiscard]] bool getObjectVisibility(ObjectId id) const;
     [[nodiscard]] unsigned getObjectChildrenCount(ObjectId id) const;
     [[nodiscard]] ObjectId getObjectChild(ObjectId id, int index) const;
+
+    [[nodiscard]] unsigned getTagCount() const;
+    [[nodiscard]] TagId getTag(int index) const;
+    [[nodiscard]] std::string_view getTagName(TagId id) const;
+    [[nodiscard]] bool getTagVisibility(TagId id) const;
+    void setTagVisibility(TagId id, bool visibility);
 private:
+    // TODO: object order?
     std::unordered_map<ObjectId, RuntimeObjectData> m_objectData;
+    std::vector<TagId> m_tagList;
+    std::unordered_map<TagId, RuntimeTagData> m_tagData;
 };
 
 }

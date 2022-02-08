@@ -37,13 +37,32 @@ std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>> buildMode
     auto runtimeModel = std::make_unique<RuntimeModel>();
     auto renderModel = std::make_unique<RenderModel>();
 
+    // Tags
+    for (int i = 0; i < reader.getTagCount(); i++) {
+        const auto tagId = reader.getTag(i);
+        const auto tagName = reader.getTagName(tagId);
+        RuntimeTagData tagData{
+            .id = tagId,
+            .name = tagName,
+            .visibility = true,
+            .objects = {},
+        };
+
+        runtimeModel->m_tagData.emplace(tagId, std::move(tagData));
+        runtimeModel->m_tagList.push_back(tagId);
+    }
+
+    // Traverse all objects
+
     struct DfsItem {
         ObjectId id;
+        std::optional<ObjectId> parentId;
         glm::mat4 ancestorTransform;
     };
 
     std::stack<DfsItem> dfsStack({{
             .id = ROOT_OBJECT_ID,
+            .parentId = {},
             .ancestorTransform = glm::mat4(1.0f),
     }});
 
@@ -51,10 +70,11 @@ std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>> buildMode
         auto item = dfsStack.top();
         dfsStack.pop();
 
-        RuntimeObjectData objectData;
+        RuntimeObjectData objectData{};
         objectData.name = reader.getObjectName(item.id);
         objectData.visibility = true; // TODO
         objectData.transform = reader.getObjectTransform(item.id);
+        objectData.parentIdOpt = item.parentId;
 
         auto worldTransform = item.ancestorTransform * objectData.transform;
 
@@ -109,12 +129,23 @@ std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>> buildMode
             auto childId = reader.getObjectChild(item.id, i);
             dfsStack.push({
                     .id = childId,
+                    .parentId = item.id,
                     .ancestorTransform = worldTransform
             });
             objectData.children.push_back(childId);
         }
 
         runtimeModel->m_objectData.emplace(item.id, std::move(objectData));
+    }
+
+    // Tag - Object relation
+    for (const auto tagId: runtimeModel->m_tagList) {
+        const auto tagObjectCount = reader.getTagObjectCount(tagId);
+        for (int j = 0; j < tagObjectCount; j++) {
+            const auto objectId = reader.getTagObject(tagId, j);
+            runtimeModel->m_tagData.at(tagId).objects.insert(objectId);
+            runtimeModel->m_objectData.at(objectId).tagIdOpt = tagId;
+        }
     }
 
     return std::make_pair(std::move(runtimeModel), std::move(renderModel));
