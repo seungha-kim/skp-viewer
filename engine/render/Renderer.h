@@ -53,6 +53,8 @@ private:
     AdditiveBlendPass m_outlineMultiplicativeBlendPass;
     TextureRenderer m_textureRenderer;
     RenderOptions m_renderOptions;
+
+    std::vector<const RenderUnit*> m_unitsForRender{};
 };
 
 }

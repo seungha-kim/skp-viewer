@@ -61,7 +61,7 @@ public:
         m_subShader->setVector3f("sunLightDir", ctx.scene.sunLight().direction);
         m_subShader->setVector3f("color", glm::vec3(1.0f, 1.0f, 1.0f));
 
-        for (auto &unit: input.units) {
+        for (auto* unit: input.units) {
             glBindVertexArray(unit->VAO());
 
             glm::mat4 model = unit->transform();

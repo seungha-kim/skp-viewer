@@ -12,7 +12,7 @@ namespace acon {
 
 struct SunlightPassInput {
     // TODO: units 말고 rootObject 를 받는 것이 적절.
-    const std::vector<std::unique_ptr<RenderUnit>>& units;
+    const std::vector<const RenderUnit*>& units;
 };
 
 struct SunlightPassOutput {

@@ -19,13 +19,22 @@ void Renderer::render(RenderContext &ctx) {
     glClearColor(0.2f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    if (ctx.renderModel.popNeedsVisibilityUpdate()) {
+        m_unitsForRender.clear();
+        for (const auto &unit: ctx.renderModel.units()) {
+            if (ctx.runtimeModel.getObjectVisibility(unit->objectId())) {
+                m_unitsForRender.push_back(unit.get());
+            }
+        }
+    }
+
     const SunlightPassInput sunlightPassInput {
-            .units = ctx.renderModel.units(),
+            .units = m_unitsForRender,
     };
     const auto sunlightPassOutput = m_sunlightPass.render(ctx, sunlightPassInput);
 
     const MainPassInput mainPassInput {
-            .units = ctx.renderModel.units(),
+            .units = m_unitsForRender,
             .lightSpaceMatrix = sunlightPassOutput.lightSpaceMatrix,
             .shadowDepthTexture = sunlightPassOutput.depthTexture,
             .shadowMix = 0.0f, // TODO
@@ -67,7 +76,7 @@ void Renderer::render(RenderContext &ctx) {
     const auto colorBalancePassOutput = m_colorBalancePass.render(ctx, colorBalancePassInput);
 
     const OutlinePassInput outlinePassInput {
-        .units = ctx.renderModel.units(),
+        .units = m_unitsForRender,
         .depthTexture = mainPassOutput.depthTexture,
         .outlineWidth = m_renderOptions.outlineWidth,
         .outlineDepthThreshold = m_renderOptions.outlineDepthThreshold,

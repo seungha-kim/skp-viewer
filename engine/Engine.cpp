@@ -45,6 +45,7 @@ void Engine::render(float playbackValue, std::optional<ObjectId> selectedObjectI
             .playbackValue = playbackValue,
             .surfaceInfo = m_surfaceInfo,
             .renderModel = *m_renderModel,
+            .runtimeModel = *m_runtimeModel,
             .selectedObjectIdOpt = selectedObjectIdOpt,
     };
     m_renderer->render(renderCtx);

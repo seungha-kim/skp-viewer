@@ -10,7 +10,7 @@
 namespace acon {
 
 struct MainPassInput {
-    const std::vector<std::unique_ptr<RenderUnit>>& units;
+    const std::vector<const RenderUnit*>& units;
     const glm::mat4 lightSpaceMatrix;
     const DepthTexture& shadowDepthTexture;
     const float shadowMix;

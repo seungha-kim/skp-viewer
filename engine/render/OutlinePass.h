@@ -10,7 +10,7 @@
 namespace acon {
 
 struct OutlinePassInput {
-    const std::vector<std::unique_ptr<RenderUnit>>& units;
+    const std::vector<const RenderUnit*>& units;
     const DepthTexture& depthTexture;
     const float outlineWidth;
     const float outlineDepthThreshold;
