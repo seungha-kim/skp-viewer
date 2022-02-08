@@ -148,8 +148,12 @@ void Gui::processOutliner(GuiContext &ctx) {
         static void displayNode(GuiContext& ctx, Node item) {
             auto childCount = ctx.runtimeModel.getObjectChildrenCount(item.objectId);
             auto name = ctx.runtimeModel.getObjectName(item.objectId);
-            auto idString = std::to_string(item.objectId);
-            std::string_view label = name.empty() ? idString : name;
+            char label[256];
+            if (name.empty()) {
+                sprintf(label, "Object#%d", item.objectId);
+            } else {
+                sprintf(label, "%s", name.data());
+            }
 
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
@@ -160,7 +164,7 @@ void Gui::processOutliner(GuiContext &ctx) {
                 if (ctx.selectedObjectIdOpt == item.objectId) {
                     nodeFlag |= ImGuiTreeNodeFlags_Selected;
                 }
-                bool open = ImGui::TreeNodeEx(label.data(), nodeFlag);
+                bool open = ImGui::TreeNodeEx(label, nodeFlag);
                 if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()) {
                     ctx.selectedObjectIdOpt = item.objectId;
                 }
@@ -182,7 +186,7 @@ void Gui::processOutliner(GuiContext &ctx) {
                 if (ctx.selectedObjectIdOpt == item.objectId) {
                     nodeFlag |= ImGuiTreeNodeFlags_Selected;
                 }
-                ImGui::TreeNodeEx(label.data(), nodeFlag);
+                ImGui::TreeNodeEx(label, nodeFlag);
                 if (ImGui::IsItemClicked()) {
                     ctx.selectedObjectIdOpt = item.objectId;
                 }
