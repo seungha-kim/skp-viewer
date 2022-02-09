@@ -56,14 +56,18 @@ def build_binding():
     subprocess.run(["cmake", "--build", release_build_dir, "--target", "binding_test"])
 
 
-def main():
+def run_app(command):
     from studio.app import App
+    App(command.opts).run()
+
+
+def main():
     command = RunnerCommand.parse()
     if isinstance(command, RunnerCommand.Config):
         config()
     elif isinstance(command, RunnerCommand.RunStudio):
         build_binding()
-        App(command.opts).run()
+        run_app(command)
 
 
 if __name__ == '__main__':

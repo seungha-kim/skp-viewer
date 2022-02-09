@@ -10,7 +10,10 @@
 namespace py = pybind11;
 
 void init() {
+    static bool initialized = false;
+    if (initialized) return;
     gladLoadGL();
+    initialized = true;
 }
 
 PYBIND11_MODULE(binding_test, m) {
@@ -37,11 +40,21 @@ PYBIND11_MODULE(binding_test, m) {
             }));
 
     py::class_<Engine>(m, "Engine")
-            .def(py::init<SurfaceInfo, const AbstractReader&>())
-            .def("render", &Engine::render)
+            .def(py::init<const AbstractReader&>())
+            .def("render", [](Engine& engine, float playbackValue){
+                engine.render(playbackValue, {});
+            })
+            .def("prepareToRender", &Engine::prepareToRender)
             .def("resize", &Engine::resize)
             .def("currentCameraStateMut", &Engine::currentCameraStateMut, py::return_value_policy::reference)
-            .def("setRandomGlobalDiffuse", &Engine::setRandomGlobalDiffuse);
+            .def("runtimeModelMut", &Engine::runtimeModelMut, py::return_value_policy::reference);
+
+    py::class_<RuntimeModel>(m, "RuntimeModel")
+            .def("getTagCount", &RuntimeModel::getTagCount)
+            .def("getTag", &RuntimeModel::getTag)
+            .def("getTagName", &RuntimeModel::getTagName)
+            .def("getTagVisibility", &RuntimeModel::getTagVisibility)
+            .def("setTagVisibility", &RuntimeModel::setTagVisibility);
 
     py::class_<AbstractReader>(m, "AbstractReader");
 

@@ -3,18 +3,14 @@ from dataclasses import dataclass
 from enum import Flag, auto
 from typing import cast
 
-import binding_test
+from binding_test import CameraState, Engine, SurfaceInfo, init as init_engine
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QKeyEvent
-from PySide6.QtWidgets import QFileDialog
 from PySide6.QtOpenGLWidgets import QOpenGLWidget
 
-from binding_test import CameraState
 from .fly_mode import FlyModeController
 from .input_controller import AbstractInputController, InputControllerOverriding
 from .keymap import KeyMap
-from .startup_options import StartupOptions
-from .util import create_reader_by_file_format
 
 
 class State:
@@ -26,9 +22,9 @@ class State:
         input_controller: AbstractInputController
 
     class FlyMode(Base):
-        def __init__(self, canvas_widget: 'CanvasWidget', parent: AbstractInputController):
+        def __init__(self, canvas_widget: 'CanvasWidget', engine: binding_test.Engine, parent: AbstractInputController):
             self.input_controller = InputControllerOverriding(
-                overrider=FlyModeController(FlyModeControllerDelegateImpl(canvas_widget)),
+                overrider=FlyModeController(FlyModeControllerDelegateImpl(canvas_widget, engine)),
                 overridden=parent,
             )
 
@@ -41,53 +37,37 @@ class CanvasWidget(QOpenGLWidget):
         def on_fly_mode_off(self):
             pass
 
-    engine: binding_test.Engine
-
-    def __init__(self, opts: StartupOptions, delegate: Delegate) -> None:
+    def __init__(self, delegate: Delegate, engine: Engine) -> None:
         super().__init__()
         self._delegate = delegate
+        self._engine = engine
         self._default_input_controller = CanvasInputController(self)
         self._state: State.Base = State.Default(self._default_input_controller)
-        self._model = create_reader_by_file_format(opts.model_path or self.__file_path_by_dialog())
 
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.setUpdateBehavior(QOpenGLWidget.UpdateBehavior.NoPartialUpdate)
 
-    def __file_path_by_dialog(self) -> str:
-        supported_formats = {
-            "SketchUp": "*.skp",
-            "Wavefront OBJ": "*.obj"
-        }
-
-        file_filter = ";;".join([
-                                    "All supported formats (" + " ".join(supported_formats.values()) + ")"
-                                ] + [
-                                    f"{desc} ({ext})" for desc, ext in supported_formats.items()
-                                ])
-        file_path, selected_filter = QFileDialog.getOpenFileName(self, "Open File", "./", file_filter)
-        return file_path
-
     def initializeGL(self) -> None:
-        binding_test.init()
-        self.engine = binding_test.Engine(self.surface_info(), self._model)
+        init_engine()
+        self._engine.prepareToRender(self.surface_info())
 
     def paintGL(self) -> None:
         self._state.input_controller.update()
         if self._state.input_controller.should_render_continuously():
             self.update()
-        self.engine.render(0)
+        self._engine.render(0)
 
     def resizeGL(self, w: int, h: int) -> None:
-        self.engine.resize(self.surface_info())
+        self._engine.resize(self.surface_info())
 
-    def surface_info(self) -> binding_test.SurfaceInfo:
+    def surface_info(self) -> SurfaceInfo:
         w = self.size().width()
         h = self.size().height()
         screen = self.screen()
         device_pixel_ratio = screen.devicePixelRatio()
         pw = int(w * device_pixel_ratio)
         ph = int(h * device_pixel_ratio)
-        return binding_test.SurfaceInfo(w, h, pw, ph, device_pixel_ratio, device_pixel_ratio)
+        return SurfaceInfo(w, h, pw, ph, device_pixel_ratio, device_pixel_ratio)
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         self._dispatch_key_event(event.modifiers(), cast(Qt.Key, event.key()), True)
@@ -99,13 +79,9 @@ class CanvasWidget(QOpenGLWidget):
         if self._state.input_controller.handle_key(key, modifiers, pressed):
             self.update()
 
-    def set_random_global_diffuse(self) -> None:
-        self.engine.setRandomGlobalDiffuse()
-        self.update()
-
     def turn_on_fly_mode(self) -> None:
         if isinstance(self._state, State.Default):
-            self._state = State.FlyMode(self, self._default_input_controller)
+            self._state = State.FlyMode(self, self._engine, self._default_input_controller)
         self._delegate.on_fly_mode_on()
 
     def turn_off_fly_mode(self) -> None:
@@ -118,11 +94,12 @@ class CanvasWidget(QOpenGLWidget):
 
 
 class FlyModeControllerDelegateImpl(FlyModeController.Delegate):
-    def __init__(self, canvas_widget: CanvasWidget):
+    def __init__(self, canvas_widget: CanvasWidget, engine: Engine):
         self._canvas_widget = canvas_widget
+        self._engine = engine
 
     def get_camera(self) -> CameraState:
-        return self._canvas_widget.engine.currentCameraStateMut()
+        return self._engine.currentCameraStateMut()
 
     def on_exit(self) -> None:
         self._canvas_widget.turn_off_fly_mode()
