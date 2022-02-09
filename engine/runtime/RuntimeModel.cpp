@@ -59,6 +59,15 @@ bool RuntimeModel::getTagVisibility(TagId id) const {
 
 void RuntimeModel::setTagVisibility(TagId id, bool visibility) {
     m_tagData.at(id).visibility = visibility;
+    m_objectVisibilityUpdated = true;
+}
+
+bool RuntimeModel::getObjectVisibilityUpdated() const {
+    return m_objectVisibilityUpdated;
+}
+
+void RuntimeModel::clearFrameFlags() {
+    m_objectVisibilityUpdated = false;
 }
 
 }

@@ -18,16 +18,6 @@ const std::vector<std::unique_ptr<RenderUnit>> &RenderModel::units() const {
     return m_units;
 }
 
-void RenderModel::setNeedsVisibilityUpdate() {
-    m_needsVisibilityUpdate = true;
-}
-
-bool RenderModel::popNeedsVisibilityUpdate() {
-    auto result = m_needsVisibilityUpdate;
-    m_needsVisibilityUpdate = false;
-    return result;
-}
-
 void RenderModel::prepareToRender() {
     for (auto& [textureId, texture]: m_textures) {
         texture->prepareToRender();

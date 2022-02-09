@@ -44,6 +44,7 @@ void Engine::render(float playbackValue, std::optional<ObjectId> selectedObjectI
     }
     updateTextures();
 //    printf("RENDER %f\n", playbackValue);
+    m_renderer->syncVisibility(*m_runtimeModel, *m_renderModel);
     RenderContext renderCtx {
             .scene = sceneManager().activeScene(),
             .playbackValue = playbackValue,
@@ -52,6 +53,7 @@ void Engine::render(float playbackValue, std::optional<ObjectId> selectedObjectI
             .selectedObjectIdOpt = selectedObjectIdOpt,
     };
     m_renderer->render(renderCtx);
+    m_runtimeModel->clearFrameFlags();
 }
 
 void Engine::resize(const SurfaceInfo &surfaceInfo) {

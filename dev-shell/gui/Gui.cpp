@@ -238,7 +238,6 @@ void Gui::processLayerList(GuiContext &ctx) {
             ImGui::Checkbox("", &checked);
             if (ImGui::IsItemClicked()) {
                 ctx.runtimeModel.setTagVisibility(tagId, !checked);
-                ctx.renderModel.setNeedsVisibilityUpdate();
             }
         }
 

@@ -19,15 +19,6 @@ void Renderer::render(RenderContext &ctx) {
     glClearColor(0.2f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    if (ctx.renderModel.popNeedsVisibilityUpdate()) {
-        m_unitsForRender.clear();
-        for (const auto &unit: ctx.renderModel.units()) {
-            if (ctx.runtimeModel.getObjectVisibility(unit->objectId())) {
-                m_unitsForRender.push_back(unit.get());
-            }
-        }
-    }
-
     const SunlightPassInput sunlightPassInput {
             .units = m_unitsForRender,
     };
@@ -107,6 +98,17 @@ void Renderer::resizeResources(const SurfaceInfo &surfaceInfo) {
 
 RenderOptions &Renderer::renderOptionsMut() {
     return m_renderOptions;
+}
+
+void Renderer::syncVisibility(const RuntimeModel &runtimeModel, const RenderModel &renderModel) {
+    if (runtimeModel.getObjectVisibilityUpdated()) {
+        m_unitsForRender.clear();
+        for (const auto &unit: renderModel.units()) {
+            if (runtimeModel.getObjectVisibility(unit->objectId())) {
+                m_unitsForRender.push_back(unit.get());
+            }
+        }
+    }
 }
 
 }

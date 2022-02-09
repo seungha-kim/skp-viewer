@@ -42,11 +42,17 @@ public:
     [[nodiscard]] std::string_view getTagName(TagId id) const;
     [[nodiscard]] bool getTagVisibility(TagId id) const;
     void setTagVisibility(TagId id, bool visibility);
+    [[nodiscard]] bool getObjectVisibilityUpdated() const;
+    void clearFrameFlags();
+
 private:
     // TODO: object order?
     std::unordered_map<ObjectId, RuntimeObjectData> m_objectData;
     std::vector<TagId> m_tagList;
     std::unordered_map<TagId, RuntimeTagData> m_tagData;
+
+    // TODO: 렌더링 고려사항은 여기에 없는게 맞다 - 삭제 예정
+    bool m_objectVisibilityUpdated = true;
 };
 
 }

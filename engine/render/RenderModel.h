@@ -21,15 +21,11 @@ public:
     [[nodiscard]] unsigned getObjectUnitCount(ObjectId id) const;
     [[nodiscard]] UnitId getObjectUnit(ObjectId id, int index) const;
     [[nodiscard]] const std::vector<std::unique_ptr<RenderUnit>>& units() const;
-    void setNeedsVisibilityUpdate();
-    bool popNeedsVisibilityUpdate();
     void prepareToRender();
 private:
     std::unordered_map<ObjectId, RenderObjectData> m_objectData{};
     std::vector<std::unique_ptr<RenderUnit>> m_units{};
     std::unordered_map<TextureId, std::unique_ptr<RenderTexture>> m_textures{};
-
-    bool m_needsVisibilityUpdate = true;
 };
 
 }

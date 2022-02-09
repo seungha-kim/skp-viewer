@@ -40,6 +40,7 @@ public:
     void resizeResources(const SurfaceInfo &surfaceInfo);
 
     RenderOptions& renderOptionsMut();
+    void syncVisibility(const RuntimeModel& runtimeModel, const RenderModel& renderModel);
 
 private:
     SunlightPass m_sunlightPass;
