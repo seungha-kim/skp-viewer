@@ -28,4 +28,13 @@ bool RenderModel::popNeedsVisibilityUpdate() {
     return result;
 }
 
+void RenderModel::prepareToRender() {
+    for (auto& [textureId, texture]: m_textures) {
+        texture->prepareToRender();
+    }
+    for (auto& unit: m_units) {
+        unit->prepareToRender();
+    }
+}
+
 }

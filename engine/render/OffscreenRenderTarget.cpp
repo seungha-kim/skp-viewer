@@ -1,3 +1,4 @@
+#include <iostream>
 #include "OffscreenRenderTarget.h"
 #include "checkError.h"
 
@@ -57,6 +58,7 @@ void OffscreenRenderTarget::checkState() {
     auto binding = bind();
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        std::cerr << "Frame buffer is not complete" << std::endl;
         exit(1);
     }
 }

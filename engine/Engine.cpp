@@ -7,14 +7,10 @@
 
 namespace acon {
 
-Engine::Engine(SurfaceInfo surfaceInfo, const AbstractReader& reader)
-    : m_surfaceInfo(surfaceInfo)
-    , m_sceneManager(surfaceInfo) {
+Engine::Engine(const AbstractReader& reader) {
     auto [runtimeModel, renderModel] = buildModel(reader);
     m_runtimeModel = std::move(runtimeModel);
     m_renderModel = std::move(renderModel);
-    m_renderer = std::make_unique<Renderer>(surfaceInfo);
-    glEnable(GL_DEPTH_TEST);
 }
 
 Engine::~Engine() = default;
@@ -31,6 +27,16 @@ const SurfaceInfo &Engine::surfaceInfo() const {
     return m_surfaceInfo;
 }
 
+void Engine::prepareToRender(const SurfaceInfo& surfaceInfo) {
+    if (m_preparedToRender) return;
+    m_surfaceInfo = surfaceInfo;
+    m_sceneManager.updateAspectRatio(surfaceInfo);
+    m_renderModel->prepareToRender();
+    m_renderer = std::make_unique<Renderer>(surfaceInfo);
+    m_preparedToRender = true;
+    glEnable(GL_DEPTH_TEST);
+}
+
 void Engine::render(float playbackValue, std::optional<ObjectId> selectedObjectIdOpt) {
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         printf("WARN - NOT COMPLETE\n");
@@ -43,7 +49,6 @@ void Engine::render(float playbackValue, std::optional<ObjectId> selectedObjectI
             .playbackValue = playbackValue,
             .surfaceInfo = m_surfaceInfo,
             .renderModel = *m_renderModel,
-            .runtimeModel = *m_runtimeModel,
             .selectedObjectIdOpt = selectedObjectIdOpt,
     };
     m_renderer->render(renderCtx);

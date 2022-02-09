@@ -2,7 +2,7 @@
 
 namespace acon {
 
-SceneManager::SceneManager(const SurfaceInfo &surfaceInfo): m_scenes{Scene(surfaceInfo)} {}
+SceneManager::SceneManager(): m_scenes{Scene()} {}
 
 const Scene &SceneManager::activeScene() const {
     return m_scenes[m_activeSceneIndex];
@@ -41,6 +41,12 @@ bool SceneManager::setActiveScene(int index) {
 
 int SceneManager::activeSceneIndex() const {
     return m_activeSceneIndex;
+}
+
+void SceneManager::updateAspectRatio(const SurfaceInfo &surfaceInfo) {
+    for (auto& scene: m_scenes) {
+        scene.updateAspectRatio(surfaceInfo);
+    }
 }
 
 }

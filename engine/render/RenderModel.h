@@ -23,6 +23,7 @@ public:
     [[nodiscard]] const std::vector<std::unique_ptr<RenderUnit>>& units() const;
     void setNeedsVisibilityUpdate();
     bool popNeedsVisibilityUpdate();
+    void prepareToRender();
 private:
     std::unordered_map<ObjectId, RenderObjectData> m_objectData{};
     std::vector<std::unique_ptr<RenderUnit>> m_units{};

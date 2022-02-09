@@ -10,11 +10,12 @@
 
 namespace acon {
 
+struct RenderUnitTempData;
 class RenderUnit {
 public:
     RenderUnit(UnitId id,
                ObjectId objectId,
-               const std::vector<RenderVertex>& vertices,
+               std::vector<RenderVertex>&& vertices,
                glm::mat4 transform,
                RenderMaterial frontMaterial,
                RenderMaterial backMaterial,
@@ -30,7 +31,7 @@ public:
     [[nodiscard]] GLuint VAO() const;
     [[nodiscard]] std::optional<GLuint> frontTextureName() const;
     [[nodiscard]] std::optional<GLuint> backTextureName() const;
-
+    void prepareToRender();
 private:
     UnitId m_id;
     ObjectId m_objectId;
@@ -41,6 +42,7 @@ private:
     glm::vec3 m_backColor{};
     GLuint m_frontTexture = 0;
     GLuint m_backTexture = 0;
+    std::unique_ptr<RenderUnitTempData> m_tempData;
 };
 
 }

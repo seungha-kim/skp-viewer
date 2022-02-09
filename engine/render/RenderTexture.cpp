@@ -10,7 +10,21 @@ namespace acon {
 #define PIXEL_FORMAT GL_RGBA
 #endif
 
-RenderTexture::RenderTexture(const TextureData& textureData) {
+RenderTexture::RenderTexture(std::unique_ptr<TextureData>&& textureData)
+        : m_tempData(std::move(textureData)) {}
+
+RenderTexture::~RenderTexture() {
+    if (m_textureName) {
+        glDeleteTextures(1, &m_textureName);
+    }
+}
+
+GLuint RenderTexture::textureName() const {
+    return m_textureName;
+}
+
+void RenderTexture::prepareToRender() {
+    if (!m_tempData) return;
     glGenTextures(1, &m_textureName);
     glBindTexture(GL_TEXTURE_2D, m_textureName);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -18,18 +32,10 @@ RenderTexture::RenderTexture(const TextureData& textureData) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureData.width(), textureData.height(), 0, PIXEL_FORMAT, GL_UNSIGNED_BYTE, textureData.data());
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_tempData->width(), m_tempData->height(), 0, PIXEL_FORMAT, GL_UNSIGNED_BYTE, m_tempData->data());
     glBindTexture(GL_TEXTURE_2D, 0);
-}
 
-RenderTexture::~RenderTexture() {
-    glDeleteTextures(1, &m_textureName);
-}
-
-
-GLuint RenderTexture::textureName() const {
-    return m_textureName;
+    m_tempData = nullptr;
 }
 
 }

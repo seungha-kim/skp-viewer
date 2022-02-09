@@ -13,7 +13,6 @@ struct RenderContext {
     const float playbackValue;
     const SurfaceInfo& surfaceInfo;
     RenderModel& renderModel;
-    const RuntimeModel& runtimeModel;
     const std::optional<ObjectId> selectedObjectIdOpt;
 };
 

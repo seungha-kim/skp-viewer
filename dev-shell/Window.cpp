@@ -92,7 +92,8 @@ Window::Window(int width, int height, const char *title, const acon::AbstractRea
         glfwGetWindowSize(windowPtr, &surfaceInfo.logicalWidth, &surfaceInfo.logicalHeight);
         glfwGetWindowContentScale(windowPtr, &surfaceInfo.contentScaleX, &surfaceInfo.contentScaleY);
 
-        m_engine = std::make_unique<acon::Engine>(surfaceInfo, m_model);
+        m_engine = std::make_unique<acon::Engine>(m_model);
+        m_engine->prepareToRender(surfaceInfo);
     } else {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();

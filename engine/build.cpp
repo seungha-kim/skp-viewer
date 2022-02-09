@@ -92,8 +92,8 @@ std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>> buildMode
                     backMaterial = backTextureId;
 
                     if (!renderModel->m_textures.contains(backTextureId)) {
-                        const auto textureData = reader.copyTextureData(backTextureId);
-                        auto backTexture = std::make_unique<RenderTexture>(*textureData);
+                        auto textureData = reader.copyTextureData(backTextureId);
+                        auto backTexture = std::make_unique<RenderTexture>(std::move(textureData));
                         renderModel->m_textures[backTextureId] = std::move(backTexture);
                     }
                 } else if (reader.getMaterialHasColor(backMaterialId)) {
@@ -109,8 +109,8 @@ std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>> buildMode
                     frontMaterial = frontTextureId;
 
                     if (!renderModel->m_textures.contains(frontTextureId)) {
-                        const auto textureData = reader.copyTextureData(frontTextureId);
-                        auto frontTexture = std::make_unique<RenderTexture>(*textureData);
+                        auto textureData = reader.copyTextureData(frontTextureId);
+                        auto frontTexture = std::make_unique<RenderTexture>(std::move(textureData));
                         renderModel->m_textures[frontTextureId] = std::move(frontTexture);
                     }
                 } else if (reader.getMaterialHasColor(frontMaterialId)) {
@@ -118,9 +118,16 @@ std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>> buildMode
                 }
             }
 
-            std::vector<RenderVertex> vertices;
+            std::vector<RenderVertex> vertices{};
             buildVertices(reader, unitId, vertices);
-            auto unit = std::make_unique<RenderUnit>(unitId, item.id, vertices, worldTransform, frontMaterial, backMaterial, renderModel->m_textures);
+            auto unit = std::make_unique<RenderUnit>(
+                    unitId,
+                    item.id,
+                    std::move(vertices),
+                    worldTransform,
+                    frontMaterial,
+                    backMaterial,
+                    renderModel->m_textures);
             renderModel->m_units.push_back(std::move(unit));
         }
 

@@ -11,7 +11,7 @@ namespace acon {
 
 class DLL_EXPORT Engine {
 public:
-    explicit Engine(SurfaceInfo surfaceInfo, const AbstractReader& reader);
+    explicit Engine(const AbstractReader& reader);
     ~Engine();
 
     [[nodiscard]] const SceneManager& sceneManager() const;
@@ -26,17 +26,19 @@ public:
 
     CameraState& currentCameraStateMut();
 
+    void prepareToRender(const SurfaceInfo& surfaceInfo);
     void render(float playbackValue, std::optional<ObjectId> selectedObjectIdOpt);
     void resize(const SurfaceInfo& surfaceInfo);
 
 private:
-    SceneManager m_sceneManager;
-    SurfaceInfo m_surfaceInfo;
+    SceneManager m_sceneManager{};
+    SurfaceInfo m_surfaceInfo; // TODO: 여기서 제거
     std::unique_ptr<RuntimeModel> m_runtimeModel;
     std::unique_ptr<RenderModel> m_renderModel;
     std::unique_ptr<Renderer> m_renderer;
 
     bool m_sizeUpdated = false;
+    bool m_preparedToRender = false;
 
     void updateTextures();
 };

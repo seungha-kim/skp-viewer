@@ -2,10 +2,7 @@
 
 namespace acon {
 
-Scene::Scene(const SurfaceInfo &surfaceInfo) {
-    m_camera.aspectWidth = surfaceInfo.logicalWidth;
-    m_camera.aspectHeight = surfaceInfo.logicalHeight;
-}
+Scene::Scene() = default;
 
 const DirectionalLight &Scene::sunLight() const {
     return m_sunLight;
@@ -21,6 +18,11 @@ const CameraState &Scene::cameraState() const {
 
 CameraState &Scene::cameraStateMut() {
     return m_camera;
+}
+
+void Scene::updateAspectRatio(const SurfaceInfo &surfaceInfo) {
+    m_camera.aspectWidth = float(surfaceInfo.physicalWidth);
+    m_camera.aspectHeight = float(surfaceInfo.physicalHeight);
 }
 
 }
