@@ -41,6 +41,10 @@ ObjectId RuntimeModel::getObjectChild(ObjectId id, int index) const {
     return m_objectData.at(id).children[index];
 }
 
+std::optional<ObjectId> RuntimeModel::getObjectParent(ObjectId id) const {
+    return m_objectData.at(id).parentIdOpt;
+}
+
 unsigned RuntimeModel::getTagCount() const {
     return m_tagList.size();
 }
@@ -68,6 +72,18 @@ bool RuntimeModel::getObjectVisibilityUpdated() const {
 
 void RuntimeModel::clearFrameFlags() {
     m_objectVisibilityUpdated = false;
+}
+
+ObjectId RuntimeModel::rootObjectId() const {
+    return ROOT_OBJECT_ID;
+}
+
+std::optional<ObjectId> RuntimeModel::selectedObjectIdOpt() const {
+    return m_selectedObjectIdOpt;
+}
+
+void RuntimeModel::updateObjectSelectionById(std::optional<ObjectId> objectIdOpt) {
+    m_selectedObjectIdOpt = objectIdOpt;
 }
 
 }

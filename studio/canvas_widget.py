@@ -5,11 +5,11 @@ from typing import cast
 
 from binding_test import CameraState, Engine, SurfaceInfo, init as init_engine
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QKeyEvent
+from PySide6.QtGui import QKeyEvent, QMouseEvent
 from PySide6.QtOpenGLWidgets import QOpenGLWidget
 
 from .fly_mode import FlyModeController
-from .input_controller import AbstractInputController, InputControllerOverriding
+from .input_controller import AbstractInputController, InputControllerOverriding, MouseButton
 from .keymap import KeyMap
 
 
@@ -22,7 +22,9 @@ class State:
         input_controller: AbstractInputController
 
     class FlyMode(Base):
-        def __init__(self, canvas_widget: 'CanvasWidget', engine: binding_test.Engine, parent: AbstractInputController):
+        def __init__(self, canvas_widget: 'CanvasWidget', engine: Engine, parent: AbstractInputController):
+            self.prev_mouse_x = 0
+            self.prev_mouse_y = 0
             self.input_controller = InputControllerOverriding(
                 overrider=FlyModeController(FlyModeControllerDelegateImpl(canvas_widget, engine)),
                 overridden=parent,
@@ -75,6 +77,22 @@ class CanvasWidget(QOpenGLWidget):
     def keyReleaseEvent(self, event: QKeyEvent) -> None:
         self._dispatch_key_event(event.modifiers(), cast(Qt.Key, event.key()), False)
 
+    def mousePressEvent(self, event: QMouseEvent) -> None:
+        if event.button() == Qt.MouseButton.RightButton:
+            self.turn_on_fly_mode()
+
+    def mouseReleaseEvent(self, event: QMouseEvent) -> None:
+        if event.button() == Qt.MouseButton.RightButton:
+            self.turn_off_fly_mode()
+
+    def mouseMoveEvent(self, event: QMouseEvent) -> None:
+        pos = event.pos()
+        button = MouseButton.from_qt_buttons(event.buttons())
+        width = self.width()
+        height = self.height()
+        self._state.input_controller.handle_mouse_move(pos.x(), pos.y(), width, height, button)
+        self.update()
+
     def _dispatch_key_event(self, modifiers: Qt.KeyboardModifiers, key: Qt.Key, pressed: bool) -> None:
         if self._state.input_controller.handle_key(key, modifiers, pressed):
             self.update()
@@ -82,11 +100,13 @@ class CanvasWidget(QOpenGLWidget):
     def turn_on_fly_mode(self) -> None:
         if isinstance(self._state, State.Default):
             self._state = State.FlyMode(self, self._engine, self._default_input_controller)
+        self.setCursor(Qt.CrossCursor)
         self._delegate.on_fly_mode_on()
 
     def turn_off_fly_mode(self) -> None:
         if isinstance(self._state, State.FlyMode):
             self._state = State.Default(self._default_input_controller)
+        self.setCursor(Qt.ArrowCursor)
         self._delegate.on_fly_mode_off()
 
     def is_in_fly_mode(self) -> bool:

@@ -194,7 +194,8 @@ void Window::mainLoop() {
 
         updateTime();
         updateCamera();
-        m_engine->render(playbackValue(), m_selectedObjectIdOpt);
+        m_engine->runtimeModelMut().updateObjectSelectionById(m_selectedObjectIdOpt);
+        m_engine->render(playbackValue());
 
         beginGui();
         GuiContext guiCtx {

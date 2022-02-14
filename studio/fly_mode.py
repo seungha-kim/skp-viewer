@@ -9,6 +9,7 @@ from binding_test import CameraState
 
 from .input_controller import AbstractInputController, MouseButton
 from .keymap import KeyMap
+from .util import clamp
 
 
 class FlyModeKeyCommand(Flag):
@@ -55,10 +56,15 @@ class FlyModeController(AbstractInputController):
         def on_idle_state_transition(self) -> None:
             pass
 
+    _prev_mouse_x = None
+    _prev_mouse_y = None
     _running = FlyModeKeyCommand.NONE
     _state: State.Any = State.Idle()
-    _move_speed = 10
+    _move_speed = 7
     _rotation_speed = 50
+    _mouse_yaw_speed = 0.3
+    _mouse_pitch_speed = 0.3
+    _pitch_limit = 80
     _key_map = KeyMap((
         (Qt.Key_W, Qt.NoModifier, FlyModeKeyCommand.FORWARD),
         (Qt.Key_S, Qt.NoModifier, FlyModeKeyCommand.BACKWARD),
@@ -84,12 +90,25 @@ class FlyModeController(AbstractInputController):
             return False
 
     def handle_mouse_move(self, x: int, y: int, width: int, height: int, buttons: MouseButton) -> None:
-        pass
+        # 마우스 커서를 숨기는 전형적 first person controller 시도해 봤는데,
         # 아래 글과 같이 뚝뚝 끊기는 문제가 있어서 일단 키보드 방향키로 카메라 회전
         # https://forum.qt.io/topic/123869/capturing-the-mouse-inside-a-qopenglwidget/10
-        # camera = self._delegate.get_camera()
-        # camera.yaw += (x - (width / 2)) * 0.3
-        # camera.pitch -= (y - (height / 2)) * 0.3
+
+        if not (buttons & MouseButton.RIGHT):
+            return
+
+        if self._prev_mouse_x is None:
+            self._prev_mouse_x = x
+            self._prev_mouse_y = y
+            return
+        delta_x = x - self._prev_mouse_x
+        delta_y = y - self._prev_mouse_y
+        self._prev_mouse_x = x
+        self._prev_mouse_y = y
+        camera = self._delegate.get_camera()
+        camera.yaw -= delta_x * self._mouse_yaw_speed
+        camera.pitch -= delta_y * self._mouse_pitch_speed
+        camera.pitch = clamp(camera.pitch, -self._pitch_limit, self._pitch_limit)
 
     def should_render_continuously(self) -> bool:
         return isinstance(self._state, State.Moving)

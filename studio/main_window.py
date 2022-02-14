@@ -1,5 +1,5 @@
 from PySide6.QtCore import QSize
-from PySide6.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QWidget, QHBoxLayout, QListView, QFileDialog
+from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QHBoxLayout, QFileDialog
 
 from binding_test import Engine
 from .canvas_widget import CanvasWidget
@@ -17,17 +17,8 @@ class MainWindow(QMainWindow):
         self._runtimeModel = self._engine.runtimeModelMut()
         self._reader = reader
 
-        self.setWindowTitle("My App")
+        self.setWindowTitle("SKP Viewer")
         root_layout = QVBoxLayout()
-
-        toolbox_layout = QHBoxLayout()
-        root_layout.addLayout(toolbox_layout)
-
-        self.fly_mode_toggle_button = FlyModeToggleButton()
-        toolbox_layout.addWidget(self.fly_mode_toggle_button)
-        self.fly_mode_toggle_button.clicked.connect(self._handle_fly_mode_toggle_button_click)
-
-        toolbox_layout.addStretch(1)
 
         content_layout = QHBoxLayout()
         root_layout.addLayout(content_layout)
@@ -38,17 +29,18 @@ class MainWindow(QMainWindow):
         left_area = QVBoxLayout()
         content_layout.addLayout(left_area)
 
-        hierarchy_panel_ctrl = HierarchyPanelController()
-        left_area.addWidget(hierarchy_panel_ctrl.widget)
-
         middle_layout = QVBoxLayout()
         content_layout.addLayout(middle_layout, 1)
+
+        right_layout = QVBoxLayout()
+        content_layout.addLayout(right_layout)
 
         canvas = CanvasWidget(CanvasWidgetDelegateImpl(self), self._engine)
         middle_layout.addWidget(canvas)
 
-        right_layout = QVBoxLayout()
-        content_layout.addLayout(right_layout)
+        hierarchy_panel_ctrl_d = HierarchyPanelControllerDelegate(canvas)
+        hierarchy_panel_ctrl = HierarchyPanelController(hierarchy_panel_ctrl_d, self._runtimeModel)
+        left_area.addWidget(hierarchy_panel_ctrl.widget)
 
         tag_panel_ctrl = TagPanelController(self._runtimeModel, TagPanelControllerDelegateImpl(canvas))
         right_layout.addWidget(tag_panel_ctrl.widget)
@@ -61,12 +53,6 @@ class MainWindow(QMainWindow):
         self.canvas = canvas
 
         self.statusBar().showMessage("Loaded", 3000)
-
-    def _handle_fly_mode_toggle_button_click(self) -> None:
-        if self.canvas.is_in_fly_mode():
-            self.canvas.turn_off_fly_mode()
-        else:
-            self.canvas.turn_on_fly_mode()
 
     def __file_path_by_dialog(self) -> str:
         supported_formats = {
@@ -83,33 +69,26 @@ class MainWindow(QMainWindow):
         return file_path
 
 
-class FlyModeToggleButton(QPushButton):
-    label_turn_on = "Fly Mode On"
-    label_turn_off = "Fly Mode Off"
-
-    def __init__(self):
-        super().__init__()
-        self.setText(self.label_turn_on)
-
-    def change_text(self, on: bool):
-        if on:
-            self.setText(self.label_turn_on)
-        else:
-            self.setText(self.label_turn_off)
-
-
 class CanvasWidgetDelegateImpl(CanvasWidget.Delegate):
     def __init__(self, main_window: MainWindow):
         self._main_window = main_window
 
     def on_fly_mode_on(self):
-        self._main_window.fly_mode_toggle_button.change_text(on=False)
+        self._main_window.statusBar().showMessage("Fly mode turned on", 3000)
 
     def on_fly_mode_off(self):
-        self._main_window.fly_mode_toggle_button.change_text(on=True)
+        self._main_window.statusBar().showMessage("Fly mode turned off", 3000)
 
 
 class TagPanelControllerDelegateImpl(TagPanelController.Delegate):
+    def __init__(self, canvas_widget: CanvasWidget):
+        self._canvas_widget = canvas_widget
+
+    def render_immediately(self):
+        self._canvas_widget.update()
+
+
+class HierarchyPanelControllerDelegate(HierarchyPanelController.Delegate):
     def __init__(self, canvas_widget: CanvasWidget):
         self._canvas_widget = canvas_widget
 

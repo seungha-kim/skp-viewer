@@ -8,12 +8,18 @@
 #include "../runtime/RuntimeModel.h"
 namespace acon {
 
+class RenderQuery {
+public:
+    virtual ~RenderQuery() = default;
+    [[nodiscard]] virtual bool isSelfOrParentSelected(ObjectId objectId) const = 0;
+};
+
 struct RenderContext {
     const Scene& scene;
     const float playbackValue;
     const SurfaceInfo& surfaceInfo;
     RenderModel& renderModel;
-    const std::optional<ObjectId> selectedObjectIdOpt;
+    const RenderQuery& query;
 };
 
 }

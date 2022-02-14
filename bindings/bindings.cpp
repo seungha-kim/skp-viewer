@@ -1,5 +1,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
+#include <pybind11/stl.h>
 #include "../engine/Engine.h"
 #include "../engine/render/checkError.h"
 #include <glad/glad.h>
@@ -42,7 +43,7 @@ PYBIND11_MODULE(binding_test, m) {
     py::class_<Engine>(m, "Engine")
             .def(py::init<const AbstractReader&>())
             .def("render", [](Engine& engine, float playbackValue){
-                engine.render(playbackValue, {});
+                engine.render(playbackValue);
             })
             .def("prepareToRender", &Engine::prepareToRender)
             .def("resize", &Engine::resize)
@@ -50,11 +51,18 @@ PYBIND11_MODULE(binding_test, m) {
             .def("runtimeModelMut", &Engine::runtimeModelMut, py::return_value_policy::reference);
 
     py::class_<RuntimeModel>(m, "RuntimeModel")
+            .def("rootObjectId", &RuntimeModel::rootObjectId)
+            .def("getObjectName", &RuntimeModel::getObjectName)
+            .def("getObjectChildrenCount", &RuntimeModel::getObjectChildrenCount)
+            .def("getObjectChild", &RuntimeModel::getObjectChild)
             .def("getTagCount", &RuntimeModel::getTagCount)
             .def("getTag", &RuntimeModel::getTag)
             .def("getTagName", &RuntimeModel::getTagName)
             .def("getTagVisibility", &RuntimeModel::getTagVisibility)
-            .def("setTagVisibility", &RuntimeModel::setTagVisibility);
+            .def("setTagVisibility", &RuntimeModel::setTagVisibility)
+            .def("selectedObjectIdOpt", &RuntimeModel::selectedObjectIdOpt)
+            .def("updateObjectSelectionById", &RuntimeModel::updateObjectSelectionById)
+            ;
 
     py::class_<AbstractReader>(m, "AbstractReader");
 

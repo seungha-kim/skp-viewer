@@ -30,12 +30,14 @@ class RuntimeModel {
 public:
     RuntimeModel() = default;
     ~RuntimeModel() = default;
+    [[nodiscard]] ObjectId rootObjectId() const;
     [[nodiscard]] bool hasObject(ObjectId id) const;
     [[nodiscard]] std::string_view getObjectName(ObjectId id) const;
     [[nodiscard]] glm::mat4 getObjectTransform(ObjectId id) const;
     [[nodiscard]] bool getObjectVisibility(ObjectId id) const;
     [[nodiscard]] unsigned getObjectChildrenCount(ObjectId id) const;
     [[nodiscard]] ObjectId getObjectChild(ObjectId id, int index) const;
+    [[nodiscard]] std::optional<ObjectId> getObjectParent(ObjectId id) const;
 
     [[nodiscard]] unsigned getTagCount() const;
     [[nodiscard]] TagId getTag(int index) const;
@@ -45,11 +47,15 @@ public:
     [[nodiscard]] bool getObjectVisibilityUpdated() const;
     void clearFrameFlags();
 
+    [[nodiscard]] std::optional<ObjectId> selectedObjectIdOpt() const;
+    void updateObjectSelectionById(std::optional<ObjectId> objectIdOpt);
+
 private:
     // TODO: object order?
     std::unordered_map<ObjectId, RuntimeObjectData> m_objectData;
     std::vector<TagId> m_tagList;
     std::unordered_map<TagId, RuntimeTagData> m_tagData;
+    std::optional<ObjectId> m_selectedObjectIdOpt{};
 
     // TODO: 렌더링 고려사항은 여기에 없는게 맞다 - 삭제 예정
     bool m_objectVisibilityUpdated = true;

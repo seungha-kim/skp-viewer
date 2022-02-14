@@ -9,6 +9,7 @@
 
 namespace acon {
 
+// NOTE: Engine 의 인터페이스는 Python binding 을 고려해서 설계해야 함.
 class DLL_EXPORT Engine {
 public:
     explicit Engine(const AbstractReader& reader);
@@ -27,7 +28,7 @@ public:
     CameraState& currentCameraStateMut();
 
     void prepareToRender(const SurfaceInfo& surfaceInfo);
-    void render(float playbackValue, std::optional<ObjectId> selectedObjectIdOpt);
+    void render(float playbackValue);
     void resize(const SurfaceInfo& surfaceInfo);
 
 private:

@@ -7,6 +7,29 @@
 
 namespace acon {
 
+class RenderQueryImpl: public RenderQuery {
+public:
+    explicit RenderQueryImpl(const RuntimeModel& runtimeModel): m_runtimeModel(runtimeModel) {}
+    ~RenderQueryImpl() override = default;
+
+    [[nodiscard]] bool isSelfOrParentSelected(ObjectId objectId) const override {
+        // TODO: 이게 매 render 매 unit 마다 호출되고 있는데, 미리 계산해서 더 효율적으로 개선할 수 있을듯.
+        auto selectedObjectIdOpt = m_runtimeModel.selectedObjectIdOpt();
+        if (!selectedObjectIdOpt) return false;
+        auto selectedObjectId = selectedObjectIdOpt.value();
+        std::optional<ObjectId> currentId = objectId;
+        while (currentId) {
+            if (currentId.value() == selectedObjectId) {
+                return true;
+            }
+            currentId = m_runtimeModel.getObjectParent(currentId.value());
+        }
+        return false;
+    }
+private:
+    const RuntimeModel& m_runtimeModel;
+};
+
 Engine::Engine(const AbstractReader& reader) {
     auto [runtimeModel, renderModel] = buildModel(reader);
     m_runtimeModel = std::move(runtimeModel);
@@ -37,7 +60,7 @@ void Engine::prepareToRender(const SurfaceInfo& surfaceInfo) {
     glEnable(GL_DEPTH_TEST);
 }
 
-void Engine::render(float playbackValue, std::optional<ObjectId> selectedObjectIdOpt) {
+void Engine::render(float playbackValue) {
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         printf("WARN - NOT COMPLETE\n");
         return;
@@ -45,12 +68,13 @@ void Engine::render(float playbackValue, std::optional<ObjectId> selectedObjectI
     updateTextures();
 //    printf("RENDER %f\n", playbackValue);
     m_renderer->syncVisibility(*m_runtimeModel, *m_renderModel);
+    auto query = RenderQueryImpl(*m_runtimeModel);
     RenderContext renderCtx {
             .scene = sceneManager().activeScene(),
             .playbackValue = playbackValue,
             .surfaceInfo = m_surfaceInfo,
             .renderModel = *m_renderModel,
-            .selectedObjectIdOpt = selectedObjectIdOpt,
+            .query = query,
     };
     m_renderer->render(renderCtx);
     m_runtimeModel->clearFrameFlags();

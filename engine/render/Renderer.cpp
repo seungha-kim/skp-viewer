@@ -29,7 +29,7 @@ void Renderer::render(RenderContext &ctx) {
             .lightSpaceMatrix = sunlightPassOutput.lightSpaceMatrix,
             .shadowDepthTexture = sunlightPassOutput.depthTexture,
             .shadowMix = 0.0f, // TODO
-            .selectedObjectIdOpt = ctx.selectedObjectIdOpt,
+            .query = ctx.query,
     };
     const auto mainPassOutput = m_mainPass.render(ctx, mainPassInput);
 

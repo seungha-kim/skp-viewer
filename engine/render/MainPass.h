@@ -14,7 +14,7 @@ struct MainPassInput {
     const glm::mat4 lightSpaceMatrix;
     const DepthTexture& shadowDepthTexture;
     const float shadowMix;
-    const std::optional<ObjectId> selectedObjectIdOpt;
+    const RenderQuery& query;
 };
 
 struct MainPassOutput {
