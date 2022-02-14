@@ -15,8 +15,15 @@ if (WIN32)
     find_path(SKETCHUP_SDK_ROOT NAMES version.txt PATHS ${CMAKE_SOURCE_DIR}/extern/sketchup/windows)
 
     add_library(sketchup-api SHARED IMPORTED)
-    set_property(TARGET sketchup-api PROPERTY IMPORTED_LOCATION ${SKETCHUP_SDK_ROOT}/binaries/sketchup/x64/SketchUpAPI.dll)
-    set_property(TARGET sketchup-api PROPERTY IMPORTED_IMPLIB ${SKETCHUP_SDK_ROOT}/binaries/sketchup/x64/SketchUpAPI.lib)
+    set(SKETCHUP_API_DLL ${SKETCHUP_SDK_ROOT}/binaries/sketchup/x64/SketchUpAPI.dll)
+    set(SKETCHUP_API_COMMON_DLL ${SKETCHUP_SDK_ROOT}/binaries/sketchup/x64/SketchUpCommonPreferences.dll)
+    set(SKETCHUP_API_IMPLIB ${SKETCHUP_SDK_ROOT}/binaries/sketchup/x64/SketchUpAPI.lib)
+    set_property(TARGET sketchup-api PROPERTY IMPORTED_LOCATION ${SKETCHUP_API_DLL})
+    set_property(TARGET sketchup-api PROPERTY IMPORTED_IMPLIB ${SKETCHUP_API_IMPLIB})
+    
+    list(APPEND SKETCHUP_DLL_LIST ${SKETCHUP_API_DLL})
+    list(APPEND SKETCHUP_DLL_LIST ${SKETCHUP_API_COMMON_DLL})
+
     target_include_directories(sketchup-api INTERFACE ${SKETCHUP_SDK_ROOT}/headers)
 endif()
 
