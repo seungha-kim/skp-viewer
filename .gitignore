@@ -2,3 +2,6 @@ imgui.ini
 __pycache__
 *~.skp
 cmake-build-*/
+build/
+.vscode/
+env/
