@@ -7,8 +7,8 @@ from typing import Union, Optional
 from studio.startup_options import StartupOptions
 
 project_root = os.path.abspath(os.path.dirname(__file__))
-release_build_dir = os.path.join(project_root, "cmake-build-release")
-release_bindings_dir = os.path.join(release_build_dir, "bindings")
+release_build_dir = os.path.join(project_root, "build")
+release_bindings_dir = os.path.join(release_build_dir, "bindings", "Release")  # TODO: macos
 
 sys.path.append(release_bindings_dir)
 os.chdir(project_root)
@@ -53,7 +53,7 @@ def config():
 def build_binding():
     if not os.path.isdir(release_build_dir):
         config()
-    subprocess.run(["cmake", "--build", release_build_dir, "--target", "binding_test"])
+    subprocess.run(["cmake", "--build", release_build_dir, "--config", "Release", "--target", "binding_test"])
 
 
 def run_app(command):
