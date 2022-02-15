@@ -8,7 +8,9 @@ from studio.startup_options import StartupOptions
 
 project_root = os.path.abspath(os.path.dirname(__file__))
 release_build_dir = os.path.join(project_root, "build")
-release_bindings_dir = os.path.join(release_build_dir, "bindings", "Release")  # TODO: macos
+release_bindings_dir = os.path.join(release_build_dir, "bindings")
+if sys.platform == "win32":
+    release_bindings_dir = os.path.join(release_bindings_dir, "Release")
 
 sys.path.append(release_bindings_dir)
 os.chdir(project_root)
@@ -44,16 +46,15 @@ class RunnerCommand:
 
 
 def config():
-    subprocess.run(["git", "submodule", "update", "--init", "--recursive"])
-    # TODO: sketchup sdk binary
     os.makedirs(release_build_dir, exist_ok=True)
-    subprocess.run(["cmake", "-B", release_build_dir, "-D", "CMAKE_BUILD_TYPE=Release"])
+    subprocess.run(["cmake", "-B", release_build_dir, "-D", "CMAKE_BUILD_TYPE=Release"], check=True)
 
 
 def build_binding():
     if not os.path.isdir(release_build_dir):
         config()
-    subprocess.run(["cmake", "--build", release_build_dir, "--config", "Release", "--target", "binding_test"])
+    cmd = ["cmake", "--build", release_build_dir, "--config", "Release", "--target", "binding_test"]
+    subprocess.run(cmd, check=True)
 
 
 def run_app(command):
