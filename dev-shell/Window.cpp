@@ -1,12 +1,11 @@
 #include "Window.h"
-#include <iostream>
+#include "../engine/reader/AssimpReader.h"
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
-#include "../engine/reader/AssimpReader.h"
+#include <iostream>
 
-void framebuffer_size_callback(GLFWwindow* glfwWindow, int width, int height)
-{
+void framebuffer_size_callback(GLFWwindow* glfwWindow, int width, int height) {
     Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
     auto surfaceInfo = window.m_engine->surfaceInfo();
     surfaceInfo.physicalWidth = width;
@@ -14,8 +13,7 @@ void framebuffer_size_callback(GLFWwindow* glfwWindow, int width, int height)
     window.m_engine->resize(surfaceInfo);
 }
 
-void window_size_callback(GLFWwindow* glfwWindow, int width, int height)
-{
+void window_size_callback(GLFWwindow* glfwWindow, int width, int height) {
     Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
     auto surfaceInfo = window.m_engine->surfaceInfo();
     surfaceInfo.logicalWidth = width;
@@ -23,8 +21,7 @@ void window_size_callback(GLFWwindow* glfwWindow, int width, int height)
     window.m_engine->resize(surfaceInfo);
 }
 
-void content_scale_size_callback(GLFWwindow* glfwWindow, float x, float y)
-{
+void content_scale_size_callback(GLFWwindow* glfwWindow, float x, float y) {
     Window& window = *(Window*)glfwGetWindowUserPointer(glfwWindow);
     auto surfaceInfo = window.m_engine->surfaceInfo();
     surfaceInfo.contentScaleX = x;
@@ -38,7 +35,7 @@ void mouse_move_callback(GLFWwindow* glfwWindow, double xPosD, double yPosD) {
     double mousePosX, mousePosY;
     glfwGetCursorPos(glfwWindow, &mousePosX, &mousePosY);
 
-    window.onMouseMove((float) mousePosX, (float) mousePosY);
+    window.onMouseMove((float)mousePosX, (float)mousePosY);
 }
 
 void mouse_wheel_callback(GLFWwindow* glfwWindow, double xOffset, double yOffset) {
@@ -46,7 +43,7 @@ void mouse_wheel_callback(GLFWwindow* glfwWindow, double xOffset, double yOffset
 
     double mousePosX, mousePosY;
     glfwGetCursorPos(glfwWindow, &mousePosX, &mousePosY);
-    window.onMouseWheel((float) mousePosX, (float) mousePosY, (float) xOffset, (float) yOffset);
+    window.onMouseWheel((float)mousePosX, (float)mousePosY, (float)xOffset, (float)yOffset);
 
     // https://github.com/ocornut/imgui/issues/1759
     ImGui_ImplGlfw_ScrollCallback(glfwWindow, xOffset, yOffset);
@@ -61,22 +58,20 @@ void Window::initGlfw() {
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
-
 }
 
 void Window::initGl() {
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cout << "Failed to initialize GLAD" << std::endl;
         exit(-1);
     }
 }
 
-Window::Window(int width, int height, const char *title, const acon::AbstractReader& model): m_model(model) {
+Window::Window(int width, int height, const char* title, const acon::AbstractReader& model)
+        : m_model(model) {
 
     initGlfw();
-    if (auto* windowPtr = glfwCreateWindow(width, height, title, NULL, NULL))
-    {
+    if (auto* windowPtr = glfwCreateWindow(width, height, title, NULL, NULL)) {
         acon::SurfaceInfo surfaceInfo;
         m_glfwWindow = windowPtr;
         bind();
@@ -131,38 +126,14 @@ void Window::updateCamera() {
 }
 
 void Window::updateKeyCommandSet() {
-    m_keyCommandSet.setPressed(
-            KeyCommand::FLY_MODE_TOGGLE,
-            glfwGetKey(m_glfwWindow, GLFW_KEY_SPACE) == GLFW_PRESS
-            );
-    m_keyCommandSet.setPressed(
-            KeyCommand::FLY_MODE_FORWARD,
-            glfwGetKey(m_glfwWindow, GLFW_KEY_W) == GLFW_PRESS
-            );
-    m_keyCommandSet.setPressed(
-            KeyCommand::FLY_MODE_BACKWARD,
-            glfwGetKey(m_glfwWindow, GLFW_KEY_S) == GLFW_PRESS
-            );
-    m_keyCommandSet.setPressed(
-            KeyCommand::FLY_MODE_LEFT,
-            glfwGetKey(m_glfwWindow, GLFW_KEY_A) == GLFW_PRESS
-            );
-    m_keyCommandSet.setPressed(
-            KeyCommand::FLY_MODE_RIGHT,
-            glfwGetKey(m_glfwWindow, GLFW_KEY_D) == GLFW_PRESS
-            );
-    m_keyCommandSet.setPressed(
-            KeyCommand::FLY_MODE_UPWARD,
-            glfwGetKey(m_glfwWindow, GLFW_KEY_E) == GLFW_PRESS
-            );
-    m_keyCommandSet.setPressed(
-            KeyCommand::FLY_MODE_DOWNWARD,
-            glfwGetKey(m_glfwWindow, GLFW_KEY_Q) == GLFW_PRESS
-            );
-    m_keyCommandSet.setPressed(
-            KeyCommand::EXIT,
-            glfwGetKey(m_glfwWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS
-            );
+    m_keyCommandSet.setPressed(KeyCommand::FLY_MODE_TOGGLE, glfwGetKey(m_glfwWindow, GLFW_KEY_SPACE) == GLFW_PRESS);
+    m_keyCommandSet.setPressed(KeyCommand::FLY_MODE_FORWARD, glfwGetKey(m_glfwWindow, GLFW_KEY_W) == GLFW_PRESS);
+    m_keyCommandSet.setPressed(KeyCommand::FLY_MODE_BACKWARD, glfwGetKey(m_glfwWindow, GLFW_KEY_S) == GLFW_PRESS);
+    m_keyCommandSet.setPressed(KeyCommand::FLY_MODE_LEFT, glfwGetKey(m_glfwWindow, GLFW_KEY_A) == GLFW_PRESS);
+    m_keyCommandSet.setPressed(KeyCommand::FLY_MODE_RIGHT, glfwGetKey(m_glfwWindow, GLFW_KEY_D) == GLFW_PRESS);
+    m_keyCommandSet.setPressed(KeyCommand::FLY_MODE_UPWARD, glfwGetKey(m_glfwWindow, GLFW_KEY_E) == GLFW_PRESS);
+    m_keyCommandSet.setPressed(KeyCommand::FLY_MODE_DOWNWARD, glfwGetKey(m_glfwWindow, GLFW_KEY_Q) == GLFW_PRESS);
+    m_keyCommandSet.setPressed(KeyCommand::EXIT, glfwGetKey(m_glfwWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS);
     onKeyboardStateChange(m_keyCommandSet);
     // TODO
     if (m_showMouseCursor) {
@@ -199,15 +170,15 @@ void Window::mainLoop() {
 
         beginGui();
         GuiContext guiCtx {
-                .sceneManager = m_engine->sceneManagerMut(),
-                .playbackState = m_playbackState,
-                .inputController = m_inputController,
-                .surfaceInfo = m_engine->surfaceInfo(),
-                .renderOptions = m_engine->rendererMut().renderOptionsMut(),
-                .runtimeModel = m_engine->runtimeModelMut(),
-                .renderModel = m_engine->renderModelMut(),
-                .selectedObjectIdOpt = m_selectedObjectIdOpt,
-                .hoveringGui = m_hoveringGui,
+            .sceneManager = m_engine->sceneManagerMut(),
+            .playbackState = m_playbackState,
+            .inputController = m_inputController,
+            .surfaceInfo = m_engine->surfaceInfo(),
+            .renderOptions = m_engine->rendererMut().renderOptionsMut(),
+            .runtimeModel = m_engine->runtimeModelMut(),
+            .renderModel = m_engine->renderModelMut(),
+            .selectedObjectIdOpt = m_selectedObjectIdOpt,
+            .hoveringGui = m_hoveringGui,
         };
         m_gui.process(guiCtx);
         endGui();
@@ -223,7 +194,8 @@ void Window::initGlfwGui() {
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     ImGui::StyleColorsDark();
-    m_font = io.Fonts->AddFontFromFileTTF("./resources/NotoSansKR-Regular.otf", 18.0f, nullptr, io.Fonts->GetGlyphRangesKorean());
+    m_font = io.Fonts->AddFontFromFileTTF(
+        "./resources/NotoSansKR-Regular.otf", 18.0f, nullptr, io.Fonts->GetGlyphRangesKorean());
 
     ImGui_ImplGlfw_InitForOpenGL(m_glfwWindow, true);
     ImGui_ImplOpenGL3_Init("#version 330");
@@ -260,16 +232,16 @@ void Window::onKeyboardStateChange(const KeyCommandSet& keyCommandSet) {
 
 void Window::handleInput() {
     InputContext ctx {
-            .cameraManager = m_engine->sceneManagerMut(),
-            .playbackState = m_playbackState,
-            .mouseEvent = m_mouseEvent,
-            .keyCommandSet = m_keyCommandSet,
-            .prevKeyCommandSet = m_prevKeyCommandSet,
-            .shouldClose = m_shouldClose,
-            .showMouseCursor = m_showMouseCursor,
-            .mousePosX = m_mousePosX,
-            .mousePosY = m_mousePosY,
-            .disableCameraControlByWheel = m_hoveringGui,
+        .cameraManager = m_engine->sceneManagerMut(),
+        .playbackState = m_playbackState,
+        .mouseEvent = m_mouseEvent,
+        .keyCommandSet = m_keyCommandSet,
+        .prevKeyCommandSet = m_prevKeyCommandSet,
+        .shouldClose = m_shouldClose,
+        .showMouseCursor = m_showMouseCursor,
+        .mousePosX = m_mousePosX,
+        .mousePosY = m_mousePosY,
+        .disableCameraControlByWheel = m_hoveringGui,
     };
     m_inputController.handleKeyboardInput(ctx);
     m_inputController.handleMouseInput(ctx);

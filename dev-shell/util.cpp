@@ -1,13 +1,14 @@
 #include "util.h"
-#include "../engine/reader/SketchupReader.h"
 #include "../engine/reader/AssimpReader.h"
-#include <stdexcept>
+#include "../engine/reader/SketchupReader.h"
 #include <memory>
+#include <stdexcept>
 
 namespace acon {
 
 static inline bool ends_with(std::string_view value, std::string_view ending) {
-    if (ending.size() > value.size()) return false;
+    if (ending.size() > value.size())
+        return false;
     return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
 }
 

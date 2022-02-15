@@ -1,8 +1,8 @@
 #pragma once
 
-#include <memory>
 #include "../reader/AbstractReader.h"
 #include <glad/glad.h>
+#include <memory>
 
 namespace acon {
 
@@ -12,8 +12,9 @@ public:
     ~RenderTexture();
     [[nodiscard]] GLuint textureName() const;
     void prepareToRender();
+
 private:
-    unsigned m_textureName{};
+    unsigned m_textureName {};
     std::unique_ptr<TextureData> m_tempData;
 };
 

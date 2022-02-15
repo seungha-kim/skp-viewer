@@ -1,6 +1,6 @@
 #include "checkError.h"
-#include <glad/glad.h>
 #include <cstdio>
+#include <glad/glad.h>
 
 namespace acon {
 

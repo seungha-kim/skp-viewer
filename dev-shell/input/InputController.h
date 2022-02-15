@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../../engine/scene/SceneManager.h"
-#include "InputContext.h"
 #include "FlyCameraContext.h"
+#include "InputContext.h"
 #include "ObjectEditContext.h"
 
 class InputController {
@@ -11,6 +11,7 @@ public:
     void handleMouseInput(InputContext& ctx);
     void setGuiFocused(bool value);
     bool isCameraRotateMode();
+
 private:
     bool m_guiFocused = false;
     bool m_cameraRotateMode = false;

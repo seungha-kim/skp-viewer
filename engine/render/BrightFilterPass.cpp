@@ -1,6 +1,6 @@
 #include "BrightFilterPass.h"
-#include "Shader.h"
 #include "OffscreenRenderTarget.h"
+#include "Shader.h"
 #include "TextureRenderer.h"
 
 namespace acon {
@@ -20,11 +20,12 @@ public:
 
     ~BrightFilterPassPimpl() = default;
 
-    BrightFilterPassOutput render(RenderContext &ctx, const BrightFilterPassInput &input) {
+    BrightFilterPassOutput render(RenderContext& ctx, const BrightFilterPassInput& input) {
         const auto viewportWidth = ctx.surfaceInfo.physicalWidth;
         const auto viewportHeight = ctx.surfaceInfo.physicalHeight;
         m_offscreenRenderTarget.setTargetColorTexture(*m_brightColorTexture, 0);
-        auto binding = m_offscreenRenderTarget.bindAndPrepare(glm::vec3(0.0f, 0.0f, 0.0f), viewportWidth, viewportHeight);
+        auto binding
+            = m_offscreenRenderTarget.bindAndPrepare(glm::vec3(0.0f, 0.0f, 0.0f), viewportWidth, viewportHeight);
         m_textureRenderer.setSourceTexture(input.colorTexture, 0);
         m_textureRenderer.render(ctx, [&](Shader& shader) {
             shader.setInt("tex", 0);
@@ -35,20 +36,21 @@ public:
         };
     }
 
-    void resizeResources(const SurfaceInfo &surfaceInfo) {
+    void resizeResources(const SurfaceInfo& surfaceInfo) {
         m_brightColorTexture = std::make_unique<ColorTexture>(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight);
     }
 };
 
-BrightFilterPass::BrightFilterPass(const SurfaceInfo &surfaceInfo): m_pimpl(std::make_unique<BrightFilterPassPimpl>(surfaceInfo)) {}
+BrightFilterPass::BrightFilterPass(const SurfaceInfo& surfaceInfo)
+        : m_pimpl(std::make_unique<BrightFilterPassPimpl>(surfaceInfo)) { }
 
 BrightFilterPass::~BrightFilterPass() = default;
 
-BrightFilterPassOutput BrightFilterPass::render(RenderContext &ctx, const BrightFilterPassInput &input) {
+BrightFilterPassOutput BrightFilterPass::render(RenderContext& ctx, const BrightFilterPassInput& input) {
     return m_pimpl->render(ctx, input);
 }
 
-void BrightFilterPass::resizeResources(const SurfaceInfo &surfaceInfo) {
+void BrightFilterPass::resizeResources(const SurfaceInfo& surfaceInfo) {
     m_pimpl->resizeResources(surfaceInfo);
 }
 

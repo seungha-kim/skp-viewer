@@ -29,11 +29,9 @@ Gui::~Gui() {
     ImGui::DestroyContext();
 }
 
-void Gui::processMainMenuBar(GuiContext &ctx) {
-    if (ImGui::BeginMainMenuBar())
-    {
-        if (ImGui::BeginMenu("File"))
-        {
+void Gui::processMainMenuBar(GuiContext& ctx) {
+    if (ImGui::BeginMainMenuBar()) {
+        if (ImGui::BeginMenu("File")) {
             if (ImGui::MenuItem("Todo")) {
                 printf("TODO\n");
             }
@@ -43,7 +41,7 @@ void Gui::processMainMenuBar(GuiContext &ctx) {
     }
 }
 
-void Gui::processRenderInfo(GuiContext &ctx) {
+void Gui::processRenderInfo(GuiContext& ctx) {
     float deltaTimeMs = ImGui::GetIO().DeltaTime * 1000.0f;
     m_deltas[m_deltasPivot] = deltaTimeMs;
     ImGui::Begin("Render Info", nullptr, windowFlag(ctx));
@@ -53,7 +51,7 @@ void Gui::processRenderInfo(GuiContext &ctx) {
     ImGui::Text("pixel scale: %.0f * %.0f", dim.contentScaleX, dim.contentScaleY);
     ImGui::Text("render time: %.0f ms", deltaTimeMs);
     ImGui::Text("render fps: %.1f", 1000.0f / deltaTimeMs);
-//    ImGui::Text("WantCaptureMouse: %d", ctx.inputState.isGuiFocused);
+    //    ImGui::Text("WantCaptureMouse: %d", ctx.inputState.isGuiFocused);
     ImGui::PlotHistogram("", deltasHistogram, this, 100, 0, nullptr, 0.0f, 100.0f, ImVec2(0, 20));
     ImGui::Checkbox("Continuous", &ctx.playbackState.forceContinuous);
     ImGui::Checkbox("Manual playback", &ctx.playbackState.manual);
@@ -68,7 +66,7 @@ void Gui::processRenderInfo(GuiContext &ctx) {
     m_deltasPivot = (m_deltasPivot + 1) % 100;
 }
 
-void Gui::processSceneControl(GuiContext &ctx) const {
+void Gui::processSceneControl(GuiContext& ctx) const {
     if (show_camera_control) {
         auto& cm = ctx.sceneManager;
         ImGui::Begin("Scenes", nullptr, windowFlag(ctx));
@@ -104,16 +102,16 @@ void Gui::processSceneControl(GuiContext &ctx) const {
     }
 }
 
-float Gui::deltasHistogram(void *data, int i) {
+float Gui::deltasHistogram(void* data, int i) {
     auto that = (Gui*)data;
     return that->m_deltas[(that->m_deltasPivot + i) % 100];
 }
 
-void Gui::processRenderOptions(GuiContext &ctx) {
+void Gui::processRenderOptions(GuiContext& ctx) {
     auto& renderOptions = ctx.renderOptions;
     auto assistant = 0; // TODO: m_sunlightPass.depthTexture();
     ImGui::Begin("Assistant View", nullptr, windowFlag(ctx));
-    ImGui::Image((void*)(intptr_t)assistant, ImVec2(512,512), ImVec2(0, 1), ImVec2(1, 0));
+    ImGui::Image((void*)(intptr_t)assistant, ImVec2(512, 512), ImVec2(0, 1), ImVec2(1, 0));
     ImGui::End();
 
     ImGui::Begin("Program Setting", nullptr, windowFlag(ctx));
@@ -139,7 +137,7 @@ void Gui::processRenderOptions(GuiContext &ctx) {
     ImGui::End();
 }
 
-void Gui::processOutliner(GuiContext &ctx) {
+void Gui::processOutliner(GuiContext& ctx) {
     static const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
     static const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
 
@@ -159,8 +157,7 @@ void Gui::processOutliner(GuiContext &ctx) {
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
             const bool is_folder = (childCount > 0);
-            if (is_folder)
-            {
+            if (is_folder) {
                 auto nodeFlag = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanFullWidth;
                 if (ctx.selectedObjectIdOpt == item.objectId) {
                     nodeFlag |= ImGuiTreeNodeFlags_Selected;
@@ -171,19 +168,19 @@ void Gui::processOutliner(GuiContext &ctx) {
                 }
                 ImGui::TableNextColumn();
                 ImGui::Text("%d", childCount);
-                if (open)
-                {
+                if (open) {
                     for (int i = 0; i < childCount; i++) {
-                        displayNode(ctx, Node {
+                        displayNode(
+                            ctx,
+                            Node {
                                 .objectId = ctx.runtimeModel.getObjectChild(item.objectId, i),
-                        });
+                            });
                     }
                     ImGui::TreePop();
                 }
-            }
-            else
-            {
-                auto nodeFlag = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth;
+            } else {
+                auto nodeFlag = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet
+                    | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth;
                 if (ctx.selectedObjectIdOpt == item.objectId) {
                     nodeFlag |= ImGuiTreeNodeFlags_Selected;
                 }
@@ -201,15 +198,16 @@ void Gui::processOutliner(GuiContext &ctx) {
     ImGui::Begin("Outliner", nullptr, windowFlag(ctx));
     static ImGuiTableFlags flags = ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_NoBordersInBody;
 
-    if (ImGui::BeginTable("Outliner", 3, flags))
-    {
+    if (ImGui::BeginTable("Outliner", 3, flags)) {
         ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoHide);
         ImGui::TableSetupColumn("Children", ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 12.0f);
         ImGui::TableHeadersRow();
 
-        Node::displayNode(ctx, Node {
-            .objectId = acon::ROOT_OBJECT_ID,
-        });
+        Node::displayNode(
+            ctx,
+            Node {
+                .objectId = acon::ROOT_OBJECT_ID,
+            });
 
         ImGui::EndTable();
     }
@@ -217,7 +215,7 @@ void Gui::processOutliner(GuiContext &ctx) {
     ImGui::PopStyleVar();
 }
 
-void Gui::processLayerList(GuiContext &ctx) {
+void Gui::processLayerList(GuiContext& ctx) {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {0, 0});
     ImGui::Begin("Layers", nullptr, windowFlag(ctx));
     static ImGuiTableFlags flags = ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_NoBordersInBody;

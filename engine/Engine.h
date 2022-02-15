@@ -1,11 +1,11 @@
 #pragma once
 
 #include "export.h"
-#include "scene/SceneManager.h"
-#include "render/SurfaceInfo.h"
+#include "reader/AbstractReader.h"
 #include "render/RenderMaterial.h"
 #include "render/Renderer.h"
-#include "reader/AbstractReader.h"
+#include "render/SurfaceInfo.h"
+#include "scene/SceneManager.h"
 
 namespace acon {
 
@@ -32,7 +32,7 @@ public:
     void resize(const SurfaceInfo& surfaceInfo);
 
 private:
-    SceneManager m_sceneManager{};
+    SceneManager m_sceneManager {};
     SurfaceInfo m_surfaceInfo; // TODO: 여기서 제거
     std::unique_ptr<RuntimeModel> m_runtimeModel;
     std::unique_ptr<RenderModel> m_renderModel;

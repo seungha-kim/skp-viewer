@@ -1,8 +1,8 @@
 #pragma once
 
+#include "AbstractReader.h"
 #include <string>
 #include <unordered_map>
-#include "AbstractReader.h"
 
 struct aiScene;
 struct aiNode;
@@ -78,7 +78,7 @@ private:
     using NodeInverse = std::unordered_map<const aiNode*, ObjectId>;
     using MeshMap = std::unordered_map<UnitId, const aiMesh*>;
     using MeshInverse = std::unordered_map<const aiMesh*, UnitId>;
-    using MaterialMap = std::unordered_map<MaterialId , const aiMaterial*>;
+    using MaterialMap = std::unordered_map<MaterialId, const aiMaterial*>;
     using MaterialInverse = std::unordered_map<const aiMaterial*, MaterialId>;
     using TextureMap = std::unordered_map<TextureId, const aiTexture*>;
     using TextureInverse = std::unordered_map<const aiTexture*, TextureId>;

@@ -1,11 +1,11 @@
 #pragma once
-#include <memory>
-#include "DepthTexture.h"
+#include "BasePass.h"
 #include "ColorTexture.h"
-#include "SurfaceInfo.h"
+#include "DepthTexture.h"
 #include "RenderContext.h"
 #include "RenderUnit.h"
-#include "BasePass.h"
+#include "SurfaceInfo.h"
+#include <memory>
 
 namespace acon {
 
@@ -26,7 +26,8 @@ public:
     OutlinePass(const SurfaceInfo& surfaceInfo);
     ~OutlinePass();
     OutlinePassOutput render(RenderContext& ctx, const OutlinePassInput& input);
-    void resizeResources(const SurfaceInfo &surfaceInfo) override;
+    void resizeResources(const SurfaceInfo& surfaceInfo) override;
+
 private:
     std::unique_ptr<OutlinePassPimpl> m_pimpl;
 };

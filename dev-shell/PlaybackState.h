@@ -1,7 +1,7 @@
 #pragma once
 
-#include <optional>
 #include "ContinuousRenderSession.h"
+#include <optional>
 
 struct PlaybackState {
     bool forceContinuous = false;

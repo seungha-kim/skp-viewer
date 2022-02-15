@@ -14,7 +14,7 @@ UnitId RenderModel::getObjectUnit(ObjectId id, int index) const {
     return m_objectData.at(id).units[index];
 }
 
-const std::vector<std::unique_ptr<RenderUnit>> &RenderModel::units() const {
+const std::vector<std::unique_ptr<RenderUnit>>& RenderModel::units() const {
     return m_units;
 }
 

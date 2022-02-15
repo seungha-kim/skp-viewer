@@ -1,9 +1,9 @@
 #include "AssimpReader.h"
-#include <stack>
 #include <assimp/Importer.hpp>
-#include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <assimp/scene.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <stack>
 
 namespace acon {
 
@@ -15,11 +15,9 @@ static glm::vec2 convertVec2(const aiVector2D& vec);
 AssimpReader::AssimpReader(std::string_view path) {
 
     Assimp::Importer importer;
-    importer.ReadFile(path.data(),
-        aiProcess_CalcTangentSpace |
-        aiProcess_Triangulate |
-        aiProcess_JoinIdenticalVertices |
-        aiProcess_SortByPType);
+    importer.ReadFile(
+        path.data(),
+        aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
     // to take ownership
     m_scene = importer.GetOrphanedScene();
     constructMap();
@@ -84,7 +82,8 @@ std::optional<MaterialId> AssimpReader::getUnitBackMaterial(UnitId id) const {
 }
 
 bool AssimpReader::hasMaterial(MaterialId materialId) const {
-    // TODO: Material 좀 더 알아보기: https://assimp-docs.readthedocs.io/en/master/usage/use_the_lib.html#material-system
+    // TODO: Material 좀 더 알아보기:
+    // https://assimp-docs.readthedocs.io/en/master/usage/use_the_lib.html#material-system
     return false;
 }
 
@@ -92,7 +91,6 @@ bool AssimpReader::getMaterialHasColor(MaterialId materialId) const {
     // TODO
     return false;
 }
-
 
 glm::vec4 AssimpReader::getMaterialColor(MaterialId id) const {
     // TODO
@@ -141,7 +139,7 @@ Triangle AssimpReader::getUnitTriangle(UnitId id, int index) const {
     const auto* mesh = m_meshMap.at(id);
     const auto face = mesh->mFaces[index];
 
-    Triangle result { .vertices = {} };
+    Triangle result {.vertices = {}};
 
     assert(face.mNumIndices == 3);
     for (int i = 0; i < face.mNumIndices; i++) {
@@ -225,12 +223,24 @@ ObjectId AssimpReader::getTagObject(TagId id, int index) const {
     return 0;
 }
 
-glm::mat4 convertMatrix4(const aiMatrix4x4 &mat) {
+glm::mat4 convertMatrix4(const aiMatrix4x4& mat) {
     float arr[] {
-        mat.a1, mat.b1, mat.c1, mat.d1,
-        mat.a2, mat.b2, mat.c2, mat.d2,
-        mat.a3, mat.b3, mat.c3, mat.d3,
-        mat.a4, mat.b4, mat.c4, mat.d4,
+        mat.a1,
+        mat.b1,
+        mat.c1,
+        mat.d1,
+        mat.a2,
+        mat.b2,
+        mat.c2,
+        mat.d2,
+        mat.a3,
+        mat.b3,
+        mat.c3,
+        mat.d3,
+        mat.a4,
+        mat.b4,
+        mat.c4,
+        mat.d4,
     };
     return glm::make_mat4(arr);
 }

@@ -1,10 +1,10 @@
 #pragma once
-#include <string>
-#include <unordered_map>
-#include <stack>
-#include <SketchUpAPI/sketchup.h>
 #include "AbstractReader.h"
 #include "sketchup-specialization.h"
+#include <SketchUpAPI/sketchup.h>
+#include <stack>
+#include <string>
+#include <unordered_map>
 
 namespace acon {
 
@@ -88,7 +88,7 @@ private:
     UnitId m_unitCount = 0;
     TextureId m_textureCount = 0;
     TagId m_tagCount = 0;
-    SULayerRef m_defaultLayerRef{};
+    SULayerRef m_defaultLayerRef {};
 
     using GroupMap = std::unordered_map<ObjectId, SUGroupRef>;
     using GroupInverse = std::unordered_map<SUGroupRef, ObjectId>;

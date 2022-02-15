@@ -1,12 +1,12 @@
 #pragma once
-#include <memory>
-#include "SurfaceInfo.h"
-#include "RenderUnit.h"
-#include <glm/glm.hpp>
-#include <glad/glad.h>
-#include "RenderContext.h"
-#include "DepthTexture.h"
 #include "BasePass.h"
+#include "DepthTexture.h"
+#include "RenderContext.h"
+#include "RenderUnit.h"
+#include "SurfaceInfo.h"
+#include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <memory>
 
 namespace acon {
 
@@ -27,7 +27,7 @@ public:
     explicit SunlightPass(const SurfaceInfo& surfaceInfo);
     ~SunlightPass();
     SunlightPassOutput render(RenderContext& ctx, const SunlightPassInput& input);
-    void resizeResources(const SurfaceInfo &surfaceInfo) override;
+    void resizeResources(const SurfaceInfo& surfaceInfo) override;
     GLuint depthTexture();
 
 private:

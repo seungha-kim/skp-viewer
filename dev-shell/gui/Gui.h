@@ -1,12 +1,13 @@
 #pragma once
-#include <memory>
 #include "GuiContext.h"
+#include <memory>
 
 class Gui {
 public:
     Gui();
     ~Gui();
     void process(GuiContext& ctx);
+
 private:
     bool show_demo_window = false;
     bool show_camera_control = false;
@@ -16,7 +17,7 @@ private:
 
     void processMainMenuBar(GuiContext& ctx);
     void processRenderInfo(GuiContext& ctx);
-    void processRenderOptions(GuiContext &ctx);
+    void processRenderOptions(GuiContext& ctx);
     void processSceneControl(GuiContext& ctx) const;
     void processOutliner(GuiContext& ctx);
     void processLayerList(GuiContext& ctx);

@@ -3,17 +3,19 @@
 namespace acon {
 
 static const float vertices[] {
-        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-        1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-        1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+    -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // 1
+    1.0f,  -1.0f, 0.0f, 1.0f, 0.0f, // 2
+    1.0f,  1.0f,  0.0f, 1.0f, 1.0f, // 3
+    1.0f,  1.0f,  0.0f, 1.0f, 1.0f, // 4
+    -1.0f, 1.0f,  0.0f, 0.0f, 1.0f, // 5
+    -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // 6
 };
 
-TextureRenderer::TextureRenderer(): TextureRenderer(std::make_unique<Shader>("quad.vert", "quad.frag")) {}
+TextureRenderer::TextureRenderer()
+        : TextureRenderer(std::make_unique<Shader>("quad.vert", "quad.frag")) { }
 
-TextureRenderer::TextureRenderer(std::unique_ptr<Shader> shader): m_shader(std::move(shader)) {
+TextureRenderer::TextureRenderer(std::unique_ptr<Shader> shader)
+        : m_shader(std::move(shader)) {
     // VAO
     glGenVertexArrays(1, &m_vao);
     glBindVertexArray(m_vao);
@@ -25,7 +27,7 @@ TextureRenderer::TextureRenderer(std::unique_ptr<Shader> shader): m_shader(std::
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), nullptr);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3* sizeof(float)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     glBindVertexArray(0);
@@ -36,14 +38,14 @@ TextureRenderer::~TextureRenderer() {
     glDeleteBuffers(1, &m_vbo);
 }
 
-void TextureRenderer::setSourceTexture(const ColorTexture &texture, int index) {
+void TextureRenderer::setSourceTexture(const ColorTexture& texture, int index) {
     m_textureNames[index] = texture.textureName();
     m_maxTextureIndex = index > m_maxTextureIndex ? index : m_maxTextureIndex;
 }
 
-void TextureRenderer::render(RenderContext &ctx, const std::function<void(Shader&)>& shaderCallback) {
+void TextureRenderer::render(RenderContext& ctx, const std::function<void(Shader&)>& shaderCallback) {
     glViewport(0, 0, ctx.surfaceInfo.physicalWidth, ctx.surfaceInfo.physicalHeight);
-//    glClear(GL_DEPTH_BUFFER_BIT);
+    //    glClear(GL_DEPTH_BUFFER_BIT);
     m_shader->use();
     // TODO: remove
     m_shader->setInt("tex", 0);

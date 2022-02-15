@@ -1,7 +1,7 @@
 #pragma once
-#include "DirectionalLight.h"
-#include "CameraState.h"
 #include "../render/SurfaceInfo.h"
+#include "CameraState.h"
+#include "DirectionalLight.h"
 
 namespace acon {
 
@@ -12,7 +12,8 @@ public:
     DirectionalLight& sunLightMut();
     [[nodiscard]] const CameraState& cameraState() const;
     CameraState& cameraStateMut();
-    void updateAspectRatio(const SurfaceInfo &surfaceInfo);
+    void updateAspectRatio(const SurfaceInfo& surfaceInfo);
+
 private:
     DirectionalLight m_sunLight;
     CameraState m_camera;

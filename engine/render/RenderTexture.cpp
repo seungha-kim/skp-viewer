@@ -11,7 +11,7 @@ namespace acon {
 #endif
 
 RenderTexture::RenderTexture(std::unique_ptr<TextureData>&& textureData)
-        : m_tempData(std::move(textureData)) {}
+        : m_tempData(std::move(textureData)) { }
 
 RenderTexture::~RenderTexture() {
     if (m_textureName) {
@@ -24,7 +24,8 @@ GLuint RenderTexture::textureName() const {
 }
 
 void RenderTexture::prepareToRender() {
-    if (!m_tempData) return;
+    if (!m_tempData)
+        return;
     glGenTextures(1, &m_textureName);
     glBindTexture(GL_TEXTURE_2D, m_textureName);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -32,7 +33,16 @@ void RenderTexture::prepareToRender() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_tempData->width(), m_tempData->height(), 0, PIXEL_FORMAT, GL_UNSIGNED_BYTE, m_tempData->data());
+    glTexImage2D(
+        GL_TEXTURE_2D,
+        0,
+        GL_RGBA,
+        m_tempData->width(),
+        m_tempData->height(),
+        0,
+        PIXEL_FORMAT,
+        GL_UNSIGNED_BYTE,
+        m_tempData->data());
     glBindTexture(GL_TEXTURE_2D, 0);
 
     m_tempData = nullptr;

@@ -2,13 +2,14 @@
 
 namespace acon {
 
-SceneManager::SceneManager(): m_scenes{Scene()} {}
+SceneManager::SceneManager()
+        : m_scenes {Scene()} { }
 
-const Scene &SceneManager::activeScene() const {
+const Scene& SceneManager::activeScene() const {
     return m_scenes[m_activeSceneIndex];
 }
 
-Scene &SceneManager::activeSceneMut() {
+Scene& SceneManager::activeSceneMut() {
     return m_scenes[m_activeSceneIndex];
 }
 
@@ -27,7 +28,7 @@ void SceneManager::addScene() {
     m_scenes.push_back(m_scenes.back());
 }
 
-const std::vector<Scene> &SceneManager::scenes() {
+const std::vector<Scene>& SceneManager::scenes() {
     return m_scenes;
 }
 
@@ -43,7 +44,7 @@ int SceneManager::activeSceneIndex() const {
     return m_activeSceneIndex;
 }
 
-void SceneManager::updateAspectRatio(const SurfaceInfo &surfaceInfo) {
+void SceneManager::updateAspectRatio(const SurfaceInfo& surfaceInfo) {
     for (auto& scene: m_scenes) {
         scene.updateAspectRatio(surfaceInfo);
     }

@@ -1,11 +1,11 @@
 #pragma once
 
-#include <string_view>
+#include "../build.h"
+#include "../primitives.h"
 #include <memory>
+#include <string_view>
 #include <unordered_map>
 #include <unordered_set>
-#include "../primitives.h"
-#include "../build.h"
 
 namespace acon {
 
@@ -27,6 +27,7 @@ struct RuntimeTagData {
 
 class RuntimeModel {
     friend ModelPair buildModel(const AbstractReader& reader);
+
 public:
     RuntimeModel() = default;
     ~RuntimeModel() = default;
@@ -55,7 +56,7 @@ private:
     std::unordered_map<ObjectId, RuntimeObjectData> m_objectData;
     std::vector<TagId> m_tagList;
     std::unordered_map<TagId, RuntimeTagData> m_tagData;
-    std::optional<ObjectId> m_selectedObjectIdOpt{};
+    std::optional<ObjectId> m_selectedObjectIdOpt {};
 
     // TODO: 렌더링 고려사항은 여기에 없는게 맞다 - 삭제 예정
     bool m_objectVisibilityUpdated = true;

@@ -1,9 +1,9 @@
 #pragma once
-#include <memory>
-#include "ColorTexture.h"
-#include "SurfaceInfo.h"
-#include "RenderContext.h"
 #include "BasePass.h"
+#include "ColorTexture.h"
+#include "RenderContext.h"
+#include "SurfaceInfo.h"
+#include <memory>
 
 namespace acon {
 
@@ -23,7 +23,8 @@ public:
     ~GaussianBlurPass();
     void setEnabled(bool enabled);
     GaussianBlurPassOutput render(RenderContext& ctx, const GaussianBlurPassInput& input);
-    void resizeResources(const SurfaceInfo &surfaceInfo) override;
+    void resizeResources(const SurfaceInfo& surfaceInfo) override;
+
 private:
     std::unique_ptr<GaussianBlurPassPimpl> m_pimpl;
 };

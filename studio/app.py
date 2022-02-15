@@ -7,7 +7,6 @@ from PySide6.QtWidgets import QApplication
 from studio.startup_options import StartupOptions
 from .main_window import MainWindow
 
-
 faulthandler.enable()
 
 

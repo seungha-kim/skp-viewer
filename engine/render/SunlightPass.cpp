@@ -1,8 +1,8 @@
 #include "SunlightPass.h"
-#include "Shader.h"
-#include "DepthTexture.h"
 #include "ColorTexture.h"
+#include "DepthTexture.h"
 #include "OffscreenRenderTarget.h"
+#include "Shader.h"
 
 namespace acon {
 
@@ -12,16 +12,17 @@ class SunlightPassPimpl {
     std::unique_ptr<ColorTexture> m_colorTexture;
     std::unique_ptr<DepthTexture> m_depthTexture;
     OffscreenRenderTarget m_offscreenRenderTarget;
-    glm::mat4 m_lightSpaceMatrix{};
+    glm::mat4 m_lightSpaceMatrix {};
     std::unique_ptr<Shader> m_subShader;
+
 public:
     ~SunlightPassPimpl() = default;
     explicit SunlightPassPimpl(const SurfaceInfo& surfaceInfo)
-        : m_subShader(std::make_unique<Shader>("sub.vert", "sub.frag")) {
+            : m_subShader(std::make_unique<Shader>("sub.vert", "sub.frag")) {
         resizeResources(surfaceInfo);
     }
 
-    SunlightPassOutput render(RenderContext &ctx, const SunlightPassInput& input) {
+    SunlightPassOutput render(RenderContext& ctx, const SunlightPassInput& input) {
         auto& cam = ctx.scene.cameraState();
 
         // solution for peter panning
@@ -37,7 +38,8 @@ public:
         m_offscreenRenderTarget.checkState();
 
         // TODO: adjustable shadow resolution
-        auto binding = m_offscreenRenderTarget.bindAndPrepare(glm::vec3(1.0f, 1.0f, 0.0f), ctx.surfaceInfo.physicalWidth, ctx.surfaceInfo.physicalHeight);
+        auto binding = m_offscreenRenderTarget.bindAndPrepare(
+            glm::vec3(1.0f, 1.0f, 0.0f), ctx.surfaceInfo.physicalWidth, ctx.surfaceInfo.physicalHeight);
 
         // Light point of view
         float width = 30.0f;
@@ -79,18 +81,18 @@ public:
         };
     }
 
-    void resizeResources(const SurfaceInfo &surfaceInfo) {
+    void resizeResources(const SurfaceInfo& surfaceInfo) {
         m_colorTexture = std::make_unique<ColorTexture>(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight);
         m_depthTexture = std::make_unique<DepthTexture>(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight);
     }
 };
 
 SunlightPass::SunlightPass(const SurfaceInfo& surfaceInfo)
-    : m_pimpl(std::make_unique<SunlightPassPimpl>(surfaceInfo)) {}
+        : m_pimpl(std::make_unique<SunlightPassPimpl>(surfaceInfo)) { }
 
 SunlightPass::~SunlightPass() = default;
 
-SunlightPassOutput SunlightPass::render(RenderContext &ctx, const SunlightPassInput& input) {
+SunlightPassOutput SunlightPass::render(RenderContext& ctx, const SunlightPassInput& input) {
     return m_pimpl->render(ctx, input);
 }
 
@@ -98,7 +100,7 @@ GLuint SunlightPass::depthTexture() {
     return m_pimpl->m_depthTexture->textureName();
 }
 
-void SunlightPass::resizeResources(const SurfaceInfo &surfaceInfo) {
+void SunlightPass::resizeResources(const SurfaceInfo& surfaceInfo) {
     m_pimpl->resizeResources(surfaceInfo);
 }
 

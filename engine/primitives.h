@@ -15,8 +15,8 @@ struct Vertex {
     glm::vec3 position;
     glm::vec3 normal;
     glm::vec3 faceNormal;
-    glm::vec2 frontTexCoord{};
-    glm::vec2 backTexCoord{};
+    glm::vec2 frontTexCoord {};
+    glm::vec2 backTexCoord {};
 };
 
 struct Triangle {

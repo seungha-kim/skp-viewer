@@ -1,10 +1,10 @@
 #pragma once
-#include <memory>
+#include "BasePass.h"
+#include "ColorTexture.h"
 #include "RenderContext.h"
 #include "RenderUnit.h"
 #include "SurfaceInfo.h"
-#include "ColorTexture.h"
-#include "BasePass.h"
+#include <memory>
 
 namespace acon {
 
@@ -23,8 +23,9 @@ public:
     explicit ColorBalancePass(const SurfaceInfo& surfaceInfo);
     ~ColorBalancePass();
     ColorBalancePassOutput render(RenderContext& ctx, const ColorBalancePassInput& input);
-    void resizeResources(const SurfaceInfo &surfaceInfo) override;
+    void resizeResources(const SurfaceInfo& surfaceInfo) override;
     void setColorBalance(glm::vec3 colorBalance);
+
 private:
     std::unique_ptr<ColorBalancePassPimpl> m_pimpl;
 };

@@ -1,10 +1,10 @@
 #pragma once
-#include <memory>
+#include "BasePass.h"
+#include "ColorTexture.h"
 #include "RenderContext.h"
 #include "RenderUnit.h"
 #include "SurfaceInfo.h"
-#include "ColorTexture.h"
-#include "BasePass.h"
+#include <memory>
 
 namespace acon {
 
@@ -26,7 +26,8 @@ public:
     explicit ToneMapPass(const SurfaceInfo& surfaceInfo);
     ~ToneMapPass();
     ToneMapPassOutput render(RenderContext& ctx, const ToneMapPassInput& input);
-    void resizeResources(const SurfaceInfo &surfaceInfo) override;
+    void resizeResources(const SurfaceInfo& surfaceInfo) override;
+
 private:
     std::unique_ptr<ToneMapPassPimpl> m_pimpl;
 };

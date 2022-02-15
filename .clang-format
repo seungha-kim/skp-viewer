@@ -1,0 +1,13 @@
+BasedOnStyle: WebKit
+BreakBeforeBraces: Attach
+ContinuationIndentWidth: 4
+ConstructorInitializerIndentWidth: 8
+ColumnLimit: 120
+AllowShortFunctionsOnASingleLine: Inline
+BinPackArguments: false
+BinPackParameters: false
+AlignAfterOpenBracket: AlwaysBreak
+Cpp11BracedListStyle: true
+SpaceBeforeInheritanceColon: false
+SpaceBeforeCtorInitializerColon: false
+SpaceBeforeRangeBasedForLoopColon: false

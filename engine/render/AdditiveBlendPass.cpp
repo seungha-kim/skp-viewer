@@ -1,16 +1,16 @@
 #include "AdditiveBlendPass.h"
-#include "Shader.h"
 #include "OffscreenRenderTarget.h"
+#include "Shader.h"
 #include "TextureRenderer.h"
 
 namespace acon {
 
 static const char* kindToShader(BlendPassKind kind) {
     switch (kind) {
-        case BlendPassKind::additive:
-            return "additiveBlend.frag";
-        case BlendPassKind::multiplicative:
-            return "multiplicativeBlend.frag";
+    case BlendPassKind::additive:
+        return "additiveBlend.frag";
+    case BlendPassKind::multiplicative:
+        return "multiplicativeBlend.frag";
     }
 }
 
@@ -20,7 +20,7 @@ class AdditiveBlendPassPimpl {
     OffscreenRenderTarget m_offscreenRenderTarget;
     std::unique_ptr<ColorTexture> m_colorTexture;
     TextureRenderer m_textureRenderer;
-    glm::vec3 m_colorBalance{};
+    glm::vec3 m_colorBalance {};
 
 public:
     explicit AdditiveBlendPassPimpl(const SurfaceInfo& surfaceInfo, BlendPassKind kind)
@@ -30,11 +30,12 @@ public:
 
     ~AdditiveBlendPassPimpl() = default;
 
-    AdditiveBlendPassOutput render(RenderContext &ctx, const AdditiveBlendPassInput &input) {
+    AdditiveBlendPassOutput render(RenderContext& ctx, const AdditiveBlendPassInput& input) {
         const auto viewportWidth = ctx.surfaceInfo.physicalWidth;
         const auto viewportHeight = ctx.surfaceInfo.physicalHeight;
         m_offscreenRenderTarget.setTargetColorTexture(*m_colorTexture, 0);
-        auto binding = m_offscreenRenderTarget.bindAndPrepare(glm::vec3(0.0f, 0.0f, 0.0f), viewportWidth, viewportHeight);
+        auto binding
+            = m_offscreenRenderTarget.bindAndPrepare(glm::vec3(0.0f, 0.0f, 0.0f), viewportWidth, viewportHeight);
         m_textureRenderer.setSourceTexture(input.colorTexture1, 0);
         m_textureRenderer.setSourceTexture(input.colorTexture2, 1);
         m_textureRenderer.render(ctx, [&](Shader& shader) {
@@ -44,24 +45,25 @@ public:
             shader.setFloat("c2", input.c2);
         });
         return {
-                .colorTexture = *m_colorTexture,
+            .colorTexture = *m_colorTexture,
         };
     }
 
-    void resizeResources(const SurfaceInfo &surfaceInfo) {
+    void resizeResources(const SurfaceInfo& surfaceInfo) {
         m_colorTexture = std::make_unique<ColorTexture>(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight);
     }
 };
 
-AdditiveBlendPass::AdditiveBlendPass(const SurfaceInfo &surfaceInfo, BlendPassKind kind): m_pimpl(std::make_unique<AdditiveBlendPassPimpl>(surfaceInfo, kind)) {}
+AdditiveBlendPass::AdditiveBlendPass(const SurfaceInfo& surfaceInfo, BlendPassKind kind)
+        : m_pimpl(std::make_unique<AdditiveBlendPassPimpl>(surfaceInfo, kind)) { }
 
 AdditiveBlendPass::~AdditiveBlendPass() = default;
 
-AdditiveBlendPassOutput AdditiveBlendPass::render(RenderContext &ctx, const AdditiveBlendPassInput &input) {
+AdditiveBlendPassOutput AdditiveBlendPass::render(RenderContext& ctx, const AdditiveBlendPassInput& input) {
     return m_pimpl->render(ctx, input);
 }
 
-void AdditiveBlendPass::resizeResources(const SurfaceInfo &surfaceInfo) {
+void AdditiveBlendPass::resizeResources(const SurfaceInfo& surfaceInfo) {
     m_pimpl->resizeResources(surfaceInfo);
 }
 

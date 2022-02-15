@@ -1,24 +1,24 @@
 #pragma once
-#include <glad/glad.h>
-#include <memory>
-#include <functional>
-#include "SurfaceInfo.h"
-#include "SunlightPass.h"
-#include "MainPass.h"
-#include "TextureRenderer.h"
-#include "ColorBalancePass.h"
-#include "GaussianBlurPass.h"
 #include "AdditiveBlendPass.h"
 #include "BrightFilterPass.h"
-#include "ToneMapPass.h"
+#include "ColorBalancePass.h"
+#include "GaussianBlurPass.h"
+#include "MainPass.h"
 #include "OutlinePass.h"
 #include "RenderModel.h"
+#include "SunlightPass.h"
+#include "SurfaceInfo.h"
+#include "TextureRenderer.h"
+#include "ToneMapPass.h"
+#include <functional>
+#include <glad/glad.h>
+#include <memory>
 
 namespace acon {
 
 struct RenderOptions {
-    glm::vec3 colorBalance{1.0};
-    bool enableGaussianBlur{false};
+    glm::vec3 colorBalance {1.0};
+    bool enableGaussianBlur {false};
 
     float toneMapExposure = 2.0f;
     float toneMapGamma = 0.7f;
@@ -36,8 +36,8 @@ public:
     explicit Renderer(const SurfaceInfo& surfaceInfo);
     ~Renderer() = default;
 
-    void render(RenderContext &ctx);
-    void resizeResources(const SurfaceInfo &surfaceInfo);
+    void render(RenderContext& ctx);
+    void resizeResources(const SurfaceInfo& surfaceInfo);
 
     RenderOptions& renderOptionsMut();
     void syncVisibility(const RuntimeModel& runtimeModel, const RenderModel& renderModel);
@@ -55,7 +55,7 @@ private:
     TextureRenderer m_textureRenderer;
     RenderOptions m_renderOptions;
 
-    std::vector<const RenderUnit*> m_unitsForRender{};
+    std::vector<const RenderUnit*> m_unitsForRender {};
 };
 
 }

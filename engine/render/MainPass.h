@@ -1,11 +1,11 @@
 #pragma once
-#include <memory>
+#include "BasePass.h"
+#include "ColorTexture.h"
+#include "DepthTexture.h"
 #include "RenderContext.h"
 #include "RenderUnit.h"
 #include "SurfaceInfo.h"
-#include "ColorTexture.h"
-#include "DepthTexture.h"
-#include "BasePass.h"
+#include <memory>
 
 namespace acon {
 
@@ -29,7 +29,8 @@ public:
     explicit MainPass(const SurfaceInfo& surfaceInfo);
     ~MainPass();
     MainPassOutput render(RenderContext& ctx, const MainPassInput& input);
-    void resizeResources(const SurfaceInfo &surfaceInfo) override;
+    void resizeResources(const SurfaceInfo& surfaceInfo) override;
+
 private:
     std::unique_ptr<MainPassPimpl> m_pimpl;
 };

@@ -1,18 +1,18 @@
 #include "build.h"
-#include "runtime/RuntimeModel.h"
 #include "render/RenderModel.h"
-#include <stack>
+#include "runtime/RuntimeModel.h"
 #include <memory>
+#include <stack>
 
 namespace acon {
 
 static RenderVertex convertVertex(const Vertex& vertex) {
     return RenderVertex {
-            .pos = vertex.position,
-            .normal = vertex.normal,
-            .faceNormal = vertex.faceNormal,
-            .frontTexCoord = vertex.frontTexCoord,
-            .backTexCoord = vertex.backTexCoord,
+        .pos = vertex.position,
+        .normal = vertex.normal,
+        .faceNormal = vertex.faceNormal,
+        .frontTexCoord = vertex.frontTexCoord,
+        .backTexCoord = vertex.backTexCoord,
     };
 }
 
@@ -25,7 +25,7 @@ static void buildVertices(const AbstractReader& reader, UnitId unitId, std::vect
     unsigned faceCount = reader.getUnitTriangleCount(unitId);
     for (int i = 0; i < faceCount; i++) {
         auto face = reader.getUnitTriangle(unitId, i);
-        for (const auto& vertex : face.vertices) {
+        for (const auto& vertex: face.vertices) {
             auto renderVertex = convertVertex(vertex);
 
             vertices.push_back(renderVertex);
@@ -33,7 +33,7 @@ static void buildVertices(const AbstractReader& reader, UnitId unitId, std::vect
     }
 }
 
-std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>> buildModel(const AbstractReader &reader) {
+std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>> buildModel(const AbstractReader& reader) {
     auto runtimeModel = std::make_unique<RuntimeModel>();
     auto renderModel = std::make_unique<RenderModel>();
 
@@ -41,7 +41,7 @@ std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>> buildMode
     for (int i = 0; i < reader.getTagCount(); i++) {
         const auto tagId = reader.getTag(i);
         const auto tagName = reader.getTagName(tagId);
-        RuntimeTagData tagData{
+        RuntimeTagData tagData {
             .id = tagId,
             .name = tagName,
             .visibility = true,
@@ -61,16 +61,16 @@ std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>> buildMode
     };
 
     std::stack<DfsItem> dfsStack({{
-            .id = ROOT_OBJECT_ID,
-            .parentId = {},
-            .ancestorTransform = glm::mat4(1.0f),
+        .id = ROOT_OBJECT_ID,
+        .parentId = {},
+        .ancestorTransform = glm::mat4(1.0f),
     }});
 
     while (!dfsStack.empty()) {
         auto item = dfsStack.top();
         dfsStack.pop();
 
-        RuntimeObjectData objectData{};
+        RuntimeObjectData objectData {};
         objectData.name = reader.getObjectName(item.id);
         objectData.visibility = true; // TODO
         objectData.transform = reader.getObjectTransform(item.id);
@@ -118,16 +118,16 @@ std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>> buildMode
                 }
             }
 
-            std::vector<RenderVertex> vertices{};
+            std::vector<RenderVertex> vertices {};
             buildVertices(reader, unitId, vertices);
             auto unit = std::make_unique<RenderUnit>(
-                    unitId,
-                    item.id,
-                    std::move(vertices),
-                    worldTransform,
-                    frontMaterial,
-                    backMaterial,
-                    renderModel->m_textures);
+                unitId,
+                item.id,
+                std::move(vertices),
+                worldTransform,
+                frontMaterial,
+                backMaterial,
+                renderModel->m_textures);
             renderModel->m_units.push_back(std::move(unit));
         }
 
@@ -135,9 +135,9 @@ std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>> buildMode
         for (int i = 0; i < childCount; i++) {
             auto childId = reader.getObjectChild(item.id, i);
             dfsStack.push({
-                    .id = childId,
-                    .parentId = item.id,
-                    .ancestorTransform = worldTransform
+                .id = childId,
+                .parentId = item.id,
+                .ancestorTransform = worldTransform,
             });
             objectData.children.push_back(childId);
         }

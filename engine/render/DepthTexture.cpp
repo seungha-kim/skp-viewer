@@ -3,7 +3,9 @@
 
 namespace acon {
 
-DepthTexture::DepthTexture(int width, int height): m_width(width), m_height(height) {
+DepthTexture::DepthTexture(int width, int height)
+        : m_width(width)
+        , m_height(height) {
     glGenTextures(1, &m_textureName);
     glBindTexture(GL_TEXTURE_2D, m_textureName);
 
@@ -14,11 +16,11 @@ DepthTexture::DepthTexture(int width, int height): m_width(width), m_height(heig
 
     // Remove artefact on the edges of the shadow map
     // TODO: invalid enum 에러 해결하기
-//    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
-//    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
+    //    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
+    //    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
 
     // TODO: adjustable shadow resolution
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);

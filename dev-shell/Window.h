@@ -1,13 +1,13 @@
 #pragma once
 
-#include <vector>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include "../engine/Engine.h"
 #include "gui/Gui.h"
+#include <GLFW/glfw3.h>
+#include <glad/glad.h>
+#include <imgui.h>
 #include <memory>
 #include <optional>
-#include <imgui.h>
+#include <vector>
 
 class Window {
     friend void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -52,8 +52,8 @@ private:
     bool m_showMouseCursor = true;
     bool m_shouldClose = false;
     bool m_hoveringGui = false;
-    std::optional<acon::ObjectId> m_selectedObjectIdOpt{};
-    ImFont* m_font{};
+    std::optional<acon::ObjectId> m_selectedObjectIdOpt {};
+    ImFont* m_font {};
 
     void onMouseMove(float mousePosX, float mousePosY);
     void onMouseWheel(float mousePosX, float mousePosY, float wheelOffsetX, float wheelOffsetY);

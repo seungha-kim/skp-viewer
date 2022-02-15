@@ -1,7 +1,7 @@
 #pragma once
+#include "../primitives.h"
 #include <glm/glm.hpp>
 #include <variant>
-#include "../primitives.h"
 
 namespace acon {
 

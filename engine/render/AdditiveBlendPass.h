@@ -1,15 +1,16 @@
 #pragma once
-#include <memory>
+#include "./BasePass.h"
+#include "ColorTexture.h"
 #include "RenderContext.h"
 #include "RenderUnit.h"
 #include "SurfaceInfo.h"
-#include "ColorTexture.h"
-#include "./BasePass.h"
+#include <memory>
 
 namespace acon {
 
 enum class BlendPassKind {
-    additive, multiplicative,
+    additive,
+    multiplicative,
 };
 
 struct AdditiveBlendPassInput {
@@ -30,7 +31,7 @@ public:
     explicit AdditiveBlendPass(const SurfaceInfo& surfaceInfo, BlendPassKind kind);
     ~AdditiveBlendPass();
     AdditiveBlendPassOutput render(RenderContext& ctx, const AdditiveBlendPassInput& input);
-    void resizeResources(const SurfaceInfo &surfaceInfo) override;
+    void resizeResources(const SurfaceInfo& surfaceInfo) override;
 
 private:
     std::unique_ptr<AdditiveBlendPassPimpl> m_pimpl;

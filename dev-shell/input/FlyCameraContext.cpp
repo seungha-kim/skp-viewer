@@ -1,12 +1,12 @@
 #include "FlyCameraContext.h"
 #include <glm/glm.hpp>
 
-void FlyCameraContext::handleKeyboardInput(InputContext &ctx) {
+void FlyCameraContext::handleKeyboardInput(InputContext& ctx) {
     updateMoveState(ctx);
     updateCamera(ctx);
 }
 
-void FlyCameraContext::handleMouseInput(InputContext &ctx, const MouseMoveEvent& mouseMoveEvent) {
+void FlyCameraContext::handleMouseInput(InputContext& ctx, const MouseMoveEvent& mouseMoveEvent) {
     auto xPos = mouseMoveEvent.x, yPos = mouseMoveEvent.y;
     float xOffset = xPos - m_lastMouseX, yOffset = yPos - m_lastMouseY;
 
@@ -23,7 +23,7 @@ void FlyCameraContext::resetLastMousePos(InputContext& ctx) {
     m_lastMouseY = ctx.mousePosY;
 }
 
-void FlyCameraContext::updateMoveState(InputContext &ctx) {
+void FlyCameraContext::updateMoveState(InputContext& ctx) {
     auto& ps = ctx.playbackState;
 
     if (ctx.isBeingPressed(KeyCommand::FLY_MODE_FORWARD)) {
@@ -70,7 +70,7 @@ void FlyCameraContext::updateMoveState(InputContext &ctx) {
     }
 }
 
-void FlyCameraContext::updateCamera(InputContext &ctx) {
+void FlyCameraContext::updateCamera(InputContext& ctx) {
     auto& cam = ctx.cameraManager.activeSceneMut().cameraStateMut();
     auto& ps = ctx.playbackState;
     float cameraDelta = 0.0f;

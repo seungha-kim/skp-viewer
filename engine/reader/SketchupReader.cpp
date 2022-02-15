@@ -1,9 +1,9 @@
 #include "SketchupReader.h"
-#include <vector>
-#include <map>
-#include <glm/gtc/type_ptr.hpp>
-#include <stdexcept>
 #include <algorithm>
+#include <glm/gtc/type_ptr.hpp>
+#include <map>
+#include <stdexcept>
+#include <vector>
 
 namespace acon {
 
@@ -30,7 +30,7 @@ struct SketchupUnitHolder {
 // https://extensions.sketchup.com/developers/sketchup_c_api/sketchup/struct_s_u_group_ref.html#a51133d3d309c5cdfdc35c7b3d13196c7
 struct SketchupObject {
     std::string name;
-    glm::mat4 transform{};
+    glm::mat4 transform {};
     std::vector<UnitId> units;
     std::vector<ObjectId> children;
 };
@@ -53,29 +53,21 @@ struct SketchupTextureMetaHolder {
 class SketchupTextureData: public TextureData {
 public:
     SketchupTextureData(int width, int height, int dataSize, int bitsPerPixel, std::vector<unsigned char>&& data)
-        : m_width(width)
-        , m_height(height)
-        , m_dataSize(dataSize)
-        , m_bitsPerPixel(bitsPerPixel)
-        , m_data(std::move(data)) {}
+            : m_width(width)
+            , m_height(height)
+            , m_dataSize(dataSize)
+            , m_bitsPerPixel(bitsPerPixel)
+            , m_data(std::move(data)) { }
 
     ~SketchupTextureData() override = default;
 
-    [[nodiscard]] const unsigned char *data() const override {
-        return m_data.data();
-    }
+    [[nodiscard]] const unsigned char* data() const override { return m_data.data(); }
 
-    [[nodiscard]] int dataSize() const override {
-        return m_dataSize;
-    }
+    [[nodiscard]] int dataSize() const override { return m_dataSize; }
 
-    [[nodiscard]] int width() const override {
-        return m_width;
-    }
+    [[nodiscard]] int width() const override { return m_width; }
 
-    [[nodiscard]] int height() const override {
-        return m_height;
-    }
+    [[nodiscard]] int height() const override { return m_height; }
 
     [[nodiscard]] bool hasAlpha() const override {
         // TODO: 32 아닌 경우?
@@ -97,9 +89,9 @@ SketchupReader::SketchupReader(std::string_view path)
         : m_unitHolder(std::make_unique<SketchupUnitHolder>())
         , m_objectHolder(std::make_unique<SketchupObjectHolder>())
         , m_textureMetaHolder(std::make_unique<SketchupTextureMetaHolder>())
-        , m_model{} {
+        , m_model {} {
     SUInitialize();
-    SUModelLoadStatus status{};
+    SUModelLoadStatus status {};
     check(SUModelCreateFromFileWithStatus(&m_model, path.data(), &status));
     if (status == SUModelLoadStatus_Success_MoreRecent) {
         // TODO: 로그 찍는 것 외에 programmatically 알 수 있게 처리
@@ -124,7 +116,7 @@ SketchupReader::SketchupReader(std::string_view path)
     }
 
     // material 전부 얻어오는 작업
-    size_t numMaterials{}, numMaterialsActual{};
+    size_t numMaterials {}, numMaterialsActual {};
     check(SUModelGetNumMaterials(m_model, &numMaterials));
     std::vector<SUMaterialRef> materials(numMaterials);
     check(SUModelGetMaterials(m_model, numMaterials, materials.data(), &numMaterialsActual));
@@ -135,15 +127,15 @@ SketchupReader::SketchupReader(std::string_view path)
     }
 
     for (const auto& [materialId, material]: m_materialMap) {
-        SUMaterialType type{};
+        SUMaterialType type {};
         check(SUMaterialGetType(material, &type));
         bool materialHasTexture = type == SUMaterialType_Textured || type == SUMaterialType_ColorizedTexture;
 
         if (materialHasTexture) {
             SUTextureRef texture;
             check(SUMaterialGetTexture(material, &texture));
-            size_t width{}, height{};
-            double s_scale{}, t_scale{};
+            size_t width {}, height {};
+            double s_scale {}, t_scale {};
             check(SUTextureGetDimensions(texture, &width, &height, &s_scale, &t_scale));
             SketchupTextureMeta meta {
                 .width = int(width),
@@ -157,13 +149,13 @@ SketchupReader::SketchupReader(std::string_view path)
             m_materialTextures[materialId] = textureId;
             m_textureMetaHolder->map[textureId] = meta;
         } else {
-            SUColor color{};
+            SUColor color {};
             check(SUMaterialGetColor(material, &color));
             m_materialColors[materialId] = convertColor(color);
         }
     }
 
-    SUEntitiesRef rootEntities{};
+    SUEntitiesRef rootEntities {};
     check(SUModelGetEntities(m_model, &rootEntities));
     SUTransformation rootTransform {
         .values = {
@@ -171,14 +163,14 @@ SketchupReader::SketchupReader(std::string_view path)
                 0.0, 1.0, 0.0, 0.0,
                 0.0, 0.0, 1.0, 0.0,
                 0.0, 0.0, 0.0, 1.0,
-        }
+        },
     };
     m_dfsStack.emplace(SketchupObjectDescription {
-            .entities = rootEntities,
-            .parentObjectId = {},
-            .name = "root",
-            .transform = convertTransform(rootTransform),
-            .inheritedMaterialOpt = {},
+        .entities = rootEntities,
+        .parentObjectId = {},
+        .name = "root",
+        .transform = convertTransform(rootTransform),
+        .inheritedMaterialOpt = {},
     });
     while (!m_dfsStack.empty()) {
         const auto desc = m_dfsStack.top();
@@ -187,7 +179,7 @@ SketchupReader::SketchupReader(std::string_view path)
         const auto objectId = processObject(desc);
 
         // group
-        size_t numGroups{}, numGroupsActual{};
+        size_t numGroups {}, numGroupsActual {};
         check(SUEntitiesGetNumGroups(desc.entities, &numGroups));
         std::vector<SUGroupRef> groups(numGroups);
         if (numGroups > 0) {
@@ -200,7 +192,7 @@ SketchupReader::SketchupReader(std::string_view path)
         }
 
         // component
-        size_t numInstances{}, numInstancesActual{};
+        size_t numInstances {}, numInstancesActual {};
         check(SUEntitiesGetNumInstances(desc.entities, &numInstances));
         std::vector<SUComponentInstanceRef> instances(numInstances);
         if (numInstances > 0) {
@@ -285,7 +277,7 @@ glm::vec4 SketchupReader::getMaterialColor(MaterialId id) const {
 ObjectId SketchupReader::processObject(const SketchupObjectDescription& desc) {
     std::vector<UnitId> units;
 
-    SUTextureWriterRef textureWriter{};
+    SUTextureWriterRef textureWriter {};
     SUTextureWriterCreate(&textureWriter);
 
     // face 전부 얻어오는 작업
@@ -301,12 +293,12 @@ ObjectId SketchupReader::processObject(const SketchupObjectDescription& desc) {
     std::map<UnitKey, std::vector<SUFaceRef>> unitsByMaterial;
     for (const auto& face: faces) {
         double area;
-        SUMaterialRef frontMaterial{}, backMaterial{};
+        SUMaterialRef frontMaterial {}, backMaterial {};
         const auto frontResult = SUFaceGetFrontMaterial(face, &frontMaterial);
         const auto backResult = SUFaceGetBackMaterial(face, &backMaterial);
         bool hasFrontMaterial = SU_ERROR_NONE == frontResult;
         bool hasBackMaterial = SU_ERROR_NONE == backResult;
-        UnitKey key{};
+        UnitKey key {};
         if (desc.inheritedMaterialOpt) {
             key.first = key.second = desc.inheritedMaterialOpt.value();
         }
@@ -321,30 +313,29 @@ ObjectId SketchupReader::processObject(const SketchupObjectDescription& desc) {
 
     for (const auto& [pair, unitFaces]: unitsByMaterial) {
         const auto& [frontMaterialId, backMaterialId] = pair;
-        std::vector<Triangle> triangles{};
-
+        std::vector<Triangle> triangles {};
 
         float front_s_scale = 1.0f, front_t_scale = 1.0f, back_s_scale = 1.0f, back_t_scale = 1.0f;
         // TODO: 텍스처 스케일 값이 이상한 문제 있어서 일단 주석 처리.
-//        if (frontMaterialId.has_value() && getMaterialHasTexture(frontMaterialId.value())) {
-//            auto frontTextureId = m_materialTextures.at(frontMaterialId.value());
-//            const auto& frontTextureMeta = m_textureMetaHolder->map.at(frontTextureId);
-//            front_s_scale = frontTextureMeta.s_scale;
-//            front_t_scale = frontTextureMeta.t_scale;
-//        }
-//        if (backMaterialId.has_value() && getMaterialHasTexture(backMaterialId.value())) {
-//            auto backTextureId = m_materialTextures.at(backMaterialId.value());
-//            const auto& backTextureMeta = m_textureMetaHolder->map.at(backTextureId);
-//            back_s_scale = backTextureMeta.s_scale;
-//            back_t_scale = backTextureMeta.t_scale;
-//        }
+        //        if (frontMaterialId.has_value() && getMaterialHasTexture(frontMaterialId.value())) {
+        //            auto frontTextureId = m_materialTextures.at(frontMaterialId.value());
+        //            const auto& frontTextureMeta = m_textureMetaHolder->map.at(frontTextureId);
+        //            front_s_scale = frontTextureMeta.s_scale;
+        //            front_t_scale = frontTextureMeta.t_scale;
+        //        }
+        //        if (backMaterialId.has_value() && getMaterialHasTexture(backMaterialId.value())) {
+        //            auto backTextureId = m_materialTextures.at(backMaterialId.value());
+        //            const auto& backTextureMeta = m_textureMetaHolder->map.at(backTextureId);
+        //            back_s_scale = backTextureMeta.s_scale;
+        //            back_t_scale = backTextureMeta.t_scale;
+        //        }
 
         for (const auto& face: unitFaces) {
             // tessellate
-            SUMeshHelperRef helper{};
+            SUMeshHelperRef helper {};
             check(SUMeshHelperCreate(&helper, face));
 
-            SUVector3D faceNormal{};
+            SUVector3D faceNormal {};
             check(SUFaceGetNormal(face, &faceNormal));
             auto glmFaceNormal = glm::normalize(convertVector3D(faceNormal));
 
@@ -367,11 +358,13 @@ ObjectId SketchupReader::processObject(const SketchupObjectDescription& desc) {
                 check(SUMeshHelperGetVertices(helper, numVertices, vertices.data(), &numVerticesActual));
                 check(SUMeshHelperGetNormals(helper, numVertices, normals.data(), &numVerticesActual));
             }
-//            check(SUMeshHelperGetFrontSTQCoords(helper, numVertices, frontTexCoords.data(), &numVerticesActual));
-//            check(SUMeshHelperGetBackSTQCoords(helper, numVertices, backTexCoords.data(), &numVerticesActual));
-//            check(SUTextureWriterGetFrontFaceUVCoords(textureWriter, face, numVertices, vertices.data(), frontTexCoords.data()));
-//            check(SUTextureWriterGetBackFaceUVCoords(textureWriter, face, numVertices, vertices.data(), backTexCoords.data()));
-            SUUVHelperRef uvHelper{};
+            //            check(SUMeshHelperGetFrontSTQCoords(helper, numVertices, frontTexCoords.data(),
+            //            &numVerticesActual)); check(SUMeshHelperGetBackSTQCoords(helper, numVertices,
+            //            backTexCoords.data(), &numVerticesActual));
+            //            check(SUTextureWriterGetFrontFaceUVCoords(textureWriter, face, numVertices, vertices.data(),
+            //            frontTexCoords.data())); check(SUTextureWriterGetBackFaceUVCoords(textureWriter, face,
+            //            numVertices, vertices.data(), backTexCoords.data()));
+            SUUVHelperRef uvHelper {};
             SUFaceGetUVHelper(face, true, true, textureWriter, &uvHelper);
 
             // NOTE: MeshHelper, TextureWriter, UVHelper 모두 scale 이상한 문제 있었음
@@ -382,7 +375,7 @@ ObjectId SketchupReader::processObject(const SketchupObjectDescription& desc) {
             }
 
             for (int i = 0; i < numTriangles; i++) {
-                Triangle triangle{};
+                Triangle triangle {};
 
                 for (int j = 0; j < 3; j++) {
                     size_t index = indices[3 * i + j];
@@ -391,11 +384,11 @@ ObjectId SketchupReader::processObject(const SketchupObjectDescription& desc) {
                     auto btc = convertTexCoord(backTexCoords[index], back_s_scale, back_t_scale);
 
                     triangle.vertices[j] = Vertex {
-                            .position = convertPoint3D(vertices[index]),
-                            .normal = convertVector3D(normals[index]),
-                            .faceNormal = glmFaceNormal,
-                            .frontTexCoord = ftc,
-                            .backTexCoord = btc,
+                        .position = convertPoint3D(vertices[index]),
+                        .normal = convertVector3D(normals[index]),
+                        .faceNormal = glmFaceNormal,
+                        .frontTexCoord = ftc,
+                        .backTexCoord = btc,
                     };
                     triangle.vertices[j].frontTexCoord = ftc;
                     triangle.vertices[j].backTexCoord = btc;
@@ -407,11 +400,13 @@ ObjectId SketchupReader::processObject(const SketchupObjectDescription& desc) {
         }
 
         auto unitId = m_unitCount++;
-        m_unitHolder->map.emplace(unitId, SketchupUnit {
+        m_unitHolder->map.emplace(
+            unitId,
+            SketchupUnit {
                 .frontMaterialId = frontMaterialId,
                 .backMaterialId = backMaterialId,
                 .triangles = triangles,
-        });
+            });
         units.push_back(unitId);
     }
 
@@ -443,9 +438,9 @@ TextureId SketchupReader::getMaterialTexture(MaterialId materialId) const {
 
 std::unique_ptr<TextureData> SketchupReader::copyTextureData(TextureId textureId) const {
     const auto& texture = m_textureMap.at(textureId);
-    SUImageRepRef image{};
-    size_t dataSize{}, bitsPerPixel{};
-    size_t width{}, height{};
+    SUImageRepRef image {};
+    size_t dataSize {}, bitsPerPixel {};
+    size_t width {}, height {};
     std::vector<unsigned char> data;
 
     SUImageRepCreate(&image);
@@ -482,7 +477,7 @@ TagId SketchupReader::getTag(int index) const {
 
 std::string SketchupReader::getTagName(TagId id) const {
     const auto layerRef = m_tagMap.at(id);
-    SUStringRef nameRef{};
+    SUStringRef nameRef {};
     SUStringCreate(&nameRef);
     check(SULayerGetName(layerRef, &nameRef));
     return convertAndReleaseString(nameRef);
@@ -509,41 +504,41 @@ bool SketchupReader::isValidLayer(SULayerRef layerRef) const {
 void SketchupReader::pushChildren(ObjectId id, SUComponentInstanceRef instance) {
     const auto drawingRef = SUComponentInstanceToDrawingElement(instance);
 
-    std::optional<TagId> tagIdOpt{};
-    SULayerRef layerRef{};
+    std::optional<TagId> tagIdOpt {};
+    SULayerRef layerRef {};
     check(SUDrawingElementGetLayer(drawingRef, &layerRef));
     if (isValidLayer(layerRef)) {
         tagIdOpt = m_tagInverse.at(layerRef);
     }
 
     // TODO: reuse definition - Mesh 단위 추가
-    SUComponentDefinitionRef definition{};
-    SUEntitiesRef definitionEntities{};
+    SUComponentDefinitionRef definition {};
+    SUEntitiesRef definitionEntities {};
     check(SUComponentInstanceGetDefinition(instance, &definition));
     check(SUComponentDefinitionGetEntities(definition, &definitionEntities));
 
-    SUStringRef nameRef{};
-    SUTransformation transform{};
+    SUStringRef nameRef {};
+    SUTransformation transform {};
     SUComponentInstanceGetName(instance, &nameRef);
     SUComponentInstanceGetTransform(instance, &transform);
 
     const auto name = convertAndReleaseString(nameRef);
 
-    std::optional<MaterialId> inheritedMaterialOpt{};
+    std::optional<MaterialId> inheritedMaterialOpt {};
     auto el = SUComponentInstanceToDrawingElement(instance);
-    SUMaterialRef groupMaterial{};
+    SUMaterialRef groupMaterial {};
     auto result = SUDrawingElementGetMaterial(el, &groupMaterial);
     if (result == SU_ERROR_NONE) {
         inheritedMaterialOpt = m_materialInverse.at(groupMaterial);
     }
 
     m_dfsStack.emplace(SketchupObjectDescription {
-            .entities = definitionEntities,
-            .parentObjectId = id,
-            .name = name,
-            .transform = convertTransform(transform),
-            .inheritedMaterialOpt = inheritedMaterialOpt,
-            .tagIdOpt = tagIdOpt,
+        .entities = definitionEntities,
+        .parentObjectId = id,
+        .name = name,
+        .transform = convertTransform(transform),
+        .inheritedMaterialOpt = inheritedMaterialOpt,
+        .tagIdOpt = tagIdOpt,
     });
 }
 
@@ -561,10 +556,7 @@ static glm::vec2 convertTexCoord(SUUVQ uvq, float s_scale, float t_scale) {
     if (q == 0.0) {
         q = 1.0;
     }
-    return {
-        uvq.u / q * s_scale,
-        uvq.v / q * t_scale
-    };
+    return {uvq.u / q * s_scale, uvq.v / q * t_scale};
 }
 
 static glm::vec3 convertVector3D(SUVector3D vector) {
@@ -595,16 +587,12 @@ static void flipImageVertically(std::vector<unsigned char>& data, int width, int
     for (int row = 0; row < height / 2; row++) {
         int upperStart = rowRange * row;
         int lowerStart = rowRange * (height - 1 - row);
-        std::swap_ranges(
-                data.begin() + upperStart,
-                data.begin() + upperStart + rowRange,
-                data.begin() + lowerStart
-        );
+        std::swap_ranges(data.begin() + upperStart, data.begin() + upperStart + rowRange, data.begin() + lowerStart);
     }
 }
 
 std::string convertAndReleaseString(SUStringRef stringRef) {
-    size_t len{};
+    size_t len {};
     SUStringGetUTF8Length(stringRef, &len);
     std::string result(len, '0');
     SUStringGetUTF8(stringRef, len, result.data(), &len);

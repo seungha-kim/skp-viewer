@@ -5,31 +5,31 @@
 namespace acon {
 
 Renderer::Renderer(const SurfaceInfo& surfaceInfo)
-    : m_sunlightPass(surfaceInfo)
-    , m_mainPass(surfaceInfo)
-    , m_gaussianBlurPass(surfaceInfo)
-    , m_additiveBlendPass(surfaceInfo, BlendPassKind::additive)
-    , m_brightFilterPass(surfaceInfo)
-    , m_toneMapPass(surfaceInfo)
-    , m_outlinePass(surfaceInfo)
-    , m_outlineMultiplicativeBlendPass(surfaceInfo, BlendPassKind::multiplicative)
-    , m_colorBalancePass(surfaceInfo) {}
+        : m_sunlightPass(surfaceInfo)
+        , m_mainPass(surfaceInfo)
+        , m_gaussianBlurPass(surfaceInfo)
+        , m_additiveBlendPass(surfaceInfo, BlendPassKind::additive)
+        , m_brightFilterPass(surfaceInfo)
+        , m_toneMapPass(surfaceInfo)
+        , m_outlinePass(surfaceInfo)
+        , m_outlineMultiplicativeBlendPass(surfaceInfo, BlendPassKind::multiplicative)
+        , m_colorBalancePass(surfaceInfo) { }
 
-void Renderer::render(RenderContext &ctx) {
+void Renderer::render(RenderContext& ctx) {
     glClearColor(0.2f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     const SunlightPassInput sunlightPassInput {
-            .units = m_unitsForRender,
+        .units = m_unitsForRender,
     };
     const auto sunlightPassOutput = m_sunlightPass.render(ctx, sunlightPassInput);
 
     const MainPassInput mainPassInput {
-            .units = m_unitsForRender,
-            .lightSpaceMatrix = sunlightPassOutput.lightSpaceMatrix,
-            .shadowDepthTexture = sunlightPassOutput.depthTexture,
-            .shadowMix = 0.0f, // TODO
-            .query = ctx.query,
+        .units = m_unitsForRender,
+        .lightSpaceMatrix = sunlightPassOutput.lightSpaceMatrix,
+        .shadowDepthTexture = sunlightPassOutput.depthTexture,
+        .shadowMix = 0.0f, // TODO
+        .query = ctx.query,
     };
     const auto mainPassOutput = m_mainPass.render(ctx, mainPassInput);
 
@@ -41,8 +41,8 @@ void Renderer::render(RenderContext &ctx) {
 
     m_gaussianBlurPass.setEnabled(m_renderOptions.enableGaussianBlur);
     const GaussianBlurPassInput gaussianBlurPassInput {
-            .colorTexture = brightFilterPassOutput.brightColorTexture,
-            .iteration = m_renderOptions.gaussianBlurIteration,
+        .colorTexture = brightFilterPassOutput.brightColorTexture,
+        .iteration = m_renderOptions.gaussianBlurIteration,
     };
     const auto gaussianBlurPassOutput = m_gaussianBlurPass.render(ctx, gaussianBlurPassInput);
 
@@ -61,7 +61,7 @@ void Renderer::render(RenderContext &ctx) {
     const auto toneMapPassOutput = m_toneMapPass.render(ctx, toneMapPassInput);
 
     const ColorBalancePassInput colorBalancePassInput {
-            .colorTexture = toneMapPassOutput.colorTexture,
+        .colorTexture = toneMapPassOutput.colorTexture,
     };
     m_colorBalancePass.setColorBalance(m_renderOptions.colorBalance);
     const auto colorBalancePassOutput = m_colorBalancePass.render(ctx, colorBalancePassInput);
@@ -84,7 +84,7 @@ void Renderer::render(RenderContext &ctx) {
     m_textureRenderer.render(ctx);
 }
 
-void Renderer::resizeResources(const SurfaceInfo &surfaceInfo) {
+void Renderer::resizeResources(const SurfaceInfo& surfaceInfo) {
     m_sunlightPass.resizeResources(surfaceInfo);
     m_mainPass.resizeResources(surfaceInfo);
     m_colorBalancePass.resizeResources(surfaceInfo);
@@ -96,14 +96,14 @@ void Renderer::resizeResources(const SurfaceInfo &surfaceInfo) {
     m_outlineMultiplicativeBlendPass.resizeResources(surfaceInfo);
 }
 
-RenderOptions &Renderer::renderOptionsMut() {
+RenderOptions& Renderer::renderOptionsMut() {
     return m_renderOptions;
 }
 
-void Renderer::syncVisibility(const RuntimeModel &runtimeModel, const RenderModel &renderModel) {
+void Renderer::syncVisibility(const RuntimeModel& runtimeModel, const RenderModel& renderModel) {
     if (runtimeModel.getObjectVisibilityUpdated()) {
         m_unitsForRender.clear();
-        for (const auto &unit: renderModel.units()) {
+        for (const auto& unit: renderModel.units()) {
             if (runtimeModel.getObjectVisibility(unit->objectId())) {
                 m_unitsForRender.push_back(unit.get());
             }

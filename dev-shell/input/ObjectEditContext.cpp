@@ -1,5 +1,3 @@
 #include "ObjectEditContext.h"
 
-void ObjectEditContext::handleKeyboardInput(InputContext &ctx) {
-
-}
+void ObjectEditContext::handleKeyboardInput(InputContext& ctx) { }

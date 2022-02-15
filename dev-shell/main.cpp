@@ -1,13 +1,12 @@
-#include <filesystem>
 #include "Window.h"
-#include "util.h"
 #include "nfd.h"
+#include "util.h"
+#include <filesystem>
 
 const unsigned int SCR_WIDTH = 1366;
 const unsigned int SCR_HEIGHT = 768;
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
     NFD_Init();
 
     std::unique_ptr<acon::AbstractReader> model;
@@ -20,10 +19,10 @@ int main(int argc, char* argv[])
             return 1;
         }
     } else {
-        nfdchar_t *outPath;
+        nfdchar_t* outPath;
         nfdfilteritem_t filterItem[2] = {
-                { "SketchUp", "skp" },
-                { "Wavefront OBJ", "obj" },
+            {"SketchUp", "skp"},
+            {"Wavefront OBJ", "obj"},
         };
         nfdresult_t result = NFD_OpenDialog(&outPath, filterItem, 2, NULL);
         if (result == NFD_OKAY) {
@@ -37,9 +36,8 @@ int main(int argc, char* argv[])
             return 1;
         }
     }
-    Window window{SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", *model};
+    Window window {SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", *model};
     window.mainLoop();
     NFD_Quit();
     return 0;
 }
-

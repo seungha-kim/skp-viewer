@@ -1,8 +1,9 @@
 #include "InputController.h"
 #include <variant>
 
-void InputController::handleMouseInput(InputContext &ctx) {
-    if (!ctx.mouseEvent) return;
+void InputController::handleMouseInput(InputContext& ctx) {
+    if (!ctx.mouseEvent)
+        return;
     const auto& mouseEvent = ctx.mouseEvent.value();
     if (auto* moveEvent = std::get_if<MouseMoveEvent>(&mouseEvent)) {
         if (m_cameraRotateMode) {
@@ -16,12 +17,12 @@ void InputController::handleMouseInput(InputContext &ctx) {
     }
 }
 
-void InputController::handleKeyboardInput(InputContext &ctx) {
+void InputController::handleKeyboardInput(InputContext& ctx) {
     if (ctx.isBeingPressed(KeyCommand::EXIT)) {
         ctx.shouldClose = true;
     }
 
-    if (!m_guiFocused && ctx.isJustPressed(KeyCommand::FLY_MODE_TOGGLE )) {
+    if (!m_guiFocused && ctx.isJustPressed(KeyCommand::FLY_MODE_TOGGLE)) {
         if (m_cameraRotateMode) {
             m_cameraRotateMode = false;
         } else {

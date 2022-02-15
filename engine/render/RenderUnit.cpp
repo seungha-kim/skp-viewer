@@ -13,13 +13,14 @@ struct RenderUnitTempData {
     const std::unordered_map<TextureId, std::unique_ptr<RenderTexture>>& textures;
 };
 
-RenderUnit::RenderUnit(UnitId id,
-                       ObjectId objectId,
-                       std::vector<RenderVertex>&& vertices,
-                       glm::mat4 transform,
-                       RenderMaterial frontMaterial,
-                       RenderMaterial backMaterial,
-                       std::unordered_map<TextureId, std::unique_ptr<RenderTexture>>& textures)
+RenderUnit::RenderUnit(
+    UnitId id,
+    ObjectId objectId,
+    std::vector<RenderVertex>&& vertices,
+    glm::mat4 transform,
+    RenderMaterial frontMaterial,
+    RenderMaterial backMaterial,
+    std::unordered_map<TextureId, std::unique_ptr<RenderTexture>>& textures)
         : m_id(id)
         , m_transform(transform)
         , m_objectId(objectId) {
@@ -77,7 +78,8 @@ std::optional<GLuint> RenderUnit::backTextureName() const {
 }
 
 void RenderUnit::prepareToRender() {
-    if (!m_tempData) return;
+    if (!m_tempData)
+        return;
 
     const auto frontMaterial = m_tempData->frontMaterial;
     const auto backMaterial = m_tempData->backMaterial;

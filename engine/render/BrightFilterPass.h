@@ -1,10 +1,10 @@
 #pragma once
-#include <memory>
+#include "BasePass.h"
+#include "ColorTexture.h"
 #include "RenderContext.h"
 #include "RenderUnit.h"
 #include "SurfaceInfo.h"
-#include "ColorTexture.h"
-#include "BasePass.h"
+#include <memory>
 
 namespace acon {
 
@@ -24,7 +24,7 @@ public:
     explicit BrightFilterPass(const SurfaceInfo& surfaceInfo);
     ~BrightFilterPass();
     BrightFilterPassOutput render(RenderContext& ctx, const BrightFilterPassInput& input);
-    void resizeResources(const SurfaceInfo &surfaceInfo) override;
+    void resizeResources(const SurfaceInfo& surfaceInfo) override;
 
 private:
     std::unique_ptr<BrightFilterPassPimpl> m_pimpl;

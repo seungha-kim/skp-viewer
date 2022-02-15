@@ -1,6 +1,6 @@
 #pragma once
 
-enum class KeyCommand: unsigned {
+enum class KeyCommand : unsigned {
     EXIT = 0,
 
     FLY_MODE_TOGGLE = 10,

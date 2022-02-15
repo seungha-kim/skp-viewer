@@ -1,7 +1,7 @@
 #pragma once
-#include <vector>
-#include "Scene.h"
 #include "../render/SurfaceInfo.h"
+#include "Scene.h"
+#include <vector>
 
 namespace acon {
 
@@ -16,6 +16,7 @@ public:
     const std::vector<Scene>& scenes();
     bool setActiveScene(int index);
     void updateAspectRatio(const SurfaceInfo& surfaceInfo);
+
 private:
     std::vector<Scene> m_scenes;
     int m_activeSceneIndex = 0;

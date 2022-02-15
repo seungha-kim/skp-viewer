@@ -24,13 +24,9 @@ struct CameraState {
         return result;
     }
 
-    [[nodiscard]] glm::vec3 left() const {
-        return glm::cross(up, front());
-    }
+    [[nodiscard]] glm::vec3 left() const { return glm::cross(up, front()); }
 
-    [[nodiscard]] glm::mat4 viewMatrix() const {
-        return glm::lookAt(pos, pos + front(), up);
-    }
+    [[nodiscard]] glm::mat4 viewMatrix() const { return glm::lookAt(pos, pos + front(), up); }
 
     [[nodiscard]] glm::mat4 projectionMatrix() const {
         return glm::perspective(glm::radians(fovyDeg), aspectWidth / aspectHeight, zNear, zFar);
