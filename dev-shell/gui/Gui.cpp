@@ -52,6 +52,7 @@ void Gui::processRenderInfo(GuiContext &ctx) {
     ImGui::Text("framebuffer size: %d * %d", dim.physicalWidth, dim.physicalHeight);
     ImGui::Text("pixel scale: %.0f * %.0f", dim.contentScaleX, dim.contentScaleY);
     ImGui::Text("render time: %.0f ms", deltaTimeMs);
+    ImGui::Text("render fps: %.1f", 1000.0f / deltaTimeMs);
 //    ImGui::Text("WantCaptureMouse: %d", ctx.inputState.isGuiFocused);
     ImGui::PlotHistogram("", deltasHistogram, this, 100, 0, nullptr, 0.0f, 100.0f, ImVec2(0, 20));
     ImGui::Checkbox("Continuous", &ctx.playbackState.forceContinuous);
