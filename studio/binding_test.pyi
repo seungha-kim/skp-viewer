@@ -5,10 +5,16 @@ ObjectId = int
 
 def init() -> None: ...
 
-
 class SurfaceInfo:
-    def __init__(self, logical_width: int, logical_height: int, physical_width: int, physical_height: int, content_scale_x: float, content_scale_y: float): ...
-
+    def __init__(
+        self,
+        logical_width: int,
+        logical_height: int,
+        physical_width: int,
+        physical_height: int,
+        content_scale_x: float,
+        content_scale_y: float,
+    ): ...
 
 class Engine:
     def __init__(self, reader: AbstractReader): ...
@@ -18,7 +24,6 @@ class Engine:
     def currentCameraStateMut(self) -> CameraState: ...
     def runtimeModelMut(self) -> RuntimeModel: ...
     def prepareToRender(self, surface_info: SurfaceInfo) -> None: ...
-
 
 class RuntimeModel:
     def rootObjectId(self) -> ObjectId: ...
@@ -32,7 +37,6 @@ class RuntimeModel:
     def setTagVisibility(self, id: TagId, visibility: bool) -> None: ...
     def selectedObjectIdOpt(self) -> Optional[ObjectId]: ...
     def updateObjectSelectionById(self, object_id: Optional[ObjectId]): ...
-
 
 class AbstractReader: ...
 
@@ -51,7 +55,6 @@ class Vec3:
     x: float
     y: float
     z: float
-
 
 class CameraState:
     def __init__(self) -> None: ...

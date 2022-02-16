@@ -11,7 +11,7 @@ class MouseButton(Flag):
     RIGHT = auto()
 
     @classmethod
-    def from_qt_buttons(cls, buttons: Qt.MouseButtons) -> 'MouseButton':
+    def from_qt_buttons(cls, buttons: Qt.MouseButtons) -> "MouseButton":
         result = cls.NONE
         if buttons & Qt.LeftButton:
             result |= cls.LEFT
@@ -23,10 +23,22 @@ class MouseButton(Flag):
 
 
 class AbstractInputController(ABC):
-    def handle_key(self, key: Qt.Key, modifiers: Qt.KeyboardModifiers, pressed: bool) -> bool:
+    def handle_key(
+        self,
+        key: Qt.Key,
+        modifiers: Qt.KeyboardModifiers,
+        pressed: bool,
+    ) -> bool:
         pass
 
-    def handle_mouse_move(self, x: int, y: int, width: int, height: int, buttons: MouseButton) -> None:
+    def handle_mouse_move(
+        self,
+        x: int,
+        y: int,
+        width: int,
+        height: int,
+        buttons: MouseButton,
+    ) -> None:
         pass
 
     def update(self) -> None:
@@ -37,17 +49,32 @@ class AbstractInputController(ABC):
 
 
 class InputControllerOverriding(AbstractInputController):
-    def __init__(self, overridden: AbstractInputController, overrider: AbstractInputController):
+    def __init__(
+        self,
+        overridden: AbstractInputController,
+        overrider: AbstractInputController,
+    ):
         self._overridden = overridden
         self._overrider = overrider
 
-    def handle_key(self, key: Qt.Key, modifiers: Qt.KeyboardModifiers, pressed: bool) -> bool:
-        return (
-                self._overrider.handle_key(key, modifiers, pressed)
-                or self._overridden.handle_key(key, modifiers, pressed)
-        )
+    def handle_key(
+        self,
+        key: Qt.Key,
+        modifiers: Qt.KeyboardModifiers,
+        pressed: bool,
+    ) -> bool:
+        return self._overrider.handle_key(
+            key, modifiers, pressed
+        ) or self._overridden.handle_key(key, modifiers, pressed)
 
-    def handle_mouse_move(self, x: int, y: int, width: int, height: int, buttons: MouseButton) -> None:
+    def handle_mouse_move(
+        self,
+        x: int,
+        y: int,
+        width: int,
+        height: int,
+        buttons: MouseButton,
+    ) -> None:
         self._overrider.handle_mouse_move(x, y, width, height, buttons)
 
     def update(self) -> None:
@@ -55,7 +82,10 @@ class InputControllerOverriding(AbstractInputController):
         self._overrider.update()
 
     def should_render_continuously(self) -> bool:
-        return self._overrider.should_render_continuously() or self._overridden.should_render_continuously()
+        return (
+            self._overrider.should_render_continuously()
+            or self._overridden.should_render_continuously()
+        )
 
     @property
     def overridden(self) -> AbstractInputController:

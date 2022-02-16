@@ -18,7 +18,11 @@ class HierarchyPanelController:
 
 
 class HierarchyView(QTreeWidget):
-    def __init__(self, delegate: HierarchyPanelController.Delegate, runtime_model: RuntimeModel):
+    def __init__(
+        self,
+        delegate: HierarchyPanelController.Delegate,
+        runtime_model: RuntimeModel,
+    ):
         self._delegate = delegate
         super().__init__()
         self._itemMap: dict[int, QTreeWidgetItem] = {}
@@ -43,7 +47,9 @@ class HierarchyView(QTreeWidget):
             break
         self._delegate.render_immediately()
 
-    def _create_item(self, object_id: int, parent: Optional[QTreeWidgetItem]) -> QTreeWidgetItem:
+    def _create_item(
+        self, object_id: int, parent: Optional[QTreeWidgetItem]
+    ) -> QTreeWidgetItem:
         rt = self._runtime_model
         oid = object_id
 

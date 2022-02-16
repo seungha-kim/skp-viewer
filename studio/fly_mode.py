@@ -65,31 +65,45 @@ class FlyModeController(AbstractInputController):
     _mouse_yaw_speed = 0.3
     _mouse_pitch_speed = 0.3
     _pitch_limit = 80
-    _key_map = KeyMap((
-        (Qt.Key_W, Qt.NoModifier, FlyModeKeyCommand.FORWARD),
-        (Qt.Key_S, Qt.NoModifier, FlyModeKeyCommand.BACKWARD),
-        (Qt.Key_A, Qt.NoModifier, FlyModeKeyCommand.LEFT),
-        (Qt.Key_D, Qt.NoModifier, FlyModeKeyCommand.RIGHT),
-        (Qt.Key_Q, Qt.NoModifier, FlyModeKeyCommand.DOWNWARD),
-        (Qt.Key_E, Qt.NoModifier, FlyModeKeyCommand.UPWARD),
-        (Qt.Key_Up, Qt.KeypadModifier, FlyModeKeyCommand.PITCH_UP),
-        (Qt.Key_Down, Qt.KeypadModifier, FlyModeKeyCommand.PITCH_DOWN),
-        (Qt.Key_Left, Qt.KeypadModifier, FlyModeKeyCommand.YAW_LEFT),
-        (Qt.Key_Right, Qt.KeypadModifier, FlyModeKeyCommand.YAW_RIGHT),
-        (Qt.Key_Escape, Qt.NoModifier, FlyModeKeyCommand.EXIT),
-    ))
+    _key_map = KeyMap(
+        (
+            (Qt.Key_W, Qt.NoModifier, FlyModeKeyCommand.FORWARD),
+            (Qt.Key_S, Qt.NoModifier, FlyModeKeyCommand.BACKWARD),
+            (Qt.Key_A, Qt.NoModifier, FlyModeKeyCommand.LEFT),
+            (Qt.Key_D, Qt.NoModifier, FlyModeKeyCommand.RIGHT),
+            (Qt.Key_Q, Qt.NoModifier, FlyModeKeyCommand.DOWNWARD),
+            (Qt.Key_E, Qt.NoModifier, FlyModeKeyCommand.UPWARD),
+            (Qt.Key_Up, Qt.KeypadModifier, FlyModeKeyCommand.PITCH_UP),
+            (Qt.Key_Down, Qt.KeypadModifier, FlyModeKeyCommand.PITCH_DOWN),
+            (Qt.Key_Left, Qt.KeypadModifier, FlyModeKeyCommand.YAW_LEFT),
+            (Qt.Key_Right, Qt.KeypadModifier, FlyModeKeyCommand.YAW_RIGHT),
+            (Qt.Key_Escape, Qt.NoModifier, FlyModeKeyCommand.EXIT),
+        )
+    )
 
     def __init__(self, delegate: Delegate):
         self._delegate = delegate
 
-    def handle_key(self, key: Qt.Key, modifiers: Qt.KeyboardModifiers, pressed: bool) -> bool:
+    def handle_key(
+        self,
+        key: Qt.Key,
+        modifiers: Qt.KeyboardModifiers,
+        pressed: bool,
+    ) -> bool:
         if matched := self._key_map.match(key, modifiers):
             self._handle_command(matched, pressed)
             return True
         else:
             return False
 
-    def handle_mouse_move(self, x: int, y: int, width: int, height: int, buttons: MouseButton) -> None:
+    def handle_mouse_move(
+        self,
+        x: int,
+        y: int,
+        width: int,
+        height: int,
+        buttons: MouseButton,
+    ) -> None:
         # 마우스 커서를 숨기는 전형적 first person controller 시도해 봤는데,
         # 아래 글과 같이 뚝뚝 끊기는 문제가 있어서 일단 키보드 방향키로 카메라 회전
         # https://forum.qt.io/topic/123869/capturing-the-mouse-inside-a-qopenglwidget/10
