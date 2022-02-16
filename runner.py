@@ -47,18 +47,29 @@ class RunnerCommand:
 
 def config():
     os.makedirs(release_build_dir, exist_ok=True)
-    subprocess.run(["cmake", "-B", release_build_dir, "-D", "CMAKE_BUILD_TYPE=Release"], check=True)
+    subprocess.run(
+        ["cmake", "-B", release_build_dir, "-D", "CMAKE_BUILD_TYPE=Release"], check=True
+    )
 
 
 def build_binding():
     if not os.path.isdir(release_build_dir):
         config()
-    cmd = ["cmake", "--build", release_build_dir, "--config", "Release", "--target", "binding_test"]
+    cmd = [
+        "cmake",
+        "--build",
+        release_build_dir,
+        "--config",
+        "Release",
+        "--target",
+        "binding_test",
+    ]
     subprocess.run(cmd, check=True)
 
 
 def run_app(command):
     from studio.app import App
+
     App(command.opts).run()
 
 
@@ -71,5 +82,5 @@ def main():
         run_app(command)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
