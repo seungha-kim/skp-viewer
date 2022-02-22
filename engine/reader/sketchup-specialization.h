@@ -1,8 +1,9 @@
 #pragma once
 
+#include <SketchUpAPI/sketchup.h>
+
 // SU 타입을 unordered_map 의 키로 쓰기 위한 코드
 // https://stackoverflow.com/questions/8157937/how-to-specialize-stdhashkeyoperator-for-user-defined-type-in-unordered
-
 namespace std {
 template <> struct hash<SUMaterialRef> {
     size_t operator()(const SUMaterialRef& x) const { return size_t(x.ptr); }
