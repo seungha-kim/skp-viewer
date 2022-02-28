@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
             return 1;
         }
     }
-    Window window {SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", *model};
+    Window window {SCR_WIDTH, SCR_HEIGHT, "SKP Viewer", *model};
     window.mainLoop();
     NFD_Quit();
     return 0;
