@@ -188,7 +188,7 @@ SketchupReader::SketchupReader(std::string_view path)
 
         for (const auto& group: groups) {
             auto instance = SUGroupToComponentInstance(group);
-            pushChildren(objectId, instance);
+            pushChildren(objectId, instance, desc.inheritedMaterialOpt);
         }
 
         // component
@@ -200,7 +200,7 @@ SketchupReader::SketchupReader(std::string_view path)
         }
 
         for (const auto& instance: instances) {
-            pushChildren(objectId, instance);
+            pushChildren(objectId, instance, desc.inheritedMaterialOpt);
         }
     }
 }
@@ -501,7 +501,7 @@ bool SketchupReader::isValidLayer(SULayerRef layerRef) const {
     return layerRef.ptr != m_defaultLayerRef.ptr;
 }
 
-void SketchupReader::pushChildren(ObjectId id, SUComponentInstanceRef instance) {
+void SketchupReader::pushChildren(ObjectId id, SUComponentInstanceRef instance, std::optional<MaterialId> inheritedMaterialOpt) {
     const auto drawingRef = SUComponentInstanceToDrawingElement(instance);
 
     std::optional<TagId> tagIdOpt {};
@@ -524,7 +524,6 @@ void SketchupReader::pushChildren(ObjectId id, SUComponentInstanceRef instance) 
 
     const auto name = convertAndReleaseString(nameRef);
 
-    std::optional<MaterialId> inheritedMaterialOpt {};
     auto el = SUComponentInstanceToDrawingElement(instance);
     SUMaterialRef groupMaterial {};
     auto result = SUDrawingElementGetMaterial(el, &groupMaterial);

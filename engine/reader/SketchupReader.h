@@ -122,7 +122,7 @@ private:
     std::stack<SketchupObjectDescription> m_dfsStack;
 
     ObjectId processObject(const SketchupObjectDescription& desc);
-    void pushChildren(ObjectId id, SUComponentInstanceRef instance);
+    void pushChildren(ObjectId id, SUComponentInstanceRef instance, std::optional<MaterialId> inheritedMaterialOpt);
     [[nodiscard]] bool isValidLayer(SULayerRef layerRef) const;
 };
 
