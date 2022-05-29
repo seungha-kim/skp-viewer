@@ -7,11 +7,13 @@ struct Material {
     float shininess;
 };
 
-in vec3 normal;
-in vec3 fragPos;
+in vec3 normalVs;
+in vec3 fragPosWs;
+in vec3 fragPosVs;
 in vec4 fragPosLightSpace;
 in vec2 frontTexCoord;
 in vec2 backTexCoord;
+flat in float frontFacing;
 
 uniform vec3 cameraPos;
 uniform vec3 sunLightDir;
@@ -40,7 +42,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     float currentDepth = projCoords.z;
     // check whether current frag pos is in shadow
     // float shadow = currentDepth > closestDepth  ? 1.0 : 0.0; -> shadow acne
-    float bias = max(0.05 * (1.0 - dot(normal, -sunLightDir)), 0.005);
+    float bias = max(0.05 * (1.0 - dot(normalVs, -sunLightDir)), 0.005);
     float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
     return shadow;
 }
@@ -50,13 +52,13 @@ void main() {
         FragColor = vec4(1.0, 1.0, 0.0, 1.0);
         return;
     }
-    vec3 norm = normalize(normal);
+    vec3 norm = normalize(normalVs);
     vec3 toLight = -normalize(sunLightDir);
     vec3 lightColor = vec3(1.0);
 
     vec3 color; // TODO: vec4 alpha
 
-    if (gl_FrontFacing) {
+    if (frontFacing > 0) {
         color = frontColor;
         color = mix(color, vec3(texture(frontTexture, frontTexCoord)), frontTextureMix);
     } else {
