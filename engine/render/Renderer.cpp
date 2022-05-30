@@ -32,39 +32,39 @@ void Renderer::render(RenderContext& ctx) {
         .query = ctx.query,
     };
     const auto mainPassOutput = m_mainPass.render(ctx, mainPassInput);
-
-    const BrightFilterPassInput brightFilterPassInput {
-        .colorTexture = mainPassOutput.colorTexture,
-        .threshold = m_renderOptions.brightFilterThreshold,
-    };
-    const auto brightFilterPassOutput = m_brightFilterPass.render(ctx, brightFilterPassInput);
-
-    m_gaussianBlurPass.setEnabled(m_renderOptions.enableGaussianBlur);
-    const GaussianBlurPassInput gaussianBlurPassInput {
-        .colorTexture = brightFilterPassOutput.brightColorTexture,
-        .iteration = m_renderOptions.gaussianBlurIteration,
-    };
-    const auto gaussianBlurPassOutput = m_gaussianBlurPass.render(ctx, gaussianBlurPassInput);
-
-    const AdditiveBlendPassInput additiveBlendPassInput {
-        .colorTexture1 = mainPassOutput.colorTexture,
-        .colorTexture2 = gaussianBlurPassOutput.colorTexture,
-    };
-    const auto additivePassOutput = m_additiveBlendPass.render(ctx, additiveBlendPassInput);
-
-    const ToneMapPassInput toneMapPassInput {
-        .colorTexture = additivePassOutput.colorTexture,
-        .exposure = m_renderOptions.toneMapExposure,
-        .gamma = m_renderOptions.toneMapGamma,
-        .enabled = m_renderOptions.toneMapEnabled,
-    };
-    const auto toneMapPassOutput = m_toneMapPass.render(ctx, toneMapPassInput);
-
-    const ColorBalancePassInput colorBalancePassInput {
-        .colorTexture = toneMapPassOutput.colorTexture,
-    };
-    m_colorBalancePass.setColorBalance(m_renderOptions.colorBalance);
-    const auto colorBalancePassOutput = m_colorBalancePass.render(ctx, colorBalancePassInput);
+//
+//    const BrightFilterPassInput brightFilterPassInput {
+//        .colorTexture = mainPassOutput.colorTexture,
+//        .threshold = m_renderOptions.brightFilterThreshold,
+//    };
+//    const auto brightFilterPassOutput = m_brightFilterPass.render(ctx, brightFilterPassInput);
+//
+//    m_gaussianBlurPass.setEnabled(m_renderOptions.enableGaussianBlur);
+//    const GaussianBlurPassInput gaussianBlurPassInput {
+//        .colorTexture = brightFilterPassOutput.brightColorTexture,
+//        .iteration = m_renderOptions.gaussianBlurIteration,
+//    };
+//    const auto gaussianBlurPassOutput = m_gaussianBlurPass.render(ctx, gaussianBlurPassInput);
+//
+//    const AdditiveBlendPassInput additiveBlendPassInput {
+//        .colorTexture1 = mainPassOutput.colorTexture,
+//        .colorTexture2 = gaussianBlurPassOutput.colorTexture,
+//    };
+//    const auto additivePassOutput = m_additiveBlendPass.render(ctx, additiveBlendPassInput);
+//
+//    const ToneMapPassInput toneMapPassInput {
+//        .colorTexture = additivePassOutput.colorTexture,
+//        .exposure = m_renderOptions.toneMapExposure,
+//        .gamma = m_renderOptions.toneMapGamma,
+//        .enabled = m_renderOptions.toneMapEnabled,
+//    };
+//    const auto toneMapPassOutput = m_toneMapPass.render(ctx, toneMapPassInput);
+//
+//    const ColorBalancePassInput colorBalancePassInput {
+//        .colorTexture = toneMapPassOutput.colorTexture,
+//    };
+//    m_colorBalancePass.setColorBalance(m_renderOptions.colorBalance);
+//    const auto colorBalancePassOutput = m_colorBalancePass.render(ctx, colorBalancePassInput);
 
     const OutlinePassInput outlinePassInput {
         .units = m_unitsForRender,
@@ -75,7 +75,7 @@ void Renderer::render(RenderContext& ctx) {
     const auto outlinePassOutput = m_outlinePass.render(ctx, outlinePassInput);
 
     const AdditiveBlendPassInput multiInput {
-        .colorTexture1 = colorBalancePassOutput.colorTexture,
+        .colorTexture1 = mainPassOutput.colorTexture,
         .colorTexture2 = outlinePassOutput.colorTexture,
     };
     const auto multiOutput = m_outlineMultiplicativeBlendPass.render(ctx, multiInput);
