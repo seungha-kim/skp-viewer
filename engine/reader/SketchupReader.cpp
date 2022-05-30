@@ -8,7 +8,7 @@
 namespace acon {
 
 static inline glm::vec3 convertPoint3D(SUPoint3D point);
-static inline glm::vec2 convertTexCoord(SUUVQ uvq, float s_scale, float t_scale);
+static inline glm::vec2 convertTexCoord(SUUVQ uvq, float s_scale, float t_scale, bool isMaterialInherited);
 static inline glm::vec3 convertVector3D(SUVector3D vector);
 static inline glm::mat4 convertTransform(SUTransformation transform);
 static inline glm::vec4 convertColor(SUColor color);
@@ -18,6 +18,8 @@ static std::string convertAndReleaseString(SUStringRef stringRef);
 struct SketchupUnit {
     std::optional<MaterialId> frontMaterialId;
     std::optional<MaterialId> backMaterialId;
+    bool isFrontMaterialInherited;
+    bool isBackMaterialInherited;
     std::vector<Triangle> triangles;
 };
 
@@ -274,6 +276,12 @@ glm::vec4 SketchupReader::getMaterialColor(MaterialId id) const {
     return m_materialColors.at(id);
 }
 
+struct UnitElement {
+    SUFaceRef face;
+    bool isFrontMaterialInherited;
+    bool isBackMaterialInherited;
+};
+
 ObjectId SketchupReader::processObject(const SketchupObjectDescription& desc) {
     std::vector<UnitId> units;
 
@@ -290,7 +298,7 @@ ObjectId SketchupReader::processObject(const SketchupObjectDescription& desc) {
 
     // face 를 material 별로 분류하는 작업
     using UnitKey = std::pair<std::optional<MaterialId>, std::optional<MaterialId>>;
-    std::map<UnitKey, std::vector<SUFaceRef>> unitsByMaterial;
+    std::map<UnitKey, std::vector<UnitElement>> unitsByMaterial;
     for (const auto& face: faces) {
         double area;
         SUMaterialRef frontMaterial {}, backMaterial {};
@@ -299,44 +307,50 @@ ObjectId SketchupReader::processObject(const SketchupObjectDescription& desc) {
         bool hasFrontMaterial = SU_ERROR_NONE == frontResult;
         bool hasBackMaterial = SU_ERROR_NONE == backResult;
         UnitKey key {};
+        UnitElement element {
+            .face = face,
+            .isFrontMaterialInherited = true,
+            .isBackMaterialInherited = true,
+        };
         if (desc.inheritedMaterialOpt) {
             key.first = key.second = desc.inheritedMaterialOpt.value();
         }
         if (hasFrontMaterial) {
             key.first = m_materialInverse.at(frontMaterial);
+            element.isFrontMaterialInherited = false;
         }
         if (hasBackMaterial) {
             key.second = m_materialInverse.at(backMaterial);
+            element.isBackMaterialInherited = false;
         }
-        unitsByMaterial[key].push_back(face);
+        unitsByMaterial[key].push_back(element);
     }
 
-    for (const auto& [pair, unitFaces]: unitsByMaterial) {
+    for (const auto& [pair, elements]: unitsByMaterial) {
         const auto& [frontMaterialId, backMaterialId] = pair;
         std::vector<Triangle> triangles {};
 
         float front_s_scale = 1.0f, front_t_scale = 1.0f, back_s_scale = 1.0f, back_t_scale = 1.0f;
-        // TODO: 텍스처 스케일 값이 이상한 문제 있어서 일단 주석 처리.
-        //        if (frontMaterialId.has_value() && getMaterialHasTexture(frontMaterialId.value())) {
-        //            auto frontTextureId = m_materialTextures.at(frontMaterialId.value());
-        //            const auto& frontTextureMeta = m_textureMetaHolder->map.at(frontTextureId);
-        //            front_s_scale = frontTextureMeta.s_scale;
-        //            front_t_scale = frontTextureMeta.t_scale;
-        //        }
-        //        if (backMaterialId.has_value() && getMaterialHasTexture(backMaterialId.value())) {
-        //            auto backTextureId = m_materialTextures.at(backMaterialId.value());
-        //            const auto& backTextureMeta = m_textureMetaHolder->map.at(backTextureId);
-        //            back_s_scale = backTextureMeta.s_scale;
-        //            back_t_scale = backTextureMeta.t_scale;
-        //        }
+        if (frontMaterialId.has_value() && getMaterialHasTexture(frontMaterialId.value())) {
+            auto frontTextureId = m_materialTextures.at(frontMaterialId.value());
+            const auto& frontTextureMeta = m_textureMetaHolder->map.at(frontTextureId);
+            front_s_scale = frontTextureMeta.s_scale;
+            front_t_scale = frontTextureMeta.t_scale;
+        }
+        if (backMaterialId.has_value() && getMaterialHasTexture(backMaterialId.value())) {
+            auto backTextureId = m_materialTextures.at(backMaterialId.value());
+            const auto& backTextureMeta = m_textureMetaHolder->map.at(backTextureId);
+            back_s_scale = backTextureMeta.s_scale;
+            back_t_scale = backTextureMeta.t_scale;
+        }
 
-        for (const auto& face: unitFaces) {
+        for (const auto& element: elements) {
             // tessellate
             SUMeshHelperRef helper {};
-            check(SUMeshHelperCreate(&helper, face));
+            check(SUMeshHelperCreate(&helper, element.face));
 
             SUVector3D faceNormal {};
-            check(SUFaceGetNormal(face, &faceNormal));
+            check(SUFaceGetNormal(element.face, &faceNormal));
             auto glmFaceNormal = glm::normalize(convertVector3D(faceNormal));
 
             size_t numTriangles;
@@ -358,14 +372,8 @@ ObjectId SketchupReader::processObject(const SketchupObjectDescription& desc) {
                 check(SUMeshHelperGetVertices(helper, numVertices, vertices.data(), &numVerticesActual));
                 check(SUMeshHelperGetNormals(helper, numVertices, normals.data(), &numVerticesActual));
             }
-            //            check(SUMeshHelperGetFrontSTQCoords(helper, numVertices, frontTexCoords.data(),
-            //            &numVerticesActual)); check(SUMeshHelperGetBackSTQCoords(helper, numVertices,
-            //            backTexCoords.data(), &numVerticesActual));
-            //            check(SUTextureWriterGetFrontFaceUVCoords(textureWriter, face, numVertices, vertices.data(),
-            //            frontTexCoords.data())); check(SUTextureWriterGetBackFaceUVCoords(textureWriter, face,
-            //            numVertices, vertices.data(), backTexCoords.data()));
             SUUVHelperRef uvHelper {};
-            SUFaceGetUVHelper(face, true, true, textureWriter, &uvHelper);
+            SUFaceGetUVHelper(element.face, true, true, textureWriter, &uvHelper);
 
             // NOTE: MeshHelper, TextureWriter, UVHelper 모두 scale 이상한 문제 있었음
             // TODO: abler 컨버터에서 받아오는 uv 데이터랑 여기서 받아오는 데이터랑 제대로 비교해보기.
@@ -380,8 +388,8 @@ ObjectId SketchupReader::processObject(const SketchupObjectDescription& desc) {
                 for (int j = 0; j < 3; j++) {
                     size_t index = indices[3 * i + j];
                     // TODO: 계산이 vertex 마다 수 차례 중복 되는 문제
-                    auto ftc = convertTexCoord(frontTexCoords[index], front_s_scale, front_t_scale);
-                    auto btc = convertTexCoord(backTexCoords[index], back_s_scale, back_t_scale);
+                    auto ftc = convertTexCoord(frontTexCoords[index], front_s_scale, front_t_scale, element.isFrontMaterialInherited);
+                    auto btc = convertTexCoord(backTexCoords[index], back_s_scale, back_t_scale, element.isBackMaterialInherited);
 
                     triangle.vertices[j] = Vertex {
                         .position = convertPoint3D(vertices[index]),
@@ -405,6 +413,8 @@ ObjectId SketchupReader::processObject(const SketchupObjectDescription& desc) {
             SketchupUnit {
                 .frontMaterialId = frontMaterialId,
                 .backMaterialId = backMaterialId,
+                .isFrontMaterialInherited = false,
+                .isBackMaterialInherited = false,
                 .triangles = triangles,
             });
         units.push_back(unitId);
@@ -550,12 +560,19 @@ static glm::vec3 convertPoint3D(SUPoint3D point) {
     return glm::vec3(m(point.x), m(point.y), m(point.z));
 }
 
-static glm::vec2 convertTexCoord(SUUVQ uvq, float s_scale, float t_scale) {
+static glm::vec2 convertTexCoord(SUUVQ uvq, float s_scale, float t_scale, bool isMaterialInherited) {
     auto q = uvq.q;
     if (q == 0.0) {
         q = 1.0;
     }
-    return {uvq.u / q * s_scale, uvq.v / q * t_scale};
+    float u = uvq.u / q;
+    float v = uvq.v / q;
+    // https://forums.sketchup.com/t/how-to-get-a-textures-size/6139/10
+    if (isMaterialInherited) {
+        u *= s_scale;
+        v *= t_scale;
+    }
+    return {u, v};
 }
 
 static glm::vec3 convertVector3D(SUVector3D vector) {
