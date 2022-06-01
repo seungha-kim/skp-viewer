@@ -43,6 +43,8 @@ add_library(engine
         render/ToneMapPass.h
         render/OutlinePass.cpp
         render/OutlinePass.h
+        render/BoundingBoxOverlayPass.cpp
+        render/BoundingBoxOverlayPass.h
         Engine.cpp
         Engine.h
         export.h

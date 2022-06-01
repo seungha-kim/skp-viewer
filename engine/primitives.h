@@ -23,4 +23,11 @@ struct Triangle {
     Vertex vertices[3];
 };
 
+struct BoundingBox {
+    glm::vec3 min;
+    glm::vec3 max;
+
+    [[nodiscard]] glm::vec3 center() const { return (min + max) * 0.5f; }
+};
+
 }

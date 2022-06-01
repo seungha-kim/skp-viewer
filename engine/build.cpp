@@ -1,6 +1,7 @@
 #include "build.h"
 #include "render/RenderModel.h"
 #include "runtime/RuntimeModel.h"
+#include <limits>
 #include <memory>
 #include <stack>
 
@@ -21,16 +22,26 @@ static inline RenderMaterial defaultMaterial() {
     return glm::vec3(0.7f, 0.7f, 0.7f);
 }
 
-static void buildVertices(const AbstractReader& reader, UnitId unitId, std::vector<RenderVertex>& vertices) {
+static BoundingBox buildVertices(const AbstractReader& reader, UnitId unitId, std::vector<RenderVertex>& vertices) {
+    glm::vec3 max {std::numeric_limits<float>::lowest()};
+    glm::vec3 min {std::numeric_limits<float>::max()};
+
     unsigned faceCount = reader.getUnitTriangleCount(unitId);
     for (int i = 0; i < faceCount; i++) {
         auto face = reader.getUnitTriangle(unitId, i);
         for (const auto& vertex: face.vertices) {
             auto renderVertex = convertVertex(vertex);
 
+            max = glm::max(renderVertex.pos, max);
+            min = glm::min(renderVertex.pos, min);
+
             vertices.push_back(renderVertex);
         }
     }
+    return BoundingBox {
+        .min = min,
+        .max = max,
+    };
 }
 
 std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>> buildModel(const AbstractReader& reader) {
@@ -119,11 +130,12 @@ std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>> buildMode
             }
 
             std::vector<RenderVertex> vertices {};
-            buildVertices(reader, unitId, vertices);
+            auto boundingBox = buildVertices(reader, unitId, vertices);
             auto unit = std::make_unique<RenderUnit>(
                 unitId,
                 item.id,
                 std::move(vertices),
+                boundingBox,
                 worldTransform,
                 frontMaterial,
                 backMaterial,

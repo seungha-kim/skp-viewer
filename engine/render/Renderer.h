@@ -1,5 +1,6 @@
 #pragma once
 #include "AdditiveBlendPass.h"
+#include "BoundingBoxOverlayPass.h"
 #include "BrightFilterPass.h"
 #include "ColorBalancePass.h"
 #include "GaussianBlurPass.h"
@@ -54,6 +55,7 @@ private:
     AdditiveBlendPass m_outlineMultiplicativeBlendPass;
     TextureRenderer m_textureRenderer;
     RenderOptions m_renderOptions;
+    BoundingBoxOverlayPass m_bboxOverlayPass;
 
     std::vector<const RenderUnit*> m_unitsForRender {};
 };

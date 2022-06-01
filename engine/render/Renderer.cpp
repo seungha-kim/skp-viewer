@@ -13,6 +13,7 @@ Renderer::Renderer(const SurfaceInfo& surfaceInfo)
         , m_toneMapPass(surfaceInfo)
         , m_outlinePass(surfaceInfo)
         , m_outlineMultiplicativeBlendPass(surfaceInfo, BlendPassKind::multiplicative)
+        , m_bboxOverlayPass(surfaceInfo)
         , m_colorBalancePass(surfaceInfo) { }
 
 void Renderer::render(RenderContext& ctx) {
@@ -80,6 +81,13 @@ void Renderer::render(RenderContext& ctx) {
     };
     const auto multiOutput = m_outlineMultiplicativeBlendPass.render(ctx, multiInput);
 
+    const BoundingBoxOverlayPassInput bboxOverlayPassInput {
+        .units = m_unitsForRender,
+        .colorTexture = multiOutput.colorTexture,
+        .depthTexture = mainPassOutput.depthTexture,
+    };
+    m_bboxOverlayPass.render(ctx, bboxOverlayPassInput);
+
     m_textureRenderer.setSourceTexture(multiOutput.colorTexture, 0);
     m_textureRenderer.render(ctx);
 }
@@ -94,6 +102,7 @@ void Renderer::resizeResources(const SurfaceInfo& surfaceInfo) {
     m_toneMapPass.resizeResources(surfaceInfo);
     m_outlinePass.resizeResources(surfaceInfo);
     m_outlineMultiplicativeBlendPass.resizeResources(surfaceInfo);
+    m_bboxOverlayPass.resizeResources(surfaceInfo);
 }
 
 RenderOptions& Renderer::renderOptionsMut() {

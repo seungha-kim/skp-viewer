@@ -17,12 +17,15 @@ std::unique_ptr<OffscreenRenderTargetBinding> OffscreenRenderTarget::bind() {
 }
 
 std::unique_ptr<OffscreenRenderTargetBinding>
-OffscreenRenderTarget::bindAndPrepare(glm::vec3 clearColor, int viewportWidth, int viewportHeight) {
+OffscreenRenderTarget::bindAndPrepare(std::optional<glm::vec3> clearColor, int viewportWidth, int viewportHeight) {
     auto binding = bind();
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glViewport(0, 0, viewportWidth, viewportHeight);
-    glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if (clearColor.has_value()) {
+        auto& value = clearColor.value();
+        glClearColor(value.r, value.g, value.b, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
 
     if (!m_colorGiven) {
         glDrawBuffer(GL_NONE);

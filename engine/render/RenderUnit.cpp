@@ -6,6 +6,8 @@
 
 namespace acon {
 
+// GL context 에 접근하지 못하는 시점에 데이터를 받아놓고,
+// 추후 GL context 를 사용할 수 있을 때 lazy initialization 하기 위해 사용
 struct RenderUnitTempData {
     std::vector<RenderVertex> vertices;
     RenderMaterial frontMaterial;
@@ -17,11 +19,13 @@ RenderUnit::RenderUnit(
     UnitId id,
     ObjectId objectId,
     std::vector<RenderVertex>&& vertices,
+    BoundingBox boundingBox,
     glm::mat4 transform,
     RenderMaterial frontMaterial,
     RenderMaterial backMaterial,
     std::unordered_map<TextureId, std::unique_ptr<RenderTexture>>& textures)
         : m_id(id)
+        , m_boundingBox(boundingBox)
         , m_transform(transform)
         , m_objectId(objectId) {
     m_tempData = std::make_unique<RenderUnitTempData>(RenderUnitTempData {
@@ -35,6 +39,8 @@ RenderUnit::RenderUnit(
 RenderUnit::~RenderUnit() {
     glDeleteVertexArrays(1, &m_VAO);
     glDeleteBuffers(1, &m_VBO);
+    glDeleteVertexArrays(1, &m_bboxEdgeVAO);
+    glDeleteBuffers(1, &m_bboxEdgeVBO);
 }
 
 const ObjectId& RenderUnit::objectId() const {
@@ -121,7 +127,66 @@ void RenderUnit::prepareToRender() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
+    // bounding box
+    const auto& bbox = m_boundingBox;
+    std::vector boundingBoxEdges = {
+        glm::vec3 {bbox.min.x, bbox.min.y, bbox.min.z},
+        glm::vec3 {bbox.max.x, bbox.min.y, bbox.min.z},
+        // 1-1
+        glm::vec3 {bbox.max.x, bbox.min.y, bbox.min.z},
+        glm::vec3 {bbox.max.x, bbox.max.y, bbox.min.z},
+        // 1-2
+        glm::vec3 {bbox.max.x, bbox.min.y, bbox.min.z},
+        glm::vec3 {bbox.max.x, bbox.min.y, bbox.max.z},
+        // 2
+        glm::vec3 {bbox.min.x, bbox.min.y, bbox.min.z},
+        glm::vec3 {bbox.min.x, bbox.max.y, bbox.min.z},
+        // 2-1
+        glm::vec3 {bbox.min.x, bbox.max.y, bbox.min.z},
+        glm::vec3 {bbox.max.x, bbox.max.y, bbox.min.z},
+        // 2-2
+        glm::vec3 {bbox.min.x, bbox.max.y, bbox.min.z},
+        glm::vec3 {bbox.min.x, bbox.max.y, bbox.max.z},
+        // 3
+        glm::vec3 {bbox.min.x, bbox.min.y, bbox.min.z},
+        glm::vec3 {bbox.min.x, bbox.min.y, bbox.max.z},
+        // 3-1
+        glm::vec3 {bbox.min.x, bbox.min.y, bbox.max.z},
+        glm::vec3 {bbox.max.x, bbox.min.y, bbox.max.z},
+        // 3-2
+        glm::vec3 {bbox.min.x, bbox.min.y, bbox.max.z},
+        glm::vec3 {bbox.min.x, bbox.max.y, bbox.max.z},
+        // from max 1
+        glm::vec3 {bbox.max.x, bbox.max.y, bbox.max.z},
+        glm::vec3 {bbox.min.x, bbox.max.y, bbox.max.z},
+        // from max 2
+        glm::vec3 {bbox.max.x, bbox.max.y, bbox.max.z},
+        glm::vec3 {bbox.max.x, bbox.min.y, bbox.max.z},
+        // from max 3
+        glm::vec3 {bbox.max.x, bbox.max.y, bbox.max.z},
+        glm::vec3 {bbox.max.x, bbox.max.y, bbox.min.z},
+    };
+
+    glGenVertexArrays(1, &m_bboxEdgeVAO);
+    glGenBuffers(1, &m_bboxEdgeVBO);
+
+    glBindVertexArray(m_bboxEdgeVAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, m_bboxEdgeVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * boundingBoxEdges.size(), &boundingBoxEdges[0], GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), nullptr);
+    glEnableVertexAttribArray(0);
+
     m_tempData = nullptr;
+}
+
+BoundingBox RenderUnit::boundingBox() const {
+    return m_boundingBox;
+}
+
+GLuint RenderUnit::bboxEdgeVAO() const {
+    return m_bboxEdgeVAO;
 }
 
 }

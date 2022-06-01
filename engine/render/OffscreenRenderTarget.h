@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <memory>
+#include <optional>
 
 namespace acon {
 
@@ -20,7 +21,7 @@ public:
     // TODO: OffscreenRenderTargetBinding 를 movable 로 만들고 불필요한 힙 할당 제거하기
     [[nodiscard]] std::unique_ptr<OffscreenRenderTargetBinding> bind();
     [[nodiscard]] std::unique_ptr<OffscreenRenderTargetBinding>
-    bindAndPrepare(glm::vec3 clearColor, int viewportWidth, int viewportHeight);
+    bindAndPrepare(std::optional<glm::vec3>, int viewportWidth, int viewportHeight);
     void checkState();
 
 private:

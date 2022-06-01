@@ -17,6 +17,7 @@ public:
         UnitId id,
         ObjectId objectId,
         std::vector<RenderVertex>&& vertices,
+        BoundingBox boundingBox,
         glm::mat4 transform,
         RenderMaterial frontMaterial,
         RenderMaterial backMaterial,
@@ -30,8 +31,11 @@ public:
     [[nodiscard]] glm::vec3 backColor() const;
     [[nodiscard]] int verticesCount() const;
     [[nodiscard]] GLuint VAO() const;
+    [[nodiscard]] GLuint bboxEdgeVAO() const;
     [[nodiscard]] std::optional<GLuint> frontTextureName() const;
     [[nodiscard]] std::optional<GLuint> backTextureName() const;
+    [[nodiscard]] BoundingBox boundingBox() const;
+    [[nodiscard]] static inline constexpr unsigned bboxEdgeCount() { return 12 * 2; };
     void prepareToRender();
 
 private:
@@ -40,10 +44,12 @@ private:
     glm::mat4 m_transform {};
     int m_verticesCount {};
     GLuint m_VAO {}, m_VBO {};
+    GLuint m_bboxEdgeVAO {}, m_bboxEdgeVBO {};
     glm::vec3 m_frontColor {};
     glm::vec3 m_backColor {};
     GLuint m_frontTexture = 0;
     GLuint m_backTexture = 0;
+    BoundingBox m_boundingBox;
     std::unique_ptr<RenderUnitTempData> m_tempData;
 };
 
