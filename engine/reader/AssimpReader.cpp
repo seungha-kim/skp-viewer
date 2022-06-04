@@ -223,6 +223,16 @@ ObjectId AssimpReader::getTagObject(TagId id, int index) const {
     return 0;
 }
 
+bool AssimpReader::getMaterialHasOpacity(MaterialId id) const {
+    // TODO
+    return false;
+}
+
+float AssimpReader::getMaterialOpacity(MaterialId id) const {
+    // TODO
+    return 1.0f;
+}
+
 glm::mat4 convertMatrix4(const aiMatrix4x4& mat) {
     float arr[] {
         mat.a1,

@@ -130,6 +130,8 @@ SketchupReader::SketchupReader(std::string_view path)
 
     for (const auto& [materialId, material]: m_materialMap) {
         SUMaterialType type {};
+        bool useOpacity;
+        double opacity;
         check(SUMaterialGetType(material, &type));
         bool materialHasTexture = type == SUMaterialType_Textured || type == SUMaterialType_ColorizedTexture;
 
@@ -154,6 +156,12 @@ SketchupReader::SketchupReader(std::string_view path)
             SUColor color {};
             check(SUMaterialGetColor(material, &color));
             m_materialColors[materialId] = convertColor(color);
+        }
+
+        SUMaterialGetUseOpacity(material, &useOpacity);
+        if (useOpacity) {
+            SUMaterialGetOpacity(material, &opacity);
+            m_materialOpacity[materialId] = opacity;
         }
     }
 
@@ -276,6 +284,14 @@ glm::vec4 SketchupReader::getMaterialColor(MaterialId id) const {
     return m_materialColors.at(id);
 }
 
+bool SketchupReader::getMaterialHasOpacity(MaterialId id) const {
+    return m_materialOpacity.contains(id);
+}
+
+float SketchupReader::getMaterialOpacity(MaterialId id) const {
+    return m_materialOpacity.at(id);
+}
+
 struct UnitElement {
     SUFaceRef face;
     bool isFrontMaterialInherited;
@@ -386,8 +402,10 @@ ObjectId SketchupReader::processObject(const SketchupObjectDescription& desc) {
                 for (int j = 0; j < 3; j++) {
                     size_t index = indices[3 * i + j];
                     // TODO: 계산이 vertex 마다 수 차례 중복 되는 문제
-                    auto ftc = convertTexCoord(frontTexCoords[index], front_s_scale, front_t_scale, element.isFrontMaterialInherited);
-                    auto btc = convertTexCoord(backTexCoords[index], back_s_scale, back_t_scale, element.isBackMaterialInherited);
+                    auto ftc = convertTexCoord(
+                        frontTexCoords[index], front_s_scale, front_t_scale, element.isFrontMaterialInherited);
+                    auto btc = convertTexCoord(
+                        backTexCoords[index], back_s_scale, back_t_scale, element.isBackMaterialInherited);
 
                     triangle.vertices[j] = Vertex {
                         .position = convertPoint3D(vertices[index]),
@@ -509,7 +527,8 @@ bool SketchupReader::isValidLayer(SULayerRef layerRef) const {
     return layerRef.ptr != m_defaultLayerRef.ptr;
 }
 
-void SketchupReader::pushChildren(ObjectId id, SUComponentInstanceRef instance, std::optional<MaterialId> inheritedMaterialOpt) {
+void SketchupReader::pushChildren(
+    ObjectId id, SUComponentInstanceRef instance, std::optional<MaterialId> inheritedMaterialOpt) {
     const auto drawingRef = SUComponentInstanceToDrawingElement(instance);
 
     std::optional<TagId> tagIdOpt {};

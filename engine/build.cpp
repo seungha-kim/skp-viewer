@@ -105,6 +105,11 @@ std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>> buildMode
                 } else if (reader.getMaterialHasColor(backMaterialId)) {
                     backMaterial.color = reader.getMaterialColor(backMaterialId);
                 }
+
+                if (reader.getMaterialHasOpacity(backMaterialId)) {
+                    backMaterial.use_opacity = true;
+                    backMaterial.opacity = reader.getMaterialOpacity(backMaterialId);
+                }
             }
 
             if (auto frontMaterialIdOpt = reader.getUnitFrontMaterial(unitId)) {
@@ -121,6 +126,11 @@ std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>> buildMode
                     }
                 } else if (reader.getMaterialHasColor(frontMaterialId)) {
                     frontMaterial.color = reader.getMaterialColor(frontMaterialId);
+                }
+
+                if (reader.getMaterialHasOpacity(frontMaterialId)) {
+                    frontMaterial.use_opacity = true;
+                    frontMaterial.opacity = reader.getMaterialOpacity(frontMaterialId);
                 }
             }
 

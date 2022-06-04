@@ -47,6 +47,10 @@ public:
 
     [[nodiscard]] bool getMaterialHasColor(MaterialId materialId) const override;
 
+    [[nodiscard]] bool getMaterialHasOpacity(MaterialId id) const override;
+
+    [[nodiscard]] float getMaterialOpacity(MaterialId id) const override;
+
     [[nodiscard]] glm::vec4 getMaterialColor(MaterialId id) const override;
 
     [[nodiscard]] bool getMaterialHasTexture(MaterialId materialId) const override;

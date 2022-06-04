@@ -52,7 +52,8 @@ public:
     [[nodiscard]] virtual bool hasMaterial(MaterialId materialId) const = 0;
     [[nodiscard]] virtual bool getMaterialHasColor(MaterialId materialId) const = 0;
     [[nodiscard]] virtual glm::vec4 getMaterialColor(MaterialId id) const = 0;
-
+    [[nodiscard]] virtual bool getMaterialHasOpacity(MaterialId id) const = 0;
+    [[nodiscard]] virtual float getMaterialOpacity(MaterialId id) const = 0;
     [[nodiscard]] virtual bool getMaterialHasTexture(MaterialId materialId) const = 0;
     [[nodiscard]] virtual TextureId getMaterialTexture(MaterialId materialId) const = 0;
     [[nodiscard]] virtual std::unique_ptr<TextureData> copyTextureData(TextureId textureId) const = 0;

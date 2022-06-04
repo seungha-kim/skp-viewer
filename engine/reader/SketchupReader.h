@@ -60,6 +60,10 @@ public:
 
     [[nodiscard]] glm::vec4 getMaterialColor(MaterialId id) const override;
 
+    [[nodiscard]] bool getMaterialHasOpacity(MaterialId id) const override;
+
+    [[nodiscard]] float getMaterialOpacity(MaterialId id) const override;
+
     [[nodiscard]] bool getMaterialHasTexture(MaterialId materialId) const override;
 
     [[nodiscard]] TextureId getMaterialTexture(MaterialId materialId) const override;
@@ -113,6 +117,7 @@ private:
     MaterialInverse m_materialInverse;
     std::unordered_map<MaterialId, TextureId> m_materialTextures;
     std::unordered_map<MaterialId, glm::vec4> m_materialColors;
+    std::unordered_map<MaterialId, float> m_materialOpacity; // contains transparent material only
     TextureMap m_textureMap;
     TextureInverse m_textureInverse;
     TagList m_tagList;
