@@ -375,8 +375,6 @@ ObjectId SketchupReader::processObject(const SketchupObjectDescription& desc) {
             SUUVHelperRef uvHelper {};
             SUFaceGetUVHelper(element.face, true, true, textureWriter, &uvHelper);
 
-            // NOTE: MeshHelper, TextureWriter, UVHelper 모두 scale 이상한 문제 있었음
-            // TODO: abler 컨버터에서 받아오는 uv 데이터랑 여기서 받아오는 데이터랑 제대로 비교해보기.
             for (int i = 0; i < vertices.size(); i++) {
                 SUUVHelperGetFrontUVQ(uvHelper, &vertices[i], &frontTexCoords[i]);
                 SUUVHelperGetBackUVQ(uvHelper, &vertices[i], &backTexCoords[i]);
