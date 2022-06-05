@@ -93,13 +93,18 @@ void RenderUnit::prepareToRender() {
     const auto& textures = m_tempData->textures;
 
     m_frontColor = frontMaterial.color;
-    m_backColor = backMaterial.color;
     if (frontMaterial.textureOpt.has_value()) {
         m_frontTexture = textures.at(frontMaterial.textureOpt.value())->textureName();
     }
+    m_frontUseOpacity = frontMaterial.use_opacity;
+    m_frontOpacity = frontMaterial.opacity;
+
+    m_backColor = backMaterial.color;
     if (backMaterial.textureOpt.has_value()) {
         m_backTexture = textures.at(backMaterial.textureOpt.value())->textureName();
     }
+    m_backUseOpacity = backMaterial.use_opacity;
+    m_backOpacity = backMaterial.opacity;
 
     m_verticesCount = vertices.size();
 
@@ -184,6 +189,22 @@ BoundingBox RenderUnit::boundingBox() const {
 
 GLuint RenderUnit::bboxEdgeVAO() const {
     return m_bboxEdgeVAO;
+}
+
+glm::vec3 RenderUnit::worldSpaceCenter() const {
+    return {m_transform * glm::vec4(m_boundingBox.center(), 1.0f)};
+}
+
+bool RenderUnit::useOpacity() const {
+    return m_frontUseOpacity || m_backUseOpacity;
+}
+
+float RenderUnit::frontOpacity() const {
+    return m_frontOpacity;
+}
+
+float RenderUnit::backOpacity() const {
+    return m_backOpacity;
 }
 
 }

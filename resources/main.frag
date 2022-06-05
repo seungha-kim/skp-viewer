@@ -27,6 +27,8 @@ uniform sampler2D backTexture;
 uniform float frontTextureMix;
 uniform float backTextureMix;
 uniform int selected;
+uniform float frontOpacity;
+uniform float backOpacity;
 
 out vec4 FragColor;
 
@@ -57,16 +59,19 @@ void main() {
     vec3 lightColor = vec3(1.0);
 
     vec3 color; // TODO: vec4 alpha
+    float opacity;
 
     if (frontFacing > 0) {
         color = frontColor;
         color = mix(color, vec3(texture(frontTexture, frontTexCoord)), frontTextureMix);
+        opacity = frontOpacity;
     } else {
         color = backColor;
         color = mix(color, vec3(texture(backTexture, backTexCoord)), backTextureMix);
+        opacity = backOpacity;
     }
 
     float shadow = shadowMix * ShadowCalculation(fragPosLightSpace);
 
-    FragColor = (1.0 - shadow) * vec4(color, 1.0);
+    FragColor = (1.0 - shadow) * vec4(color, opacity);
 }

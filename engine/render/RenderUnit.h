@@ -35,7 +35,11 @@ public:
     [[nodiscard]] std::optional<GLuint> frontTextureName() const;
     [[nodiscard]] std::optional<GLuint> backTextureName() const;
     [[nodiscard]] BoundingBox boundingBox() const;
+    [[nodiscard]] glm::vec3 worldSpaceCenter() const;
     [[nodiscard]] static inline constexpr unsigned bboxEdgeCount() { return 12 * 2; };
+    [[nodiscard]] bool useOpacity() const;
+    [[nodiscard]] float frontOpacity() const;
+    [[nodiscard]] float backOpacity() const;
     void prepareToRender();
 
 private:
@@ -49,6 +53,11 @@ private:
     glm::vec3 m_backColor {};
     GLuint m_frontTexture = 0;
     GLuint m_backTexture = 0;
+    bool m_frontUseOpacity = false;
+    float m_frontOpacity = 1.0f;
+    bool m_backUseOpacity = false;
+    float m_backOpacity = 1.0f;
+    // TODO: RenderMaterial
     BoundingBox m_boundingBox;
     std::unique_ptr<RenderUnitTempData> m_tempData;
 };
