@@ -1,20 +1,42 @@
 #version 330 core
 
+//PLACEHOLDER//
+
+// pass variants: MAIN | ...
+// stage variants: VERT | FRAG
+
+#if defined(VERT)
+#define INOUT out
+#elif defined(FRAG)
+#define INOUT in
+#endif
+
+float map(float value, float min1, float max1, float min2, float max2) {
+    return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
+}
+
+#ifdef MAIN
+INOUT vec3 normalVs;
+INOUT vec3 fragPosWs;
+INOUT vec3 fragPosVs;
+INOUT vec4 fragPosLightSpace;
+INOUT vec2 frontTexCoord;
+INOUT vec2 backTexCoord;
+flat INOUT float frontFacing;
+
+// vert
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+uniform mat4 lightSpaceMatrix;
+
+// frag
 struct Material {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
     float shininess;
 };
-
-in vec3 normalVs;
-in vec3 fragPosWs;
-in vec3 fragPosVs;
-in vec4 fragPosLightSpace;
-in vec2 frontTexCoord;
-in vec2 backTexCoord;
-flat in float frontFacing;
-
 uniform vec3 cameraPos;
 uniform vec3 sunLightDir;
 uniform Material material;
@@ -29,7 +51,34 @@ uniform float backTextureMix;
 uniform int selected;
 uniform float frontOpacity;
 uniform float backOpacity;
+#endif
 
+#if defined(MAIN) && defined(VERT)
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aNormal;
+layout (location = 2) in vec3 aFaceNormal;
+layout (location = 3) in vec2 aFrontTexCoord;
+layout (location = 4) in vec2 aBackTexCoord;
+
+void main() {
+    // TODO: normal matrix outside of shader
+    mat3 normalMatrix = mat3(transpose(inverse(view * model)));
+    normalVs = normalize(normalMatrix * aNormal);
+    vec4 fragPosWs4 = model * vec4(aPos, 1.0);
+    fragPosWs = vec3(fragPosWs4);
+    fragPosVs = vec3(view * fragPosWs4);
+    gl_Position = projection * view * vec4(fragPosWs, 1.0);
+    fragPosLightSpace = lightSpaceMatrix * vec4(fragPosWs, 1.0);
+
+    vec3 faceNormalVs = normalize(normalMatrix * aFaceNormal);
+    frontFacing = sign(-dot(faceNormalVs, fragPosVs));
+
+    frontTexCoord = aFrontTexCoord;
+    backTexCoord = aBackTexCoord;
+}
+#endif
+
+#if defined(MAIN) && defined(FRAG)
 out vec4 FragColor;
 
 float ShadowCalculation(vec4 fragPosLightSpace)
@@ -75,3 +124,4 @@ void main() {
 
     FragColor = (1.0 - shadow) * vec4(color, opacity);
 }
+#endif

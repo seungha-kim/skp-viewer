@@ -12,7 +12,8 @@ public:
     unsigned int m_ID;
 
     // constructor reads and builds the shader
-    Shader(const char* vShaderName, const char* fShaderName);
+    Shader(
+        const char* vShaderName, const char* fShaderName, const char* vShaderDefs = "", const char* fShaderDefs = "");
     ~Shader();
 
     // use/activate the shader

@@ -22,7 +22,15 @@ static std::string readResourceAsStr(std::string_view name) {
     return oss.str();
 }
 
-Shader::Shader(const char* vShaderName, const char* fShaderName) {
+void replacePlaceholder(std::string& code, std::string_view defs) {
+    static std::string placeholderStr = "//PLACEHOLDER//";
+    auto pos = code.find(placeholderStr);
+    if (pos != std::string::npos) {
+        code.replace(pos, placeholderStr.size(), defs);
+    }
+}
+
+Shader::Shader(const char* vShaderName, const char* fShaderName, const char* vShaderDefs, const char* fShaderDefs) {
     std::string resourceBasePath = "resources/";
     std::string vertexCode;
     std::string fragmentCode;
@@ -34,7 +42,11 @@ Shader::Shader(const char* vShaderName, const char* fShaderName) {
     try {
         vertexCode = readResourceAsStr(vShaderName);
         fragmentCode = readResourceAsStr(fShaderName);
-    } catch (std::ifstream::failure& e) { std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl; }
+    } catch (std::ifstream::failure& e) {
+        std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+    }
+    replacePlaceholder(vertexCode, vShaderDefs);
+    replacePlaceholder(fragmentCode, fShaderDefs);
     const char* vShaderCode = vertexCode.c_str();
     const char* fShaderCode = fragmentCode.c_str();
 
