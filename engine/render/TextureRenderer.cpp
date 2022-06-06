@@ -12,7 +12,8 @@ static const float vertices[] {
 };
 
 TextureRenderer::TextureRenderer()
-        : TextureRenderer(std::make_unique<Shader>("quad.vert", "quad.frag")) { }
+        : TextureRenderer(
+            std::make_unique<Shader>("quad.glsl", "quad.glsl", "#define VERT", "#define FRAG\n#define SIMPLE")) { }
 
 TextureRenderer::TextureRenderer(std::unique_ptr<Shader> shader)
         : m_shader(std::move(shader)) {

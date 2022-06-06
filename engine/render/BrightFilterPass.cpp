@@ -14,7 +14,8 @@ class BrightFilterPassPimpl {
 
 public:
     explicit BrightFilterPassPimpl(const SurfaceInfo& surfaceInfo)
-            : m_textureRenderer(std::make_unique<Shader>("quad.vert", "brightFilter.frag")) {
+            : m_textureRenderer(std::make_unique<Shader>(
+                "quad.glsl", "quad.glsl", "#define VERT", "#define FRAG\n#define BRIGHT_FILTER")) {
         resizeResources(surfaceInfo);
     }
 

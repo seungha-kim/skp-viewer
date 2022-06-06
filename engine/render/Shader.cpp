@@ -48,7 +48,13 @@ Shader::Shader(
         vertexCode = readResourceAsStr(vShaderName);
         fragmentCode = readResourceAsStr(fShaderName);
     } catch (std::ifstream::failure& e) {
-        std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+        std::ostringstream out {};
+        out << ", v: " << vShaderName;
+        out << ", f: " << fShaderName;
+        out << ", vd: " << vShaderDefs;
+        out << ", fd: " << fShaderDefs;
+
+        std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << out.str() << std::endl;
     }
     replacePlaceholder(vertexCode, vShaderDefs);
     replacePlaceholder(fragmentCode, fShaderDefs);

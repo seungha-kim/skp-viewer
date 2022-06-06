@@ -15,7 +15,8 @@ class ColorBalancePassPimpl {
 
 public:
     explicit ColorBalancePassPimpl(const SurfaceInfo& surfaceInfo)
-            : m_textureRenderer(std::make_unique<Shader>("colorBalance.vert", "colorBalance.frag")) {
+            : m_textureRenderer(std::make_unique<Shader>(
+                "quad.glsl", "quad.glsl", "#define VERT", "#define FRAG\n#define COLOR_BALANCE")) {
         resizeResources(surfaceInfo);
     }
 

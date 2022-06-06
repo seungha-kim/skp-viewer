@@ -14,7 +14,8 @@ class ToneMapPassPimpl {
 
 public:
     explicit ToneMapPassPimpl(const SurfaceInfo& surfaceInfo)
-            : m_textureRenderer(std::make_unique<Shader>("quad.vert", "toneMap.frag")) {
+            : m_textureRenderer(
+                std::make_unique<Shader>("quad.glsl", "quad.glsl", "#define VERT", "#define FRAG\n#define TONE_MAP")) {
         resizeResources(surfaceInfo);
     }
 

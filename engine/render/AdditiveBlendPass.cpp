@@ -5,12 +5,12 @@
 
 namespace acon {
 
-static const char* kindToShader(BlendPassKind kind) {
+static const char* makeDefinitions(BlendPassKind kind) {
     switch (kind) {
     case BlendPassKind::additive:
-        return "additiveBlend.frag";
+        return "#define FRAG\n#define ADDITIVE_BLEND";
     case BlendPassKind::multiplicative:
-        return "multiplicativeBlend.frag";
+        return "#define FRAG\n#define MULTIPLICATIVE_BLEND";
     }
 }
 
@@ -24,7 +24,8 @@ class AdditiveBlendPassPimpl {
 
 public:
     explicit AdditiveBlendPassPimpl(const SurfaceInfo& surfaceInfo, BlendPassKind kind)
-            : m_textureRenderer(std::make_unique<Shader>("quad.vert", kindToShader(kind))) {
+            : m_textureRenderer(
+                std::make_unique<Shader>("quad.glsl", "quad.glsl", "#define VERT", makeDefinitions(kind))) {
         resizeResources(surfaceInfo);
     }
 

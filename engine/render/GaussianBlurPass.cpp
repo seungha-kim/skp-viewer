@@ -15,7 +15,8 @@ public:
 
     GaussianBlurPassPimpl(const SurfaceInfo& surfaceInfo)
             : m_offscreenRenderTargets {{}, {}}
-            , m_textureRenderer(std::make_unique<Shader>("quad.vert", "gaussianBlur.frag")) {
+            , m_textureRenderer(std::make_unique<Shader>(
+                  "quad.glsl", "quad.glsl", "#define VERT", "#define FRAG\n#define GAUSSIAN_BLUR")) {
         resizeResources(surfaceInfo);
     }
     ~GaussianBlurPassPimpl() = default;
