@@ -1,9 +1,31 @@
 #version 330 core
 
-//PLACEHOLDER//
+/**
+# Table of contents
 
-// pass variants: MAIN | ...
-// stage variants: VERT | FRAG
+- Placeholder
+- Definitions
+- Common Functions
+- Uniform Blocks
+- Passes
+    - Main Pass
+
+# Pass variants
+
+- MAIN
+
+# Stage variants
+
+- VERT
+- FRAG
+*/
+
+//PLACEHOLDER//
+// will be replaced with variant definitions
+
+/////////////////
+// Definitions //
+/////////////////
 
 #if defined(VERT)
 #define INOUT out
@@ -11,9 +33,33 @@
 #define INOUT in
 #endif
 
+////////////////////
+// Uniform Blocks //
+////////////////////
+
+// MUST be synchronized with `Uniforms.h`
+
+layout (std140) uniform ViewBlock {
+    mat4 viewMatrix;
+    mat4 viewMatrixInverse;
+    mat4 projectionMatrix;
+    mat4 projectionMatrixInverse;
+    mat4 viewProjectionMatrix;
+    mat4 viewProjectionMatrixInverse;
+    vec3 cameraPosition;
+};
+
+//////////////////////
+// Common Functions //
+//////////////////////
+
 float map(float value, float min1, float max1, float min2, float max2) {
     return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
 }
+
+///////////////
+// Main Pass //
+///////////////
 
 #ifdef MAIN
 INOUT vec3 normalVs;
@@ -26,8 +72,6 @@ flat INOUT float frontFacing;
 
 // vert
 uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
 uniform mat4 lightSpaceMatrix;
 
 // frag
@@ -37,7 +81,6 @@ struct Material {
     vec3 specular;
     float shininess;
 };
-uniform vec3 cameraPos;
 uniform vec3 sunLightDir;
 uniform Material material;
 uniform sampler2D shadowMap;
@@ -62,12 +105,12 @@ layout (location = 4) in vec2 aBackTexCoord;
 
 void main() {
     // TODO: normal matrix outside of shader
-    mat3 normalMatrix = mat3(transpose(inverse(view * model)));
+    mat3 normalMatrix = mat3(transpose(inverse(viewMatrix * model)));
     normalVs = normalize(normalMatrix * aNormal);
     vec4 fragPosWs4 = model * vec4(aPos, 1.0);
     fragPosWs = vec3(fragPosWs4);
-    fragPosVs = vec3(view * fragPosWs4);
-    gl_Position = projection * view * vec4(fragPosWs, 1.0);
+    fragPosVs = vec3(viewMatrix * fragPosWs4);
+    gl_Position = projectionMatrix * vec4(fragPosVs, 1.0);
     fragPosLightSpace = lightSpaceMatrix * vec4(fragPosWs, 1.0);
 
     vec3 faceNormalVs = normalize(normalMatrix * aFaceNormal);

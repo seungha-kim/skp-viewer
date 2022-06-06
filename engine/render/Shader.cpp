@@ -30,7 +30,12 @@ void replacePlaceholder(std::string& code, std::string_view defs) {
     }
 }
 
-Shader::Shader(const char* vShaderName, const char* fShaderName, const char* vShaderDefs, const char* fShaderDefs) {
+Shader::Shader(
+    const char* vShaderName,
+    const char* fShaderName,
+    const char* vShaderDefs,
+    const char* fShaderDefs,
+    const std::vector<UniformBinding>& bindings) {
     std::string resourceBasePath = "resources/";
     std::string vertexCode;
     std::string fragmentCode;
@@ -81,6 +86,15 @@ Shader::Shader(const char* vShaderName, const char* fShaderName, const char* vSh
     if (!success) {
         glGetProgramInfoLog(m_ID, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+    }
+
+    for (const auto& [name, point]: bindings) {
+        unsigned index = glGetUniformBlockIndex(m_ID, name.c_str());
+        if (index == GL_INVALID_INDEX) {
+            printf("Cannot find uniform block with name: %s, %u\n", name.c_str());
+            exit(1);
+        }
+        glUniformBlockBinding(m_ID, index, point);
     }
 
     // delete the shaders as they're linked into our program now and no longer necessary

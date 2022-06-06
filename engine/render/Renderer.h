@@ -42,6 +42,7 @@ public:
 
     RenderOptions& renderOptionsMut();
     void syncVisibility(const RuntimeModel& runtimeModel, const RenderModel& renderModel);
+    void updateViewBlock(RenderContext& ctx) const;
 
 private:
     SunlightPass m_sunlightPass;
@@ -56,6 +57,7 @@ private:
     TextureRenderer m_textureRenderer;
     RenderOptions m_renderOptions;
     BoundingBoxOverlayPass m_bboxOverlayPass;
+    GLuint m_viewBlockBuffer;
 
     std::vector<const RenderUnit*> m_unitsForRender {};
 };

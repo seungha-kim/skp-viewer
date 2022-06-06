@@ -63,6 +63,8 @@ add_library(engine
         render/RenderModel.cpp
         build.h
         build.cpp
+        render/Uniforms.h
+        render/UniformBinding.h
         )
 
 target_link_libraries(engine

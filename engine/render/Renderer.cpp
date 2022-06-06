@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "Uniforms.h"
 #include "checkError.h"
 #include <stack>
 
@@ -14,11 +15,18 @@ Renderer::Renderer(const SurfaceInfo& surfaceInfo)
         , m_outlinePass(surfaceInfo)
         , m_outlineMultiplicativeBlendPass(surfaceInfo, BlendPassKind::multiplicative)
         , m_bboxOverlayPass(surfaceInfo)
-        , m_colorBalancePass(surfaceInfo) { }
+        , m_colorBalancePass(surfaceInfo) {
+    glGenBuffers(1, &m_viewBlockBuffer);
+    glBindBuffer(GL_UNIFORM_BUFFER, m_viewBlockBuffer);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(ViewBlock), nullptr, GL_STATIC_DRAW);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
 
 void Renderer::render(RenderContext& ctx) {
     glClearColor(0.2f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    updateViewBlock(ctx);
 
     const SunlightPassInput sunlightPassInput {
         .units = m_unitsForRender,
@@ -31,41 +39,42 @@ void Renderer::render(RenderContext& ctx) {
         .shadowDepthTexture = sunlightPassOutput.depthTexture,
         .shadowMix = 0.0f, // TODO
         .query = ctx.query,
+        .viewBlockBuffer = m_viewBlockBuffer,
     };
     const auto mainPassOutput = m_mainPass.render(ctx, mainPassInput);
-//
-//    const BrightFilterPassInput brightFilterPassInput {
-//        .colorTexture = mainPassOutput.colorTexture,
-//        .threshold = m_renderOptions.brightFilterThreshold,
-//    };
-//    const auto brightFilterPassOutput = m_brightFilterPass.render(ctx, brightFilterPassInput);
-//
-//    m_gaussianBlurPass.setEnabled(m_renderOptions.enableGaussianBlur);
-//    const GaussianBlurPassInput gaussianBlurPassInput {
-//        .colorTexture = brightFilterPassOutput.brightColorTexture,
-//        .iteration = m_renderOptions.gaussianBlurIteration,
-//    };
-//    const auto gaussianBlurPassOutput = m_gaussianBlurPass.render(ctx, gaussianBlurPassInput);
-//
-//    const AdditiveBlendPassInput additiveBlendPassInput {
-//        .colorTexture1 = mainPassOutput.colorTexture,
-//        .colorTexture2 = gaussianBlurPassOutput.colorTexture,
-//    };
-//    const auto additivePassOutput = m_additiveBlendPass.render(ctx, additiveBlendPassInput);
-//
-//    const ToneMapPassInput toneMapPassInput {
-//        .colorTexture = additivePassOutput.colorTexture,
-//        .exposure = m_renderOptions.toneMapExposure,
-//        .gamma = m_renderOptions.toneMapGamma,
-//        .enabled = m_renderOptions.toneMapEnabled,
-//    };
-//    const auto toneMapPassOutput = m_toneMapPass.render(ctx, toneMapPassInput);
-//
-//    const ColorBalancePassInput colorBalancePassInput {
-//        .colorTexture = toneMapPassOutput.colorTexture,
-//    };
-//    m_colorBalancePass.setColorBalance(m_renderOptions.colorBalance);
-//    const auto colorBalancePassOutput = m_colorBalancePass.render(ctx, colorBalancePassInput);
+    //
+    //    const BrightFilterPassInput brightFilterPassInput {
+    //        .colorTexture = mainPassOutput.colorTexture,
+    //        .threshold = m_renderOptions.brightFilterThreshold,
+    //    };
+    //    const auto brightFilterPassOutput = m_brightFilterPass.render(ctx, brightFilterPassInput);
+    //
+    //    m_gaussianBlurPass.setEnabled(m_renderOptions.enableGaussianBlur);
+    //    const GaussianBlurPassInput gaussianBlurPassInput {
+    //        .colorTexture = brightFilterPassOutput.brightColorTexture,
+    //        .iteration = m_renderOptions.gaussianBlurIteration,
+    //    };
+    //    const auto gaussianBlurPassOutput = m_gaussianBlurPass.render(ctx, gaussianBlurPassInput);
+    //
+    //    const AdditiveBlendPassInput additiveBlendPassInput {
+    //        .colorTexture1 = mainPassOutput.colorTexture,
+    //        .colorTexture2 = gaussianBlurPassOutput.colorTexture,
+    //    };
+    //    const auto additivePassOutput = m_additiveBlendPass.render(ctx, additiveBlendPassInput);
+    //
+    //    const ToneMapPassInput toneMapPassInput {
+    //        .colorTexture = additivePassOutput.colorTexture,
+    //        .exposure = m_renderOptions.toneMapExposure,
+    //        .gamma = m_renderOptions.toneMapGamma,
+    //        .enabled = m_renderOptions.toneMapEnabled,
+    //    };
+    //    const auto toneMapPassOutput = m_toneMapPass.render(ctx, toneMapPassInput);
+    //
+    //    const ColorBalancePassInput colorBalancePassInput {
+    //        .colorTexture = toneMapPassOutput.colorTexture,
+    //    };
+    //    m_colorBalancePass.setColorBalance(m_renderOptions.colorBalance);
+    //    const auto colorBalancePassOutput = m_colorBalancePass.render(ctx, colorBalancePassInput);
 
     const OutlinePassInput outlinePassInput {
         .units = m_unitsForRender,
@@ -118,6 +127,30 @@ void Renderer::syncVisibility(const RuntimeModel& runtimeModel, const RenderMode
             }
         }
     }
+}
+
+void Renderer::updateViewBlock(RenderContext& ctx) const {
+    auto& cam = ctx.scene.cameraState();
+    auto viewMatrix = cam.viewMatrix();
+    auto viewMatrixInverse = glm::inverse(viewMatrix);
+    auto projectionMatrix = cam.projectionMatrix();
+    auto projectionMatrixInverse = glm::inverse(projectionMatrix);
+    auto viewProjectionMatrix = projectionMatrix * viewMatrix;
+    auto viewProjectionMatrixInverse = glm::inverse(viewProjectionMatrix);
+
+    ViewBlock viewBlock = {
+        .viewMatrix = viewMatrix,
+        .viewMatrixInverse = viewMatrixInverse,
+        .projectionMatrix = projectionMatrix,
+        .projectionMatrixInverse = projectionMatrixInverse,
+        .viewProjectionMatrix = viewProjectionMatrix,
+        .viewProjectionMatrixInverse = viewProjectionMatrixInverse,
+        .cameraPosition = cam.pos,
+    };
+
+    glBindBuffer(GL_UNIFORM_BUFFER, m_viewBlockBuffer);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(ViewBlock), &viewBlock);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
 }

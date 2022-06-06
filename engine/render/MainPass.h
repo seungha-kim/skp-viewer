@@ -15,6 +15,7 @@ struct MainPassInput {
     const DepthTexture& shadowDepthTexture;
     const float shadowMix;
     const RenderQuery& query;
+    const GLuint viewBlockBuffer;
 };
 
 struct MainPassOutput {
@@ -30,6 +31,7 @@ public:
     ~MainPass();
     MainPassOutput render(RenderContext& ctx, const MainPassInput& input);
     void resizeResources(const SurfaceInfo& surfaceInfo) override;
+    void bindViewBlock(GLuint viewBlockBuffer);
 
 private:
     std::unique_ptr<MainPassPimpl> m_pimpl;

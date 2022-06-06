@@ -5,6 +5,8 @@
 
 namespace acon {
 
+const GLuint VIEW_BLOCK_BINDING_POINT = 0;
+
 class MainPassPimpl {
     friend class MainPass;
     std::unique_ptr<Shader> m_mainShader;
@@ -16,11 +18,19 @@ class MainPassPimpl {
 public:
     explicit MainPassPimpl(const SurfaceInfo& surfaceInfo)
             : m_mainShader(std::make_unique<Shader>(
-                "render.glsl", "render.glsl", "#define MAIN\n#define VERT\n", "#define MAIN\n#define FRAG\n")) {
+                "render.glsl",
+                "render.glsl",
+                "#define MAIN\n#define VERT\n",
+                "#define MAIN\n#define FRAG\n",
+                std::vector<UniformBinding> {
+                    {"ViewBlock", VIEW_BLOCK_BINDING_POINT},
+                })) {
         resizeResources(surfaceInfo);
     }
 
     MainPassOutput render(RenderContext& ctx, const MainPassInput& input) {
+        glBindBufferBase(GL_UNIFORM_BUFFER, VIEW_BLOCK_BINDING_POINT, input.viewBlockBuffer);
+
         m_offscreenRenderTarget.setTargetColorTexture(*m_colorTexture, 0);
         m_offscreenRenderTarget.setTargetDepthTexture(*m_depthTexture);
         auto binding = m_offscreenRenderTarget.bindAndPrepare(

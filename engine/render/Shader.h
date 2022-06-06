@@ -1,8 +1,10 @@
 #pragma once
 
+#include "UniformBinding.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <string>
+#include <vector>
 
 namespace acon {
 
@@ -13,7 +15,11 @@ public:
 
     // constructor reads and builds the shader
     Shader(
-        const char* vShaderName, const char* fShaderName, const char* vShaderDefs = "", const char* fShaderDefs = "");
+        const char* vShaderName,
+        const char* fShaderName,
+        const char* vShaderDefs = "",
+        const char* fShaderDefs = "",
+        const std::vector<UniformBinding>& bindings = {});
     ~Shader();
 
     // use/activate the shader
