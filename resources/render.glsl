@@ -195,3 +195,27 @@ void main() {
     FragColor = vec4(color, 1.0);
 }
 #endif
+
+//////////////////
+// Bounding Box //
+//////////////////
+
+#ifdef BOUNDING_BOX
+uniform mat4 model;
+#endif
+
+#if defined(BOUNDING_BOX) && defined(VERT)
+layout (location = 0) in vec3 aPos;
+
+void main() {
+    gl_Position = viewProjectionMatrix * model * vec4(aPos, 1.0);
+}
+#endif
+
+#if defined(BOUNDING_BOX) && defined(FRAG)
+out vec4 FragColor;
+
+void main() {
+    FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+}
+#endif

@@ -13,7 +13,11 @@ class BoundingBoxOverlayPassPimpl {
 
 public:
     explicit BoundingBoxOverlayPassPimpl(const SurfaceInfo& surfaceInfo)
-            : m_mainShader(std::make_unique<Shader>("boundingBoxEdge.vert", "boundingBoxEdge.frag")) {
+            : m_mainShader(std::make_unique<Shader>(
+                "render.glsl",
+                "render.glsl",
+                "#define BOUNDING_BOX\n#define VERT",
+                "#define BOUNDING_BOX\n#define FRAG")) {
         resizeResources(surfaceInfo);
     }
 
@@ -26,9 +30,6 @@ public:
             std::nullopt, ctx.surfaceInfo.physicalWidth, ctx.surfaceInfo.physicalHeight);
 
         m_mainShader->use();
-        m_mainShader->setMatrix4f("view", cam.viewMatrix());
-        m_mainShader->setMatrix4f("projection", cam.projectionMatrix());
-
         for (const auto* unit: input.units) {
             glBindVertexArray(unit->bboxEdgeVAO());
             m_mainShader->setMatrix4f("model", unit->transform());
