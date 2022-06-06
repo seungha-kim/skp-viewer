@@ -18,7 +18,11 @@ class SunlightPassPimpl {
 public:
     ~SunlightPassPimpl() = default;
     explicit SunlightPassPimpl(const SurfaceInfo& surfaceInfo)
-            : m_subShader(std::make_unique<Shader>("sub.vert", "sub.frag")) {
+            : m_subShader(std::make_unique<Shader>(
+                "render.glsl",
+                "render.glsl",
+                "#define DIRECTIONAL_LIGHT\n#define VERT",
+                "#define DIRECTIONAL_LIGHT\n#define FRAG")) {
         resizeResources(surfaceInfo);
     }
 
@@ -57,10 +61,7 @@ public:
         m_lightSpaceMatrix = projection * view;
 
         m_subShader->use();
-        m_subShader->setMatrix4f("view", view);
-        m_subShader->setMatrix4f("projection", projection);
-        m_subShader->setVector3f("cameraPos", sunlightPos);
-        m_subShader->setVector3f("sunLightDir", ctx.scene.sunLight().direction);
+        m_subShader->setMatrix4f("dirLightViewProjectionMatrix", m_lightSpaceMatrix);
         m_subShader->setVector3f("color", glm::vec3(1.0f, 1.0f, 1.0f));
 
         for (auto* unit: input.units) {

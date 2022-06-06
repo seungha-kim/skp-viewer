@@ -8,11 +8,12 @@
 - Common Functions
 - Uniform Blocks
 - Passes
-    - Main Pass
 
 # Pass variants
 
 - MAIN
+- DIRECTIONAL_LIGHT
+- BOUNDING_BOX
 
 # Stage variants
 
@@ -166,5 +167,31 @@ void main() {
     float shadow = shadowMix * ShadowCalculation(fragPosLightSpace);
 
     FragColor = (1.0 - shadow) * vec4(color, opacity);
+}
+#endif
+
+///////////////////////
+// Directional Light //
+///////////////////////
+
+#ifdef DIRECTIONAL_LIGHT
+uniform mat4 dirLightViewProjectionMatrix;
+uniform vec3 color;
+uniform mat4 model;
+#endif
+
+#if defined(DIRECTIONAL_LIGHT) && defined(VERT)
+layout (location = 0) in vec3 aPos;
+
+void main() {
+    gl_Position = dirLightViewProjectionMatrix * model * vec4(aPos, 1.0);
+}
+#endif
+
+#if defined(DIRECTIONAL_LIGHT) && defined(FRAG)
+out vec4 FragColor;
+
+void main() {
+    FragColor = vec4(color, 1.0);
 }
 #endif
