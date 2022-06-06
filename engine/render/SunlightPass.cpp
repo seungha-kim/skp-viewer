@@ -68,7 +68,7 @@ public:
             glBindVertexArray(unit->VAO());
 
             glm::mat4 model = unit->transform();
-            m_subShader->setMatrix4f("model", model);
+            m_subShader->setMatrix4f("modelMatrix", model);
 
             glDrawArrays(GL_TRIANGLES, 0, unit->verticesCount());
         }

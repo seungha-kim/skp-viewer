@@ -62,7 +62,7 @@ public:
 
             glm::mat4 model = unit->transform();
             glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(model)));
-            m_shader->setMatrix4f("model", model);
+            m_shader->setMatrix4f("modelMatrix", model);
             m_shader->setMatrix3f("normalMatrix", normalMatrix);
             m_shader->setMatrix3f("NormalMatrix", normalMatrix);
             m_shader->setMatrix3f("NormalMatrixInverse", glm::inverse(normalMatrix));

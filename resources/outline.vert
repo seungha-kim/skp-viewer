@@ -2,7 +2,7 @@
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
 
-uniform mat4 model;
+uniform mat4 modelMatrix;
 uniform mat3 normalMatrix;
 
 //uniform viewBlock
@@ -28,6 +28,6 @@ out vec3 fragPos;
 
 void main() {
     worldNormal = normalMatrix * aNormal;
-    gl_Position = ProjectionMatrix * ViewMatrix * model * vec4(aPos, 1.0);
+    gl_Position = ProjectionMatrix * ViewMatrix * modelMatrix * vec4(aPos, 1.0);
     fragPos = aPos;
 }

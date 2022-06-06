@@ -72,7 +72,7 @@ INOUT vec2 backTexCoord;
 flat INOUT float frontFacing;
 
 // vert
-uniform mat4 model;
+uniform mat4 modelMatrix;
 uniform mat4 lightSpaceMatrix;
 
 // frag
@@ -106,9 +106,9 @@ layout (location = 4) in vec2 aBackTexCoord;
 
 void main() {
     // TODO: normal matrix outside of shader
-    mat3 normalMatrix = mat3(transpose(inverse(viewMatrix * model)));
+    mat3 normalMatrix = mat3(transpose(inverse(viewMatrix * modelMatrix)));
     normalVs = normalize(normalMatrix * aNormal);
-    vec4 fragPosWs4 = model * vec4(aPos, 1.0);
+    vec4 fragPosWs4 = modelMatrix * vec4(aPos, 1.0);
     fragPosWs = vec3(fragPosWs4);
     fragPosVs = vec3(viewMatrix * fragPosWs4);
     gl_Position = projectionMatrix * vec4(fragPosVs, 1.0);
@@ -177,14 +177,14 @@ void main() {
 #ifdef DIRECTIONAL_LIGHT
 uniform mat4 dirLightViewProjectionMatrix;
 uniform vec3 color;
-uniform mat4 model;
+uniform mat4 modelMatrix;
 #endif
 
 #if defined(DIRECTIONAL_LIGHT) && defined(VERT)
 layout (location = 0) in vec3 aPos;
 
 void main() {
-    gl_Position = dirLightViewProjectionMatrix * model * vec4(aPos, 1.0);
+    gl_Position = dirLightViewProjectionMatrix * modelMatrix * vec4(aPos, 1.0);
 }
 #endif
 
@@ -201,14 +201,14 @@ void main() {
 //////////////////
 
 #ifdef BOUNDING_BOX
-uniform mat4 model;
+uniform mat4 modelMatrix;
 #endif
 
 #if defined(BOUNDING_BOX) && defined(VERT)
 layout (location = 0) in vec3 aPos;
 
 void main() {
-    gl_Position = viewProjectionMatrix * model * vec4(aPos, 1.0);
+    gl_Position = viewProjectionMatrix * modelMatrix * vec4(aPos, 1.0);
 }
 #endif
 

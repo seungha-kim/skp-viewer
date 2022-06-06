@@ -92,7 +92,7 @@ private:
 
         m_mainShader->setInt("selected", selected);
         glm::mat4 model = unit->transform();
-        m_mainShader->setMatrix4f("model", model);
+        m_mainShader->setMatrix4f("modelMatrix", model);
 
         m_mainShader->setVector3f("frontColor", unit->frontColor());
         m_mainShader->setVector3f("backColor", unit->backColor());

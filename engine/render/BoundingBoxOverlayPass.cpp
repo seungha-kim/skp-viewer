@@ -32,7 +32,7 @@ public:
         m_mainShader->use();
         for (const auto* unit: input.units) {
             glBindVertexArray(unit->bboxEdgeVAO());
-            m_mainShader->setMatrix4f("model", unit->transform());
+            m_mainShader->setMatrix4f("modelMatrix", unit->transform());
             glDrawArrays(GL_LINES, 0, unit->bboxEdgeCount());
         }
 
