@@ -1,11 +1,15 @@
 #pragma once
 #include "../primitives.h"
 #include <glm/glm.hpp>
-#include <variant>
+#include <optional>
 
 namespace acon {
 
-using RenderColor = glm::vec3;
-using RenderMaterial = std::variant<glm::vec3, TextureId>;
+struct RenderMaterial {
+    glm::vec3 color = glm::vec3(0.7f, 0.7f, 0.7f);
+    std::optional<TextureId> textureOpt;
+    float opacity = 1.0f;
+    bool use_opacity = false;
+};
 
 }

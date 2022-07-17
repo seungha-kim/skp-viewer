@@ -17,11 +17,6 @@ static RenderVertex convertVertex(const Vertex& vertex) {
     };
 }
 
-static inline RenderMaterial defaultMaterial() {
-    // TODO: 리더마다 기본값이 다를 수 있음 - e.g. 스케치업 기본 색과 블렌더 기본 색이 다를 수 있음.
-    return glm::vec3(0.7f, 0.7f, 0.7f);
-}
-
 static BoundingBox buildVertices(const AbstractReader& reader, UnitId unitId, std::vector<RenderVertex>& vertices) {
     glm::vec3 max {std::numeric_limits<float>::lowest()};
     glm::vec3 min {std::numeric_limits<float>::max()};
@@ -91,8 +86,8 @@ std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>> buildMode
 
         auto unitCount = reader.getObjectUnitCount(item.id);
         for (int i = 0; i < unitCount; i++) {
-            RenderMaterial backMaterial = defaultMaterial();
-            RenderMaterial frontMaterial = defaultMaterial();
+            RenderMaterial backMaterial {};
+            RenderMaterial frontMaterial {};
             auto unitId = reader.getObjectUnit(item.id, i);
 
             if (auto backMaterialIdOpt = reader.getUnitBackMaterial(unitId)) {
@@ -100,7 +95,7 @@ std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>> buildMode
 
                 if (reader.getMaterialHasTexture(backMaterialId)) {
                     auto backTextureId = reader.getMaterialTexture(backMaterialId);
-                    backMaterial = backTextureId;
+                    backMaterial.textureOpt = backTextureId;
 
                     if (!renderModel->m_textures.contains(backTextureId)) {
                         auto textureData = reader.copyTextureData(backTextureId);
@@ -108,7 +103,7 @@ std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>> buildMode
                         renderModel->m_textures[backTextureId] = std::move(backTexture);
                     }
                 } else if (reader.getMaterialHasColor(backMaterialId)) {
-                    backMaterial = reader.getMaterialColor(backMaterialId);
+                    backMaterial.color = reader.getMaterialColor(backMaterialId);
                 }
             }
 
@@ -117,7 +112,7 @@ std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>> buildMode
 
                 if (reader.getMaterialHasTexture(frontMaterialId)) {
                     auto frontTextureId = reader.getMaterialTexture(frontMaterialId);
-                    frontMaterial = frontTextureId;
+                    frontMaterial.textureOpt = frontTextureId;
 
                     if (!renderModel->m_textures.contains(frontTextureId)) {
                         auto textureData = reader.copyTextureData(frontTextureId);
@@ -125,7 +120,7 @@ std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>> buildMode
                         renderModel->m_textures[frontTextureId] = std::move(frontTexture);
                     }
                 } else if (reader.getMaterialHasColor(frontMaterialId)) {
-                    frontMaterial = reader.getMaterialColor(frontMaterialId);
+                    frontMaterial.color = reader.getMaterialColor(frontMaterialId);
                 }
             }
 

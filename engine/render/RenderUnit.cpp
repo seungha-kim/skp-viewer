@@ -92,16 +92,13 @@ void RenderUnit::prepareToRender() {
     const auto& vertices = m_tempData->vertices;
     const auto& textures = m_tempData->textures;
 
-    if (const auto* frontTextureId = std::get_if<TextureId>(&frontMaterial)) {
-        m_frontTexture = textures.at(*frontTextureId)->textureName();
-    } else if (const auto* frontTextureColor = std::get_if<RenderColor>(&frontMaterial)) {
-        m_frontColor = *frontTextureColor;
+    m_frontColor = frontMaterial.color;
+    m_backColor = backMaterial.color;
+    if (frontMaterial.textureOpt.has_value()) {
+        m_frontTexture = textures.at(frontMaterial.textureOpt.value())->textureName();
     }
-
-    if (const auto* backTextureId = std::get_if<TextureId>(&backMaterial)) {
-        m_backTexture = textures.at(*backTextureId)->textureName();
-    } else if (const auto* backTextureColor = std::get_if<RenderColor>(&backMaterial)) {
-        m_backColor = *backTextureColor;
+    if (backMaterial.textureOpt.has_value()) {
+        m_backTexture = textures.at(backMaterial.textureOpt.value())->textureName();
     }
 
     m_verticesCount = vertices.size();
