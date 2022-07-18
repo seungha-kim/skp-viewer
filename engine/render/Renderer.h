@@ -4,6 +4,7 @@
 #include "BrightFilterPass.h"
 #include "ColorBalancePass.h"
 #include "GaussianBlurPass.h"
+#include "GeometryBufferPass.h"
 #include "MainPass.h"
 #include "OutlinePass.h"
 #include "RenderModel.h"
@@ -46,6 +47,7 @@ public:
 
 private:
     SunlightPass m_sunlightPass;
+    GeometryBufferPass m_geometryBufferPass;
     MainPass m_mainPass;
     ColorBalancePass m_colorBalancePass;
     GaussianBlurPass m_gaussianBlurPass;

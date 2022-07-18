@@ -219,3 +219,40 @@ void main() {
     FragColor = vec4(1.0, 0.0, 0.0, 1.0);
 }
 #endif
+
+/////////////////////
+// Geometry Buffer //
+/////////////////////
+
+#ifdef G_BUFFER
+uniform mat4 modelMatrix;
+uniform mat3 normalMatrix; // mat3(transpose(inverse(modelMatrix)))
+
+INOUT vec3 wsPos;
+INOUT vec3 wsVertexNormal;
+INOUT vec3 wsFaceNormal;
+#endif
+
+#if defined(G_BUFFER) && defined(VERT)
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aVertexNormal;
+layout (location = 2) in vec3 aFaceNormal;
+
+void main() {
+    wsPos = (modelMatrix * vec4(aPos, 1)).xyz;
+    wsVertexNormal = normalMatrix * aVertexNormal;
+    wsFaceNormal = normalMatrix * aFaceNormal;
+
+    gl_Position = viewProjectionMatrix * modelMatrix * vec4(aPos, 1.0);
+}
+#endif
+
+#if defined(G_BUFFER) && defined(FRAG)
+layout (location = 0) out vec3 FragVertexNormal;
+layout (location = 1) out vec3 FragFaceNormal;
+
+void main() {
+    FragVertexNormal = wsVertexNormal;
+    FragFaceNormal = wsFaceNormal;
+}
+#endif

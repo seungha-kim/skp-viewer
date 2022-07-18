@@ -2,6 +2,7 @@
 #include "OffscreenRenderTarget.h"
 #include "Shader.h"
 #include "checkError.h"
+#include <algorithm>
 
 namespace acon {
 

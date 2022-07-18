@@ -7,6 +7,7 @@ namespace acon {
 
 Renderer::Renderer(const SurfaceInfo& surfaceInfo)
         : m_sunlightPass(surfaceInfo)
+        , m_geometryBufferPass(surfaceInfo)
         , m_mainPass(surfaceInfo)
         , m_gaussianBlurPass(surfaceInfo)
         , m_additiveBlendPass(surfaceInfo, BlendPassKind::additive)
@@ -27,6 +28,12 @@ void Renderer::render(RenderContext& ctx) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     updateViewBlock(ctx);
+
+    const GeometryBufferPassInput geometryBufferPassInput {
+        .units = m_unitsForRender,
+        .viewBlockBuffer = m_viewBlockBuffer,
+    };
+    const auto geometryBufferPassOutput = m_geometryBufferPass.render(ctx, geometryBufferPassInput);
 
     const SunlightPassInput sunlightPassInput {
         .units = m_unitsForRender,
