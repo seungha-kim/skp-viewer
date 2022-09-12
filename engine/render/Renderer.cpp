@@ -105,7 +105,24 @@ void Renderer::render(RenderContext& ctx) {
         m_bboxOverlayPass.render(ctx, bboxOverlayPassInput);
     }
 
-    m_textureRenderer.setSourceTexture(multiOutput.colorTexture, 0);
+    switch (m_renderOptions.debugViewKind) {
+    case DebugViewKind::MAIN:
+        m_textureRenderer.setSourceTexture(multiOutput.colorTexture, 0);
+        break;
+    case DebugViewKind::DEPTH:
+        m_textureRenderer.setSourceTexture(geometryBufferPassOutput.depthTexture, 0);
+        break;
+    case DebugViewKind::VERTEX_NORMAL:
+        m_textureRenderer.setSourceTexture(geometryBufferPassOutput.vertexNormalTexture, 0);
+        break;
+    case DebugViewKind::FACE_NORMAL:
+        m_textureRenderer.setSourceTexture(geometryBufferPassOutput.faceNormalTexture, 0);
+        break;
+    case DebugViewKind::OUTLINE:
+        m_textureRenderer.setSourceTexture(outlinePassOutput.colorTexture, 0);
+        break;
+    }
+
     m_textureRenderer.render(ctx);
 }
 

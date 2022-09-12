@@ -107,6 +107,21 @@ float Gui::deltasHistogram(void* data, int i) {
     return that->m_deltas[(that->m_deltasPivot + i) % 100];
 }
 
+const char* debugViewDescription(acon::DebugViewKind debugViewKind) {
+    switch (debugViewKind) {
+    case acon::DebugViewKind::MAIN:
+        return "Main";
+    case acon::DebugViewKind::DEPTH:
+        return "Depth";
+    case acon::DebugViewKind::VERTEX_NORMAL:
+        return "Vertex Normal";
+    case acon::DebugViewKind::FACE_NORMAL:
+        return "Face Normal";
+    case acon::DebugViewKind::OUTLINE:
+        return "Outline";
+    }
+}
+
 void Gui::processRenderOptions(GuiContext& ctx) {
     auto& renderOptions = ctx.renderOptions;
     auto assistant = 0; // TODO: m_sunlightPass.depthTexture();
@@ -136,6 +151,28 @@ void Gui::processRenderOptions(GuiContext& ctx) {
 
     ImGui::Text("Bounding box");
     ImGui::Checkbox("Render bounding box", &renderOptions.renderBoundingBox);
+
+    static const acon::DebugViewKind debugViewKinds[5] {
+        acon::DebugViewKind::MAIN,
+        acon::DebugViewKind::DEPTH,
+        acon::DebugViewKind::VERTEX_NORMAL,
+        acon::DebugViewKind::FACE_NORMAL,
+        acon::DebugViewKind::OUTLINE,
+    };
+    static int debugViewIndex = 0;
+    if (ImGui::BeginCombo("Debug view", debugViewDescription(renderOptions.debugViewKind))) {
+        for (int n = 0; n < IM_ARRAYSIZE(debugViewKinds); n++) {
+            const bool is_selected = (debugViewIndex == n);
+            if (ImGui::Selectable(debugViewDescription(debugViewKinds[n]), is_selected))
+                debugViewIndex = n;
+
+            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+            if (is_selected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
+    renderOptions.debugViewKind = debugViewKinds[debugViewIndex];
 
     ImGui::End();
 }

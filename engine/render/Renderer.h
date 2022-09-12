@@ -18,6 +18,14 @@
 
 namespace acon {
 
+enum class DebugViewKind {
+    MAIN,
+    DEPTH,
+    VERTEX_NORMAL,
+    FACE_NORMAL,
+    OUTLINE,
+};
+
 struct RenderOptions {
     glm::vec3 colorBalance {1.0};
     bool enableGaussianBlur {false};
@@ -33,6 +41,7 @@ struct RenderOptions {
     float outlineDepthThreshold = 20.0f;
 
     bool renderBoundingBox = false;
+    DebugViewKind debugViewKind = DebugViewKind::MAIN;
 };
 
 class Renderer final {
