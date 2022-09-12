@@ -107,8 +107,11 @@ void Renderer::render(RenderContext& ctx) {
     }
 
     switch (m_renderOptions.debugViewKind) {
-    case DebugViewKind::MAIN:
+    case DebugViewKind::FULL:
         m_textureRenderer.setSourceTexture(multiOutput.colorTexture, 0);
+        break;
+    case DebugViewKind::MAIN:
+        m_textureRenderer.setSourceTexture(mainPassOutput.colorTexture, 0);
         break;
     case DebugViewKind::DEPTH:
         m_textureRenderer.setSourceTexture(geometryBufferPassOutput.depthTexture, 0);

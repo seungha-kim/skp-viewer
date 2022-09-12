@@ -109,6 +109,8 @@ float Gui::deltasHistogram(void* data, int i) {
 
 const char* debugViewDescription(acon::DebugViewKind debugViewKind) {
     switch (debugViewKind) {
+    case acon::DebugViewKind::FULL:
+        return "Full";
     case acon::DebugViewKind::MAIN:
         return "Main";
     case acon::DebugViewKind::DEPTH:
@@ -152,7 +154,8 @@ void Gui::processRenderOptions(GuiContext& ctx) {
     ImGui::Text("Bounding box");
     ImGui::Checkbox("Render bounding box", &renderOptions.renderBoundingBox);
 
-    static const acon::DebugViewKind debugViewKinds[5] {
+    static const acon::DebugViewKind debugViewKinds[6] {
+        acon::DebugViewKind::FULL,
         acon::DebugViewKind::MAIN,
         acon::DebugViewKind::DEPTH,
         acon::DebugViewKind::VERTEX_NORMAL,

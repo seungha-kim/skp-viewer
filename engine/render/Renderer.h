@@ -19,6 +19,7 @@
 namespace acon {
 
 enum class DebugViewKind {
+    FULL,
     MAIN,
     DEPTH,
     VERTEX_NORMAL,
@@ -41,7 +42,7 @@ struct RenderOptions {
     float outlineDepthThreshold = 20.0f;
 
     bool renderBoundingBox = false;
-    DebugViewKind debugViewKind = DebugViewKind::MAIN;
+    DebugViewKind debugViewKind = DebugViewKind::FULL;
 };
 
 class Renderer final {
