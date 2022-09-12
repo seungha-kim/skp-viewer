@@ -38,7 +38,8 @@ public:
     }
 
     void resizeResources(const SurfaceInfo& surfaceInfo) {
-        m_brightColorTexture = std::make_unique<ColorTexture>(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight);
+        m_brightColorTexture
+            = std::make_unique<ColorTexture>(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight, GL_RGB);
     }
 };
 

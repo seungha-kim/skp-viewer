@@ -5,7 +5,7 @@ namespace acon {
 
 class ColorTexture {
 public:
-    ColorTexture(int width, int height);
+    ColorTexture(int width, int height, GLint format);
     ~ColorTexture();
     [[nodiscard]] GLuint textureName() const;
     [[nodiscard]] int width() const;

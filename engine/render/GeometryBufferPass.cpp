@@ -55,8 +55,10 @@ public:
     }
 
     void resizeResources(const SurfaceInfo& surfaceInfo) {
-        m_vertexNormalTexture = std::make_unique<ColorTexture>(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight);
-        m_faceNormalTexture = std::make_unique<ColorTexture>(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight);
+        m_vertexNormalTexture
+            = std::make_unique<ColorTexture>(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight, GL_RGB32F);
+        m_faceNormalTexture
+            = std::make_unique<ColorTexture>(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight, GL_RGB32F);
         m_depthTexture = std::make_unique<DepthTexture>(surfaceInfo.physicalWidth, surfaceInfo.physicalHeight);
     }
 

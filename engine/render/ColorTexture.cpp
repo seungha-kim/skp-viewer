@@ -2,7 +2,7 @@
 
 namespace acon {
 
-ColorTexture::ColorTexture(int width, int height)
+ColorTexture::ColorTexture(int width, int height, GLint format)
         : m_width(width)
         , m_height(height) {
     glGenTextures(1, &m_textureName);
@@ -12,8 +12,8 @@ ColorTexture::ColorTexture(int width, int height)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    // TODO: internal format 옵션 제공
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
