@@ -166,10 +166,9 @@ void main() {
 #if defined(OUTLINE) && defined(FRAG)
 uniform sampler2D normalTexture;
 uniform sampler2D depthTexture;
-uniform float width;
-uniform float height;
 uniform float zNear;
 uniform float zFar;
+uniform int lineWidth;
 
 out vec4 FragColor;
 
@@ -186,9 +185,9 @@ vec3 ViewPosFromDepth(float depth) {
 }
 
 void main() {
-    float lineWidth = 1.0;
-    float w = lineWidth / width ;
-    float h = lineWidth / height;
+    ivec2 size = textureSize(normalTexture, 0);
+    float w = lineWidth / float(size.x);
+    float h = lineWidth / float(size.y);
 
     vec3 normalAdj[3];
     float dotVal = 1.0;

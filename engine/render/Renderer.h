@@ -37,7 +37,7 @@ struct RenderOptions {
     int gaussianBlurIteration = 5;
     float brightFilterThreshold = 0.7f;
 
-    float outlineWidth = 1.0f;
+    int outlineWidth = 1;
     float outlineDepthThreshold = 20.0f;
 
     bool renderBoundingBox = false;

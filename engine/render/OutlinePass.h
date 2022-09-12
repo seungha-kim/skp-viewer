@@ -13,6 +13,7 @@ struct OutlinePassInput {
     const ColorTexture& normalTexture;
     const DepthTexture& depthTexture;
     const GLuint viewBlockBuffer;
+    const int lineWidth;
 };
 
 struct OutlinePassOutput {

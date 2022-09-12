@@ -43,8 +43,7 @@ public:
         m_textureRenderer.render(ctx, [&](Shader& shader) {
             shader.setInt("normalTexture", 0);
             shader.setInt("depthTexture", 1);
-            shader.setFloat("width", (float)ctx.surfaceInfo.physicalWidth);
-            shader.setFloat("height", (float)ctx.surfaceInfo.physicalHeight);
+            shader.setInt("lineWidth", input.lineWidth);
             shader.setFloat("zNear", ctx.scene.cameraState().zNear);
             shader.setFloat("zFar", ctx.scene.cameraState().zFar);
         });

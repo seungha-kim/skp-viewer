@@ -87,6 +87,7 @@ void Renderer::render(RenderContext& ctx) {
         .normalTexture = geometryBufferPassOutput.vertexNormalTexture,
         .depthTexture = geometryBufferPassOutput.depthTexture,
         .viewBlockBuffer = m_viewBlockBuffer,
+        .lineWidth = m_renderOptions.outlineWidth,
     };
     const auto outlinePassOutput = m_outlinePass.render(ctx, outlinePassInput);
 
