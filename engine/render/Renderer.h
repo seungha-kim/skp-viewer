@@ -31,6 +31,8 @@ struct RenderOptions {
 
     float outlineWidth = 1.0f;
     float outlineDepthThreshold = 20.0f;
+
+    bool renderBoundingBox = false;
 };
 
 class Renderer final {

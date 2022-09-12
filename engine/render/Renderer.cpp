@@ -96,12 +96,14 @@ void Renderer::render(RenderContext& ctx) {
     };
     const auto multiOutput = m_outlineMultiplicativeBlendPass.render(ctx, multiInput);
 
-    const BoundingBoxOverlayPassInput bboxOverlayPassInput {
-        .units = m_unitsForRender,
-        .colorTexture = multiOutput.colorTexture,
-        .depthTexture = mainPassOutput.depthTexture,
-    };
-    m_bboxOverlayPass.render(ctx, bboxOverlayPassInput);
+    if (m_renderOptions.renderBoundingBox) {
+        const BoundingBoxOverlayPassInput bboxOverlayPassInput {
+            .units = m_unitsForRender,
+            .colorTexture = multiOutput.colorTexture,
+            .depthTexture = mainPassOutput.depthTexture,
+        };
+        m_bboxOverlayPass.render(ctx, bboxOverlayPassInput);
+    }
 
     m_textureRenderer.setSourceTexture(multiOutput.colorTexture, 0);
     m_textureRenderer.render(ctx);
