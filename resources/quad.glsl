@@ -189,35 +189,48 @@ void main() {
     float w = lineWidth / float(size.x);
     float h = lineWidth / float(size.y);
 
-    vec3 normalAdj[3];
+    vec3 normals[9];
     float dotVal = 1.0;
+    float normalContrib = 0.0;
     vec2 coord = TexCoord.st;
-    vec3 normal = texture(normalTexture, coord).xyz;
+    normals[0] = normalize(texture(normalTexture, coord).xyz);
+    normals[1] = normalize(texture(normalTexture, coord + vec2(      w,     0.0)).xyz);
+    normals[2] = normalize(texture(normalTexture, coord + vec2(2.0 * w,     0.0)).xyz);
+    normals[3] = normalize(texture(normalTexture, coord + vec2(    0.0,       h)).xyz);
+    normals[4] = normalize(texture(normalTexture, coord + vec2(      w,       h)).xyz);
+    normals[5] = normalize(texture(normalTexture, coord + vec2(2.0 * w,       h)).xyz);
+    normals[6] = normalize(texture(normalTexture, coord + vec2(    0.0, 2.0 * h)).xyz);
+    normals[7] = normalize(texture(normalTexture, coord + vec2(      w, 2.0 * h)).xyz);
+    normals[8] = normalize(texture(normalTexture, coord + vec2(2.0 * w, 2.0 * h)).xyz);
 
-    normalAdj[0] = normalize(texture(normalTexture, coord + vec2( -w, -h)).xyz);
-    normalAdj[1] = normalize(texture(normalTexture, coord + vec2(0.0, -h)).xyz);
-    normalAdj[2] = normalize(texture(normalTexture, coord + vec2(  w, -h)).xyz);
-    for (int i = 0; i < 3; i++) {
-        dotVal = min(dotVal, dot(normalAdj[i], normal));
+    for (int i = 1; i < 9; i++) {
+        dotVal = dot(normals[i], normals[0]);
+        normalContrib += pow(map(dotVal, -1.0, 1.0, 0.0, 1.0), 5.0);
     }
-    dotVal = pow(map(dotVal, -1.0, 1.0, 0.0, 1.0), 5.0);
+    normalContrib /= 9.0;
 
-    float depth = texture(depthTexture, coord).r;
-    float linDepthAdj[3];
-    float linDepth = linearizeDepth(depth, zNear, zFar);
+    float linDepths[9];
+    linDepths[0] = linearizeDepth(texture(depthTexture, coord).r, zNear, zFar);
+    linDepths[1] = linearizeDepth(texture(depthTexture, coord + vec2(      w,     0.0)).r, zNear, zFar);
+    linDepths[2] = linearizeDepth(texture(depthTexture, coord + vec2(2.0 * w,     0.0)).r, zNear, zFar);
+    linDepths[3] = linearizeDepth(texture(depthTexture, coord + vec2(    0.0,       h)).r, zNear, zFar);
+    linDepths[4] = linearizeDepth(texture(depthTexture, coord + vec2(      w,       h)).r, zNear, zFar);
+    linDepths[5] = linearizeDepth(texture(depthTexture, coord + vec2(2.0 * w,       h)).r, zNear, zFar);
+    linDepths[6] = linearizeDepth(texture(depthTexture, coord + vec2(    0.0, 2.0 * h)).r, zNear, zFar);
+    linDepths[7] = linearizeDepth(texture(depthTexture, coord + vec2(      w, 2.0 * h)).r, zNear, zFar);
+    linDepths[8] = linearizeDepth(texture(depthTexture, coord + vec2(2.0 * w, 2.0 * h)).r, zNear, zFar);
+
     float linDepthDiff = 0.0;
-    linDepthAdj[0] = linearizeDepth(texture(depthTexture, coord + vec2( -w, -h)).r, zNear, zFar);
-    linDepthAdj[1] = linearizeDepth(texture(depthTexture, coord + vec2(0.0, -h)).r, zNear, zFar);
-    linDepthAdj[2] = linearizeDepth(texture(depthTexture, coord + vec2(  w, -h)).r, zNear, zFar);
-    for (int i = 0; i < 3; i++) {
-        linDepthDiff = max(linDepthDiff, abs(linDepthAdj[i] - linDepth));
+    for (int i = 1; i < 9; i++) {
+        linDepthDiff += abs(linDepths[i] - linDepths[0]);
     }
+    linDepthDiff /= 9.0;
 
-    vec3 vsNormal = mat3(viewMatrix) * normal;
+    vec3 vsNormal = mat3(viewMatrix) * normals[0];
     vec3 vsPos = ViewPosFromDepth(texture(depthTexture, coord).r);
-
     float frontFacing = dot(normalize(-vsPos), vsNormal);
+
     float depthContrib = clamp(map(linDepthDiff * frontFacing, 0.5, 1.0, 1.0, 0.0), 0.0, 1.0);
-    FragColor = vec4(vec3(smoothstep(0.0, 1.0, dotVal * depthContrib)), 1.0);
+    FragColor = vec4(vec3(smoothstep(0.0, 1.0, normalContrib * depthContrib)), 1.0);
 }
 #endif
