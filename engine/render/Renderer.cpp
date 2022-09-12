@@ -111,6 +111,7 @@ void Renderer::render(RenderContext& ctx) {
 void Renderer::resizeResources(const SurfaceInfo& surfaceInfo) {
     m_sunlightPass.resizeResources(surfaceInfo);
     m_mainPass.resizeResources(surfaceInfo);
+    m_geometryBufferPass.resizeResources(surfaceInfo);
     m_colorBalancePass.resizeResources(surfaceInfo);
     m_gaussianBlurPass.resizeResources(surfaceInfo);
     m_additiveBlendPass.resizeResources(surfaceInfo);
