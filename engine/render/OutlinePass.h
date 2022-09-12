@@ -10,10 +10,9 @@
 namespace acon {
 
 struct OutlinePassInput {
-    const std::vector<const RenderUnit*>& units;
+    const ColorTexture& normalTexture;
     const DepthTexture& depthTexture;
-    const float outlineWidth;
-    const float outlineDepthThreshold;
+    const GLuint viewBlockBuffer;
 };
 
 struct OutlinePassOutput {
@@ -23,7 +22,7 @@ struct OutlinePassOutput {
 class OutlinePassPimpl;
 class OutlinePass: public BasePass {
 public:
-    OutlinePass(const SurfaceInfo& surfaceInfo);
+    explicit OutlinePass(const SurfaceInfo& surfaceInfo);
     ~OutlinePass();
     OutlinePassOutput render(RenderContext& ctx, const OutlinePassInput& input);
     void resizeResources(const SurfaceInfo& surfaceInfo) override;

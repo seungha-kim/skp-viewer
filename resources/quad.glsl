@@ -10,6 +10,40 @@
 
 INOUT vec2 TexCoord;
 
+////////////////////
+// Uniform Blocks //
+////////////////////
+
+// MUST be synchronized with `Uniforms.h`
+
+layout (std140) uniform ViewBlock {
+    mat4 viewMatrix;
+    mat4 viewMatrixInverse;
+    mat4 projectionMatrix;
+    mat4 projectionMatrixInverse;
+    mat4 viewProjectionMatrix;
+    mat4 viewProjectionMatrixInverse;
+    vec3 cameraPosition;
+};
+
+//////////////////////
+// Common Functions //
+//////////////////////
+
+float map(float value, float min1, float max1, float min2, float max2) {
+    return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
+}
+
+float linearizeDepth(float depth, float near, float far) {
+    // https://learnopengl.com/Advanced-OpenGL/Depth-testing
+    float z = depth * 2.0 - 1.0; // back to NDC
+    return (2.0 * near * far) / (far + near - z * (far - near));
+}
+
+////////////
+// Passes //
+////////////
+
 #ifdef VERT
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec2 aTexCoord;
@@ -125,5 +159,66 @@ out vec4 FragColor;
 
 void main() {
     FragColor = c1 * texture(tex1, TexCoord) + c2 * texture(tex2, TexCoord);
+}
+#endif
+
+
+#if defined(OUTLINE) && defined(FRAG)
+uniform sampler2D normalTexture;
+uniform sampler2D depthTexture;
+uniform float width;
+uniform float height;
+uniform float zNear;
+uniform float zFar;
+
+out vec4 FragColor;
+
+// https://stackoverflow.com/questions/32227283/getting-world-position-from-depth-buffer-value
+vec3 ViewPosFromDepth(float depth) {
+    float z = depth * 2.0 - 1.0;
+
+    vec4 clipSpacePosition = vec4(TexCoord * 2.0 - 1.0, z, 1.0);
+    vec4 viewSpacePosition = projectionMatrixInverse * clipSpacePosition;
+
+    // Perspective division
+    viewSpacePosition /= viewSpacePosition.w;
+    return viewSpacePosition.xyz;
+}
+
+void main() {
+    float lineWidth = 1.0;
+    float w = lineWidth / width ;
+    float h = lineWidth / height;
+
+    vec3 normalAdj[3];
+    float dotVal = 1.0;
+    vec2 coord = TexCoord.st;
+    vec3 normal = texture(normalTexture, coord).xyz;
+
+    normalAdj[0] = normalize(texture(normalTexture, coord + vec2( -w, -h)).xyz);
+    normalAdj[1] = normalize(texture(normalTexture, coord + vec2(0.0, -h)).xyz);
+    normalAdj[2] = normalize(texture(normalTexture, coord + vec2(  w, -h)).xyz);
+    for (int i = 0; i < 3; i++) {
+        dotVal = min(dotVal, dot(normalAdj[i], normal));
+    }
+    dotVal = pow(map(dotVal, -1.0, 1.0, 0.0, 1.0), 5.0);
+
+    float depth = texture(depthTexture, coord).r;
+    float linDepthAdj[3];
+    float linDepth = linearizeDepth(depth, zNear, zFar);
+    float linDepthDiff = 0.0;
+    linDepthAdj[0] = linearizeDepth(texture(depthTexture, coord + vec2( -w, -h)).r, zNear, zFar);
+    linDepthAdj[1] = linearizeDepth(texture(depthTexture, coord + vec2(0.0, -h)).r, zNear, zFar);
+    linDepthAdj[2] = linearizeDepth(texture(depthTexture, coord + vec2(  w, -h)).r, zNear, zFar);
+    for (int i = 0; i < 3; i++) {
+        linDepthDiff = max(linDepthDiff, abs(linDepthAdj[i] - linDepth));
+    }
+
+    vec3 vsNormal = mat3(viewMatrix) * normal;
+    vec3 vsPos = ViewPosFromDepth(texture(depthTexture, coord).r);
+
+    float frontFacing = dot(normalize(-vsPos), vsNormal);
+    float depthContrib = clamp(map(linDepthDiff * frontFacing, 0.5, 1.0, 1.0, 0.0), 0.0, 1.0);
+    FragColor = vec4(vec3(smoothstep(0.0, 1.0, dotVal * depthContrib)), 1.0);
 }
 #endif

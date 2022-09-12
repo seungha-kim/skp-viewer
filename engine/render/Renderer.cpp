@@ -84,10 +84,9 @@ void Renderer::render(RenderContext& ctx) {
     //    const auto colorBalancePassOutput = m_colorBalancePass.render(ctx, colorBalancePassInput);
 
     const OutlinePassInput outlinePassInput {
-        .units = m_unitsForRender,
-        .depthTexture = mainPassOutput.depthTexture,
-        .outlineWidth = m_renderOptions.outlineWidth,
-        .outlineDepthThreshold = m_renderOptions.outlineDepthThreshold,
+        .normalTexture = geometryBufferPassOutput.vertexNormalTexture,
+        .depthTexture = geometryBufferPassOutput.depthTexture,
+        .viewBlockBuffer = m_viewBlockBuffer,
     };
     const auto outlinePassOutput = m_outlinePass.render(ctx, outlinePassInput);
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "ColorTexture.h"
+#include "DepthTexture.h"
 #include "RenderContext.h"
 #include "Shader.h"
 #include <functional>
@@ -14,6 +15,7 @@ public:
     TextureRenderer(std::unique_ptr<Shader> shader);
     ~TextureRenderer();
     void setSourceTexture(const ColorTexture& texture, int index);
+    void setSourceTexture(const DepthTexture& texture, int index);
     void render(RenderContext& ctx, const std::function<void(Shader&)>& shaderCallback = nullptr);
 
 private:

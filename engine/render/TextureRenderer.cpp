@@ -44,6 +44,11 @@ void TextureRenderer::setSourceTexture(const ColorTexture& texture, int index) {
     m_maxTextureIndex = index > m_maxTextureIndex ? index : m_maxTextureIndex;
 }
 
+void TextureRenderer::setSourceTexture(const DepthTexture& texture, int index) {
+    m_textureNames[index] = texture.textureName();
+    m_maxTextureIndex = index > m_maxTextureIndex ? index : m_maxTextureIndex;
+}
+
 void TextureRenderer::render(RenderContext& ctx, const std::function<void(Shader&)>& shaderCallback) {
     glViewport(0, 0, ctx.surfaceInfo.physicalWidth, ctx.surfaceInfo.physicalHeight);
     //    glClear(GL_DEPTH_BUFFER_BIT);
