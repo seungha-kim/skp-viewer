@@ -67,6 +67,7 @@ add_library(engine
         render/UniformBinding.h
         render/GeometryBufferPass.cpp
         render/GeometryBufferPass.h
+        render/RenderEdge.h
         )
 
 target_link_libraries(engine

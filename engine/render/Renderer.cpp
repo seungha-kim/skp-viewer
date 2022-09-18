@@ -27,6 +27,9 @@ void Renderer::render(RenderContext& ctx) {
     glClearColor(0.2f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    // TODO: 좀 더 적절한 곳
+    glLineWidth(GL_LINE_SMOOTH);
+
     updateViewBlock(ctx);
 
     const GeometryBufferPassInput geometryBufferPassInput {

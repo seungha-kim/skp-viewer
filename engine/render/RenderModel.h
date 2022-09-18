@@ -27,6 +27,7 @@ public:
 private:
     std::unordered_map<ObjectId, RenderObjectData> m_objectData {};
     std::vector<std::unique_ptr<RenderUnit>> m_units {};
+    std::vector<Edge> m_edges {};
     std::unordered_map<TextureId, std::unique_ptr<RenderTexture>> m_textures {};
 };
 

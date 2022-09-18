@@ -159,6 +159,12 @@ std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>> buildMode
             objectData.children.push_back(childId);
         }
 
+        // TODO: RenderObject 가 만들어지고 난 뒤에 object 레벨로 옮기기
+        auto edgeCount = reader.getObjectEdgeCount(item.id);
+        for (int i = 0; i < edgeCount; i++) {
+            renderModel->m_edges.push_back(reader.getObjectEdge(item.id, i));
+        }
+
         runtimeModel->m_objectData.emplace(item.id, std::move(objectData));
     }
 

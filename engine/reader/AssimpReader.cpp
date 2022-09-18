@@ -233,6 +233,14 @@ float AssimpReader::getMaterialOpacity(MaterialId id) const {
     return 1.0f;
 }
 
+unsigned int AssimpReader::getObjectEdgeCount(ObjectId id) const {
+    return 0;
+}
+
+Edge AssimpReader::getObjectEdge(ObjectId id, int index) const {
+    exit(1);
+}
+
 glm::mat4 convertMatrix4(const aiMatrix4x4& mat) {
     float arr[] {
         mat.a1,

@@ -33,6 +33,10 @@ public:
 
     [[nodiscard]] ObjectId getObjectChild(ObjectId id, int index) const override;
 
+    [[nodiscard]] unsigned int getObjectEdgeCount(ObjectId id) const override;
+
+    [[nodiscard]] Edge getObjectEdge(ObjectId id, int index) const override;
+
     [[nodiscard]] bool hasUnit(UnitId meshId) const override;
 
     [[nodiscard]] std::optional<MaterialId> getUnitFrontMaterial(UnitId id) const override;

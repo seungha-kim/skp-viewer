@@ -19,6 +19,13 @@ struct Vertex {
     glm::vec2 backTexCoord {};
 };
 
+struct Edge {
+    glm::vec3 startVertex;
+    glm::vec3 endVertex;
+    bool soft;
+    bool smooth;
+};
+
 struct Triangle {
     Vertex vertices[3];
 };

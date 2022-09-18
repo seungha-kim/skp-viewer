@@ -32,6 +32,8 @@ public:
     [[nodiscard]] virtual bool getObjectVisibility(ObjectId id) const = 0;
     [[nodiscard]] virtual unsigned getObjectChildrenCount(ObjectId id) const = 0;
     [[nodiscard]] virtual ObjectId getObjectChild(ObjectId id, int index) const = 0;
+    [[nodiscard]] virtual unsigned int getObjectEdgeCount(ObjectId id) const = 0;
+    [[nodiscard]] virtual Edge getObjectEdge(ObjectId id, int index) const = 0;
 
     // Tag
     [[nodiscard]] virtual unsigned getTagCount() const = 0;

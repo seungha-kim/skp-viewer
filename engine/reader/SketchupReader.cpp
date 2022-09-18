@@ -35,6 +35,7 @@ struct SketchupObject {
     glm::mat4 transform {};
     std::vector<UnitId> units;
     std::vector<ObjectId> children;
+    std::vector<Edge> edges;
 };
 
 struct SketchupObjectHolder {
@@ -252,6 +253,14 @@ ObjectId SketchupReader::getObjectChild(ObjectId id, int index) const {
     return m_objectHolder->map.at(id).children[index];
 }
 
+unsigned SketchupReader::getObjectEdgeCount(ObjectId id) const {
+    return m_objectHolder->map.at(id).edges.size();
+}
+
+Edge SketchupReader::getObjectEdge(ObjectId id, int index) const {
+    return m_objectHolder->map.at(id).edges[index];
+}
+
 bool SketchupReader::hasUnit(UnitId unitId) const {
     return m_unitHolder->map.count(unitId) > 0;
 }
@@ -436,12 +445,40 @@ ObjectId SketchupReader::processObject(const SketchupObjectDescription& desc) {
         units.push_back(unitId);
     }
 
+    // edge 전부 얻어오기
+    size_t numEdges, numEdgesActual;
+    check(SUEntitiesGetNumEdges(desc.entities, false, &numEdges));
+    std::vector<SUEdgeRef> suEdges(numEdges);
+    if (numEdges > 0) {
+        check(SUEntitiesGetEdges(desc.entities, false, numEdges, suEdges.data(), &numEdgesActual));
+    }
+    std::vector<Edge> edges(numEdges);
+
+    for (const auto& edgeRef: suEdges) {
+        SUVertexRef vert1 {}, vert2 {};
+        SUPoint3D pos1 {}, pos2 {};
+        bool soft, smooth;
+        SUEdgeGetStartVertex(edgeRef, &vert1);
+        SUVertexGetPosition(vert1, &pos1);
+        SUEdgeGetEndVertex(edgeRef, &vert2);
+        SUVertexGetPosition(vert2, &pos2);
+        SUEdgeGetSmooth(edgeRef, &smooth);
+        SUEdgeGetSoft(edgeRef, &soft);
+        edges.push_back(Edge {
+            .startVertex = glm::vec3(pos1.x, pos1.y, pos1.z),
+            .endVertex = glm::vec3(pos2.x, pos2.y, pos2.z),
+            .soft = soft,
+            .smooth = smooth,
+        });
+    }
+
     auto objectId = m_objectCount++;
     m_objectHolder->map[objectId] = SketchupObject {
         .name = desc.name,
         .transform = desc.transform,
-        .units = units,
+        .units = std::move(units),
         .children = {},
+        .edges = std::move(edges),
     };
     if (desc.tagIdOpt) {
         const auto tagId = desc.tagIdOpt.value();
