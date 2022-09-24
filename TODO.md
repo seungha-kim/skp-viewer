@@ -1,0 +1,8 @@
+- [] 컴포넌트 메시 재사용
+- [] Anti-aliasing for mesh
+- [] Anti-aliasing for outline
+- [] SketchUp edge rendering
+- [] SketchUp Soft/Smooth edge
+- [] Frustum culling
+- [] 여러 pass 에 걸쳐서 texture 를 방만하게 쓰는 문제
+- [] 그림자 (Cascaded shadow map, PCF, ...)
