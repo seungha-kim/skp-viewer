@@ -1,4 +1,4 @@
-#include "AdditiveBlendPass.h"
+#include "BlendPass.h"
 #include "OffscreenRenderTarget.h"
 #include "Shader.h"
 #include "TextureRenderer.h"
@@ -14,8 +14,8 @@ static const char* makeDefinitions(BlendPassKind kind) {
     }
 }
 
-class AdditiveBlendPassPimpl {
-    friend class AdditiveBlendPass;
+class BlendPassPimpl {
+    friend class BlendPass;
 
     OffscreenRenderTarget m_offscreenRenderTarget;
     std::unique_ptr<ColorTexture> m_colorTexture;
@@ -23,15 +23,15 @@ class AdditiveBlendPassPimpl {
     glm::vec3 m_colorBalance {};
 
 public:
-    explicit AdditiveBlendPassPimpl(const SurfaceInfo& surfaceInfo, BlendPassKind kind)
+    explicit BlendPassPimpl(const SurfaceInfo& surfaceInfo, BlendPassKind kind)
             : m_textureRenderer(
                 std::make_unique<Shader>("quad.glsl", "quad.glsl", "#define VERT", makeDefinitions(kind))) {
         resizeResources(surfaceInfo);
     }
 
-    ~AdditiveBlendPassPimpl() = default;
+    ~BlendPassPimpl() = default;
 
-    AdditiveBlendPassOutput render(RenderContext& ctx, const AdditiveBlendPassInput& input) {
+    BlendPassOutput render(RenderContext& ctx, const BlendPassInput& input) {
         const auto viewportWidth = ctx.surfaceInfo.physicalWidth;
         const auto viewportHeight = ctx.surfaceInfo.physicalHeight;
         m_offscreenRenderTarget.setTargetColorTexture(*m_colorTexture, 0);
@@ -55,16 +55,16 @@ public:
     }
 };
 
-AdditiveBlendPass::AdditiveBlendPass(const SurfaceInfo& surfaceInfo, BlendPassKind kind)
-        : m_pimpl(std::make_unique<AdditiveBlendPassPimpl>(surfaceInfo, kind)) { }
+BlendPass::BlendPass(const SurfaceInfo& surfaceInfo, BlendPassKind kind)
+        : m_pimpl(std::make_unique<BlendPassPimpl>(surfaceInfo, kind)) { }
 
-AdditiveBlendPass::~AdditiveBlendPass() = default;
+BlendPass::~BlendPass() = default;
 
-AdditiveBlendPassOutput AdditiveBlendPass::render(RenderContext& ctx, const AdditiveBlendPassInput& input) {
+BlendPassOutput BlendPass::render(RenderContext& ctx, const BlendPassInput& input) {
     return m_pimpl->render(ctx, input);
 }
 
-void AdditiveBlendPass::resizeResources(const SurfaceInfo& surfaceInfo) {
+void BlendPass::resizeResources(const SurfaceInfo& surfaceInfo) {
     m_pimpl->resizeResources(surfaceInfo);
 }
 

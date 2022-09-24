@@ -35,10 +35,8 @@ add_library(engine
         render/ColorBalancePass.h
         render/GaussianBlurPass.cpp
         render/GaussianBlurPass.h
-        render/AdditiveBlendPass.cpp
-        render/AdditiveBlendPass.h
-        render/BrightFilterPass.cpp
-        render/BrightFilterPass.h
+        render/BlendPass.cpp
+        render/BlendPass.h
         render/ToneMapPass.cpp
         render/ToneMapPass.h
         render/OutlinePass.cpp

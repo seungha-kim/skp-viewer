@@ -13,28 +13,28 @@ enum class BlendPassKind {
     multiplicative,
 };
 
-struct AdditiveBlendPassInput {
+struct BlendPassInput {
     const ColorTexture& colorTexture1;
     const ColorTexture& colorTexture2;
     float c1 = 1.0f;
     float c2 = 1.0f;
 };
 
-struct AdditiveBlendPassOutput {
+struct BlendPassOutput {
     const ColorTexture& colorTexture;
 };
 
-class AdditiveBlendPassPimpl;
+class BlendPassPimpl;
 
-class AdditiveBlendPass: public BasePass {
+class BlendPass: public BasePass {
 public:
-    explicit AdditiveBlendPass(const SurfaceInfo& surfaceInfo, BlendPassKind kind);
-    ~AdditiveBlendPass();
-    AdditiveBlendPassOutput render(RenderContext& ctx, const AdditiveBlendPassInput& input);
+    explicit BlendPass(const SurfaceInfo& surfaceInfo, BlendPassKind kind);
+    ~BlendPass();
+    BlendPassOutput render(RenderContext& ctx, const BlendPassInput& input);
     void resizeResources(const SurfaceInfo& surfaceInfo) override;
 
 private:
-    std::unique_ptr<AdditiveBlendPassPimpl> m_pimpl;
+    std::unique_ptr<BlendPassPimpl> m_pimpl;
 };
 
 }

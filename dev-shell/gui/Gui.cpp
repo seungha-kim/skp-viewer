@@ -132,7 +132,6 @@ void Gui::processRenderOptions(GuiContext& ctx) {
     ImGui::End();
 
     ImGui::Begin("Program Setting", nullptr, windowFlag(ctx));
-    ImGui::SliderFloat("Bright Filter Threshold", &renderOptions.brightFilterThreshold, 0.0f, 1.0f);
     ImGui::Checkbox("Gaussian Blur", &renderOptions.enableGaussianBlur);
     if (renderOptions.enableGaussianBlur) {
         ImGui::SliderInt("Iteration", &renderOptions.gaussianBlurIteration, 1, 50);

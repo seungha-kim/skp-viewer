@@ -1,7 +1,6 @@
 #pragma once
-#include "AdditiveBlendPass.h"
+#include "BlendPass.h"
 #include "BoundingBoxOverlayPass.h"
-#include "BrightFilterPass.h"
 #include "ColorBalancePass.h"
 #include "GaussianBlurPass.h"
 #include "GeometryBufferPass.h"
@@ -33,10 +32,9 @@ struct RenderOptions {
 
     float toneMapExposure = 2.0f;
     float toneMapGamma = 0.7f;
-    bool toneMapEnabled = true;
+    bool toneMapEnabled = false;
 
     int gaussianBlurIteration = 5;
-    float brightFilterThreshold = 0.7f;
 
     int outlineWidth = 1;
 
@@ -62,11 +60,9 @@ private:
     MainPass m_mainPass;
     ColorBalancePass m_colorBalancePass;
     GaussianBlurPass m_gaussianBlurPass;
-    AdditiveBlendPass m_additiveBlendPass;
-    BrightFilterPass m_brightFilterPass;
     ToneMapPass m_toneMapPass;
     OutlinePass m_outlinePass;
-    AdditiveBlendPass m_outlineMultiplicativeBlendPass;
+    BlendPass m_outlineMultiplicativeBlendPass;
     TextureRenderer m_textureRenderer;
     RenderOptions m_renderOptions;
     BoundingBoxOverlayPass m_bboxOverlayPass;
