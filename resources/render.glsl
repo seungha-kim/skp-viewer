@@ -256,16 +256,16 @@ void main() {
     wsVertexNormal = normalize(normalMatrix * aVertexNormal);
     wsFaceNormal = normalize(normalMatrix * aFaceNormal);
 
-    // workaround for flipped normals in skp
-    vec3 vsPos = (viewMatrix * vec4(wsPos, 1.0)).xyz;
-    vec3 vsVertexNormal = mat3(viewMatrix) * wsVertexNormal;
-    vec3 vsFaceNormal = mat3(viewMatrix) * wsFaceNormal;
-    if (dot(vsPos, vsVertexNormal) > 0) {
-        wsVertexNormal = -wsVertexNormal;
-    }
-    if (dot(vsPos, vsFaceNormal) > 0) {
-        wsFaceNormal = -wsFaceNormal;
-    }
+    // workaround for flipped normals in skp - 특정 각도에서 outline 번지는 현상으로 임시 주석처리
+//    vec3 vsPos = (viewMatrix * vec4(wsPos, 1.0)).xyz;
+//    vec3 vsVertexNormal = mat3(viewMatrix) * wsVertexNormal;
+//    vec3 vsFaceNormal = mat3(viewMatrix) * wsFaceNormal;
+//    if (dot(vsPos, vsVertexNormal) > 0) {
+//        wsVertexNormal = -wsVertexNormal;
+//    }
+//    if (dot(vsPos, vsFaceNormal) > 0) {
+//        wsFaceNormal = -wsFaceNormal;
+//    }
 
     gl_Position = viewProjectionMatrix * modelMatrix * vec4(aPos, 1.0);
 }

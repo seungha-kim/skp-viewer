@@ -191,7 +191,7 @@ void main() {
     float h = lineWidth / float(size.y);
 
     vec3 normalAdj[3];
-    float dotVal = 1.0;
+    float angleContrib = 1.0;
     vec2 coord = TexCoord.st;
     vec3 normal = texture(normalTexture, coord).xyz;
 
@@ -199,10 +199,9 @@ void main() {
     normalAdj[1] = normalize(texture(normalTexture, coord + vec2(0.0, -h)).xyz);
     normalAdj[2] = normalize(texture(normalTexture, coord + vec2(  w, -h)).xyz);
     for (int i = 0; i < 3; i++) {
-        dotVal = min(dotVal, dot(normalAdj[i], normal));
+        angleContrib = min(angleContrib, dot(normalAdj[i], normal));
     }
-    dotVal = pow(map(dotVal, -1.0, 1.0, 0.0, 1.0), 5.0);
-
+    angleContrib = pow(clamp(angleContrib, 0.0, 1.0), 2.0);
     float depth = texture(depthTexture, coord).r;
     float linDepthAdj[3];
     float linDepth = linearizeDepth(depth, zNear, zFar);
@@ -218,7 +217,11 @@ void main() {
     vec3 vsPos = ViewPosFromDepth(texture(depthTexture, coord).r);
 
     float frontFacing = dot(normalize(-vsPos), vsNormal);
-    float depthContrib = clamp(map(linDepthDiff * frontFacing, 0.5, 1.0, 1.0, 0.0), 0.0, 1.0);
-    FragColor = vec4(vec3(smoothstep(0.0, 1.0, dotVal * depthContrib)), 1.0);
+    float depthContrib = clamp(map(linDepthDiff * frontFacing, 0.0, 1.0, 1.0, 0.0), 0.0, 1.0);
+    float outColor = angleContrib * depthContrib;
+    if (outColor > 0.3) {
+        outColor = 1.0;
+    }
+    FragColor = vec4(vec3(outColor), 1.0);
 }
 #endif
