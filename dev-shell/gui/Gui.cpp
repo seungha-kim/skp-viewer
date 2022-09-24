@@ -149,7 +149,6 @@ void Gui::processRenderOptions(GuiContext& ctx) {
 
     ImGui::Text("Outline");
     ImGui::SliderInt("Width", &renderOptions.outlineWidth, 0, 10);
-    ImGui::SliderFloat("DepthThreshold", &renderOptions.outlineDepthThreshold, 0.0f, 100.0f);
 
     ImGui::Text("Bounding box");
     ImGui::Checkbox("Render bounding box", &renderOptions.renderBoundingBox);

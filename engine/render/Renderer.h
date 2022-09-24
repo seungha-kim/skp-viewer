@@ -39,7 +39,6 @@ struct RenderOptions {
     float brightFilterThreshold = 0.7f;
 
     int outlineWidth = 1;
-    float outlineDepthThreshold = 20.0f;
 
     bool renderBoundingBox = false;
     DebugViewKind debugViewKind = DebugViewKind::FULL;
