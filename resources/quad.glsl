@@ -24,6 +24,7 @@ layout (std140) uniform ViewBlock {
     mat4 viewProjectionMatrix;
     mat4 viewProjectionMatrixInverse;
     vec3 cameraPosition;
+    vec3 cameraFront;
 };
 
 //////////////////////

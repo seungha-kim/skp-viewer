@@ -176,6 +176,7 @@ void Renderer::updateViewBlock(RenderContext& ctx) const {
         .viewProjectionMatrix = viewProjectionMatrix,
         .viewProjectionMatrixInverse = viewProjectionMatrixInverse,
         .cameraPosition = cam.pos,
+        .cameraFront = cam.front(),
     };
 
     glBindBuffer(GL_UNIFORM_BUFFER, m_viewBlockBuffer);

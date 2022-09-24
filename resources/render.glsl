@@ -48,6 +48,9 @@ layout (std140) uniform ViewBlock {
     mat4 viewProjectionMatrix;
     mat4 viewProjectionMatrixInverse;
     vec3 cameraPosition;
+    float _pad1;
+    vec3 cameraFront;
+    float _pad2;
 };
 
 //////////////////////
@@ -63,6 +66,7 @@ float map(float value, float min1, float max1, float min2, float max2) {
 ///////////////
 
 #ifdef MAIN
+INOUT vec3 normalWs;
 INOUT vec3 normalVs;
 INOUT vec3 fragPosWs;
 INOUT vec3 fragPosVs;
@@ -106,15 +110,16 @@ layout (location = 4) in vec2 aBackTexCoord;
 
 void main() {
     // TODO: normal matrix outside of shader
-    mat3 normalMatrix = mat3(transpose(inverse(viewMatrix * modelMatrix)));
-    normalVs = normalize(normalMatrix * aNormal);
+    mat3 normalMatrix = mat3(transpose(inverse(modelMatrix)));
+    normalWs = normalize(normalMatrix * aNormal);
+    normalVs = (viewMatrix * vec4(normalWs, 0.0)).xyz;
     vec4 fragPosWs4 = modelMatrix * vec4(aPos, 1.0);
     fragPosWs = vec3(fragPosWs4);
     fragPosVs = vec3(viewMatrix * fragPosWs4);
     gl_Position = projectionMatrix * vec4(fragPosVs, 1.0);
     fragPosLightSpace = lightSpaceMatrix * vec4(fragPosWs, 1.0);
 
-    vec3 faceNormalVs = normalize(normalMatrix * aFaceNormal);
+    vec3 faceNormalVs = normalize((viewMatrix * vec4(normalMatrix * aFaceNormal, 0.0)).xyz);
     frontFacing = sign(-dot(faceNormalVs, fragPosVs));
 
     frontTexCoord = aFrontTexCoord;
@@ -164,9 +169,17 @@ void main() {
         opacity = backOpacity;
     }
 
+    vec3 adjustedNormalWs = normalWs;
+    if (dot(normalVs, -fragPosVs) < 0)
+    {
+        // SketchUp 뒷면에 대해서도 문제없이 렌더링을 하기 위한 workaround
+        adjustedNormalWs = -adjustedNormalWs;
+    }
+    float shading = 0.5 + clamp(dot(-adjustedNormalWs, cameraFront) / 2, 0, 1);
+    color *= shading;
     float shadow = shadowMix * ShadowCalculation(fragPosLightSpace);
 
-    FragColor = (1.0 - shadow) * vec4(color, opacity);
+    FragColor = vec4(color, opacity);
 }
 #endif
 

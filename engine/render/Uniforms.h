@@ -13,4 +13,6 @@ struct ViewBlock {
     mat4 viewProjectionMatrixInverse;
     vec3 cameraPosition;
     float _pad1;
+    vec3 cameraFront;
+    float _pad2;
 };
