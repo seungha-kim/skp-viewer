@@ -19,6 +19,3 @@
 [submodule "extern/nfd"]
 	path = extern/nfd
 	url = git@github.com:btzy/nativefiledialog-extended.git
-[submodule "extern/sketchup"]
-	path = extern/sketchup
-	url = git@github.com:ACON3D/skp-sdk.git
