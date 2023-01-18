@@ -132,6 +132,7 @@ void Gui::processRenderOptions(GuiContext& ctx) {
     ImGui::End();
 
     ImGui::Begin("Program Setting", nullptr, windowFlag(ctx));
+    ImGui::SliderFloat3("Global Scale", &renderOptions.globalScale[0], -2.0f, 2.0f);
     ImGui::Checkbox("Gaussian Blur", &renderOptions.enableGaussianBlur);
     if (renderOptions.enableGaussianBlur) {
         ImGui::SliderInt("Iteration", &renderOptions.gaussianBlurIteration, 1, 50);

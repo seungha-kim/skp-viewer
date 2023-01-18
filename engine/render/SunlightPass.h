@@ -13,6 +13,7 @@ namespace acon {
 struct SunlightPassInput {
     // TODO: units 말고 rootObject 를 받는 것이 적절.
     const std::vector<const RenderUnit*>& units;
+    const glm::vec3& globalScale;
 };
 
 struct SunlightPassOutput {

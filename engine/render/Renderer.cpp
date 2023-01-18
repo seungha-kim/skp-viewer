@@ -29,17 +29,20 @@ void Renderer::render(RenderContext& ctx) {
 
     const GeometryBufferPassInput geometryBufferPassInput {
         .units = m_unitsForRender,
+        .globalScale = m_renderOptions.globalScale,
         .viewBlockBuffer = m_viewBlockBuffer,
     };
     const auto geometryBufferPassOutput = m_geometryBufferPass.render(ctx, geometryBufferPassInput);
 
     const SunlightPassInput sunlightPassInput {
         .units = m_unitsForRender,
+        .globalScale = m_renderOptions.globalScale,
     };
     const auto sunlightPassOutput = m_sunlightPass.render(ctx, sunlightPassInput);
 
     const MainPassInput mainPassInput {
         .units = m_unitsForRender,
+        .globalScale = m_renderOptions.globalScale,
         .lightSpaceMatrix = sunlightPassOutput.lightSpaceMatrix,
         .shadowDepthTexture = sunlightPassOutput.depthTexture,
         .shadowMix = 0.0f, // TODO
@@ -86,6 +89,7 @@ void Renderer::render(RenderContext& ctx) {
     if (m_renderOptions.renderBoundingBox) {
         const BoundingBoxOverlayPassInput bboxOverlayPassInput {
             .units = m_unitsForRender,
+            .globalScale = m_renderOptions.globalScale,
             .colorTexture = gaussianBlurPassOutput.colorTexture,
             .depthTexture = mainPassOutput.depthTexture,
         };

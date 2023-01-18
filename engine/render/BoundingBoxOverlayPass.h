@@ -11,6 +11,7 @@ namespace acon {
 
 struct BoundingBoxOverlayPassInput {
     const std::vector<const RenderUnit*>& units;
+    const glm::vec3& globalScale;
     const ColorTexture& colorTexture;
     const DepthTexture& depthTexture;
 };

@@ -40,6 +40,8 @@ struct RenderOptions {
 
     bool renderBoundingBox = false;
     DebugViewKind debugViewKind = DebugViewKind::FULL;
+
+    glm::vec3 globalScale {1, 1, 1};
 };
 
 class Renderer final {

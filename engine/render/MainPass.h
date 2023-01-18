@@ -11,6 +11,7 @@ namespace acon {
 
 struct MainPassInput {
     const std::vector<const RenderUnit*>& units;
+    const glm::vec3& globalScale;
     const glm::mat4 lightSpaceMatrix;
     const DepthTexture& shadowDepthTexture;
     const float shadowMix;

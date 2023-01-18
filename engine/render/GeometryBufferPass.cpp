@@ -65,7 +65,8 @@ public:
 private:
     void renderUnit(RenderContext& ctx, const GeometryBufferPassInput& input, const RenderUnit* unit) {
         glBindVertexArray(unit->VAO());
-        glm::mat4 model = unit->transform();
+        glm::mat4 scale = glm::scale(glm::identity<glm::mat4>(), input.globalScale);
+        glm::mat4 model = scale * unit->transform();
         glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(model)));
         m_shader->setMatrix4f("modelMatrix", model);
         m_shader->setMatrix3f("normalMatrix", normalMatrix);

@@ -92,7 +92,8 @@ private:
         m_mainShader->setFloat("backOpacity", unit->backOpacity());
 
         m_mainShader->setInt("selected", selected);
-        glm::mat4 model = unit->transform();
+        glm::mat4 scale = glm::scale(glm::identity<glm::mat4>(), input.globalScale);
+        glm::mat4 model = scale * unit->transform();
         m_mainShader->setMatrix4f("modelMatrix", model);
 
         m_mainShader->setVector3f("frontColor", unit->frontColor());
@@ -115,6 +116,8 @@ private:
         } else {
             m_mainShader->setFloat("backTextureMix", 0.0f);
         }
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
         glDrawArrays(GL_TRIANGLES, 0, unit->verticesCount());
         glActiveTexture(GL_TEXTURE0);
     }

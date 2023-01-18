@@ -11,6 +11,7 @@ namespace acon {
 
 struct GeometryBufferPassInput {
     const std::vector<const RenderUnit*>& units;
+    const glm::vec3& globalScale;
     const GLuint viewBlockBuffer;
 };
 

@@ -33,6 +33,7 @@ public:
         // glEnable(GL_CULL_FACE);
         // glFrontFace(GL_CCW);
         // glCullFace(GL_FRONT);
+        glCullFace(GL_BACK);
 
         // http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
         // https://community.khronos.org/t/drawing-depth-texture-bound-to-a-fbo/66919
@@ -67,7 +68,8 @@ public:
         for (auto* unit: input.units) {
             glBindVertexArray(unit->VAO());
 
-            glm::mat4 model = unit->transform();
+            glm::mat4 scale = glm::scale(glm::identity<glm::mat4>(), input.globalScale);
+            glm::mat4 model = scale * unit->transform();
             m_subShader->setMatrix4f("modelMatrix", model);
 
             glDrawArrays(GL_TRIANGLES, 0, unit->verticesCount());
