@@ -6,6 +6,7 @@
 #include "render/Renderer.h"
 #include "render/SurfaceInfo.h"
 #include "scene/SceneManager.h"
+#include <optional>
 
 namespace acon {
 
@@ -30,6 +31,8 @@ public:
     void prepareToRender(const SurfaceInfo& surfaceInfo);
     void render(float playbackValue);
     void resize(const SurfaceInfo& surfaceInfo);
+    
+    std::optional<glm::vec3> getObjectWorldCenter(ObjectId objectId) const;
 
 private:
     SceneManager m_sceneManager {};

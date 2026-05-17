@@ -167,6 +167,9 @@ std::pair<std::unique_ptr<RuntimeModel>, std::unique_ptr<RenderModel>> buildMode
         const auto tagObjectCount = reader.getTagObjectCount(tagId);
         for (int j = 0; j < tagObjectCount; j++) {
             const auto objectId = reader.getTagObject(tagId, j);
+            if (!runtimeModel->m_objectData.contains(objectId)) {
+                continue;
+            }
             runtimeModel->m_tagData.at(tagId).objects.insert(objectId);
             runtimeModel->m_objectData.at(objectId).tagIdOpt = tagId;
         }

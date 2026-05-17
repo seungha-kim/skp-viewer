@@ -48,7 +48,8 @@ PYBIND11_MODULE(binding_test, m) {
         .def("prepareToRender", &Engine::prepareToRender)
         .def("resize", &Engine::resize)
         .def("currentCameraStateMut", &Engine::currentCameraStateMut, py::return_value_policy::reference)
-        .def("runtimeModelMut", &Engine::runtimeModelMut, py::return_value_policy::reference);
+        .def("runtimeModelMut", &Engine::runtimeModelMut, py::return_value_policy::reference)
+        .def("getObjectWorldCenter", &Engine::getObjectWorldCenter);
 
     py::class_<RuntimeModel>(m, "RuntimeModel")
         .def("rootObjectId", &RuntimeModel::rootObjectId)

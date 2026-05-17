@@ -64,7 +64,10 @@ class MainWindow(QMainWindow):
 
         self.canvas = canvas
 
-        self.statusBar().showMessage("Loaded", 3000)
+        self.statusBar().showMessage(
+            "Left-drag: Orbit | Shift+Left-drag: Pan | Scroll: Zoom | Right-drag: Fly mode",
+            8000,
+        )
 
     def __file_path_by_dialog(self) -> str:
         supported_formats = {"SketchUp": "*.skp", "Wavefront OBJ": "*.obj"}
@@ -104,3 +107,6 @@ class HierarchyPanelControllerDelegate(HierarchyPanelController.Delegate):
 
     def render_immediately(self):
         self._canvas_widget.update()
+
+    def focus_on_object(self, object_id: int):
+        self._canvas_widget.focus_on_object(object_id)

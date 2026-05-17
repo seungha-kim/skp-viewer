@@ -13,6 +13,9 @@ class HierarchyPanelController:
         def render_immediately(self):
             pass
 
+        def focus_on_object(self, object_id: int):
+            pass
+
     def __init__(self, delegate: Delegate, runtime_model: RuntimeModel):
         self.widget = HierarchyView(delegate, runtime_model)
 
@@ -44,6 +47,7 @@ class HierarchyView(QTreeWidget):
             # TODO: 여러 객체 선택 기능
             oid = self._itemInverse[item]
             self._runtime_model.updateObjectSelectionById(oid)
+            self._delegate.focus_on_object(oid)
             break
         self._delegate.render_immediately()
 

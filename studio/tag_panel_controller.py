@@ -27,7 +27,7 @@ class TagListModel(QAbstractListModel):
     def data(self, index: QModelIndex, role: int) -> Any:
         if role == Qt.DisplayRole:
             tag_id = self.model.getTag(index.row())
-            visible = self.model.getTagVisibility(index.row())
+            visible = self.model.getTagVisibility(tag_id)
             visible_str = "[O]" if visible else "[X]"
             return visible_str + self.model.getTagName(tag_id)
 

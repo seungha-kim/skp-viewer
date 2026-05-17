@@ -1,21 +1,21 @@
 [submodule "extern/assimp"]
 	path = extern/assimp
-	url = git@github.com:assimp/assimp.git
+	url = https://github.com/assimp/assimp.git
 [submodule "extern/glfw"]
 	path = extern/glfw
-	url = git@github.com:glfw/glfw.git
+	url = https://github.com/glfw/glfw.git
 [submodule "extern/glm"]
 	path = extern/glm
-	url = git@github.com:g-truc/glm.git
+	url = https://github.com/g-truc/glm.git
 [submodule "extern/stb"]
 	path = extern/stb
-	url = git@github.com:nothings/stb.git
+	url = https://github.com/nothings/stb.git
 [submodule "extern/imgui"]
 	path = extern/imgui
-	url = git@github.com:ocornut/imgui.git
+	url = https://github.com/ocornut/imgui.git
 [submodule "extern/pybind11"]
 	path = extern/pybind11
-	url = git@github.com:pybind/pybind11.git
+	url = https://github.com/pybind/pybind11.git
 [submodule "extern/nfd"]
 	path = extern/nfd
-	url = git@github.com:btzy/nativefiledialog-extended.git
+	url = https://github.com/btzy/nativefiledialog-extended.git

@@ -83,13 +83,20 @@ target_include_directories(imgui
         extern/imgui/backends)
 
 # Extern - python
-execute_process(COMMAND python3 scripts/find_python.py --include
+# On Windows, the executable is 'python'; on Unix/macOS it is 'python3'
+find_program(PYTHON_EXECUTABLE NAMES python3 python)
+if (NOT PYTHON_EXECUTABLE)
+    message(FATAL_ERROR "Python executable not found. Please ensure Python is installed and on your PATH.")
+endif()
+message(STATUS "Using Python: ${PYTHON_EXECUTABLE}")
+
+execute_process(COMMAND ${PYTHON_EXECUTABLE} scripts/find_python.py --include
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         OUTPUT_VARIABLE PYTHON_INCLUDE_DIRS)
-execute_process(COMMAND python3 scripts/find_python.py --lib
+execute_process(COMMAND ${PYTHON_EXECUTABLE} scripts/find_python.py --lib
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         OUTPUT_VARIABLE PYTHON_LIBRARY_DIR)
-execute_process(COMMAND python3 scripts/find_python.py --name
+execute_process(COMMAND ${PYTHON_EXECUTABLE} scripts/find_python.py --name
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         OUTPUT_VARIABLE PYTHON_LIBRARY_NAME)
 find_library(PYTHON_LIBRARIES

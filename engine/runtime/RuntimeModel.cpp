@@ -3,28 +3,36 @@
 namespace acon {
 
 bool RuntimeModel::hasObject(ObjectId id) const {
-    return m_objectData.contains(id);
+    return m_objectData.count(id) > 0;
 }
 
 std::string_view RuntimeModel::getObjectName(ObjectId id) const {
-    return m_objectData.at(id).name;
+    if (m_objectData.count(id) > 0) {
+        return m_objectData.at(id).name;
+    }
+    return "";
 }
 
 glm::mat4 RuntimeModel::getObjectTransform(ObjectId id) const {
-    return m_objectData.at(id).transform;
+    if (m_objectData.count(id) > 0) {
+        return m_objectData.at(id).transform;
+    }
+    return glm::mat4(1.0f);
 }
 
 bool RuntimeModel::getObjectVisibility(ObjectId id) const {
-    if (!m_objectData.at(id).visibility) {
+    if (m_objectData.count(id) == 0 || !m_objectData.at(id).visibility) {
         return false;
     }
 
     std::optional<ObjectId> currentIdOpt = id;
     while (currentIdOpt) {
         auto currentId = currentIdOpt.value();
+        if (m_objectData.count(currentId) == 0) break;
+        
         if (m_objectData.at(currentId).tagIdOpt) {
             const auto tagId = m_objectData.at(currentId).tagIdOpt.value();
-            if (!m_tagData.at(tagId).visibility) {
+            if (m_tagData.count(tagId) > 0 && !m_tagData.at(tagId).visibility) {
                 return false;
             }
         }
@@ -34,7 +42,10 @@ bool RuntimeModel::getObjectVisibility(ObjectId id) const {
 }
 
 unsigned RuntimeModel::getObjectChildrenCount(ObjectId id) const {
-    return m_objectData.at(id).children.size();
+    if (m_objectData.count(id) > 0) {
+        return m_objectData.at(id).children.size();
+    }
+    return 0;
 }
 
 ObjectId RuntimeModel::getObjectChild(ObjectId id, int index) const {
@@ -42,7 +53,10 @@ ObjectId RuntimeModel::getObjectChild(ObjectId id, int index) const {
 }
 
 std::optional<ObjectId> RuntimeModel::getObjectParent(ObjectId id) const {
-    return m_objectData.at(id).parentIdOpt;
+    if (m_objectData.count(id) > 0) {
+        return m_objectData.at(id).parentIdOpt;
+    }
+    return std::nullopt;
 }
 
 unsigned RuntimeModel::getTagCount() const {
@@ -54,16 +68,24 @@ TagId RuntimeModel::getTag(int index) const {
 }
 
 std::string_view RuntimeModel::getTagName(TagId id) const {
-    return m_tagData.at(id).name;
+    if (m_tagData.count(id) > 0) {
+        return m_tagData.at(id).name;
+    }
+    return "";
 }
 
 bool RuntimeModel::getTagVisibility(TagId id) const {
-    return m_tagData.at(id).visibility;
+    if (m_tagData.count(id) > 0) {
+        return m_tagData.at(id).visibility;
+    }
+    return false;
 }
 
 void RuntimeModel::setTagVisibility(TagId id, bool visibility) {
-    m_tagData.at(id).visibility = visibility;
-    m_objectVisibilityUpdated = true;
+    if (m_tagData.count(id) > 0) {
+        m_tagData.at(id).visibility = visibility;
+        m_objectVisibilityUpdated = true;
+    }
 }
 
 bool RuntimeModel::getObjectVisibilityUpdated() const {

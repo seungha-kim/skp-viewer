@@ -225,15 +225,24 @@ bool SketchupReader::hasObject(ObjectId id) const {
 }
 
 std::string SketchupReader::getObjectName(ObjectId id) const {
-    return m_objectHolder->map.at(id).name;
+    if (m_objectHolder->map.count(id) > 0) {
+        return m_objectHolder->map.at(id).name;
+    }
+    return "";
 }
 
 glm::mat4 SketchupReader::getObjectTransform(ObjectId id) const {
-    return m_objectHolder->map.at(id).transform;
+    if (m_objectHolder->map.count(id) > 0) {
+        return m_objectHolder->map.at(id).transform;
+    }
+    return glm::mat4(1.0f);
 }
 
 unsigned int SketchupReader::getObjectUnitCount(ObjectId id) const {
-    return m_objectHolder->map.at(id).units.size();
+    if (m_objectHolder->map.count(id) > 0) {
+        return m_objectHolder->map.at(id).units.size();
+    }
+    return 0;
 }
 
 UnitId SketchupReader::getObjectUnit(ObjectId id, int index) const {
@@ -245,7 +254,10 @@ bool SketchupReader::getObjectVisibility(ObjectId id) const {
 }
 
 unsigned int SketchupReader::getObjectChildrenCount(ObjectId id) const {
-    return m_objectHolder->map.at(id).children.size();
+    if (m_objectHolder->map.count(id) > 0) {
+        return m_objectHolder->map.at(id).children.size();
+    }
+    return 0;
 }
 
 ObjectId SketchupReader::getObjectChild(ObjectId id, int index) const {
@@ -257,15 +269,24 @@ bool SketchupReader::hasUnit(UnitId unitId) const {
 }
 
 std::optional<MaterialId> SketchupReader::getUnitFrontMaterial(UnitId id) const {
-    return m_unitHolder->map.at(id).frontMaterialId;
+    if (m_unitHolder->map.count(id) > 0) {
+        return m_unitHolder->map.at(id).frontMaterialId;
+    }
+    return std::nullopt;
 }
 
 std::optional<MaterialId> SketchupReader::getUnitBackMaterial(UnitId id) const {
-    return m_unitHolder->map.at(id).backMaterialId;
+    if (m_unitHolder->map.count(id) > 0) {
+        return m_unitHolder->map.at(id).backMaterialId;
+    }
+    return std::nullopt;
 }
 
 unsigned int SketchupReader::getUnitTriangleCount(UnitId id) const {
-    return m_unitHolder->map.at(id).triangles.size();
+    if (m_unitHolder->map.count(id) > 0) {
+        return m_unitHolder->map.at(id).triangles.size();
+    }
+    return 0;
 }
 
 Triangle SketchupReader::getUnitTriangle(UnitId id, int index) const {
@@ -277,19 +298,25 @@ bool SketchupReader::hasMaterial(MaterialId materialId) const {
 }
 
 bool SketchupReader::getMaterialHasColor(MaterialId materialId) const {
-    return m_materialColors.contains(materialId);
+    return m_materialColors.count(materialId) > 0;
 }
 
 glm::vec4 SketchupReader::getMaterialColor(MaterialId id) const {
-    return m_materialColors.at(id);
+    if (m_materialColors.count(id) > 0) {
+        return m_materialColors.at(id);
+    }
+    return glm::vec4(1.0f);
 }
 
 bool SketchupReader::getMaterialHasOpacity(MaterialId id) const {
-    return m_materialOpacity.contains(id);
+    return m_materialOpacity.count(id) > 0;
 }
 
 float SketchupReader::getMaterialOpacity(MaterialId id) const {
-    return m_materialOpacity.at(id);
+    if (m_materialOpacity.count(id) > 0) {
+        return m_materialOpacity.at(id);
+    }
+    return 1.0f;
 }
 
 struct UnitElement {
@@ -332,11 +359,11 @@ ObjectId SketchupReader::processObject(const SketchupObjectDescription& desc) {
             key.first = key.second = desc.inheritedMaterialOpt.value();
         }
         if (hasFrontMaterial) {
-            key.first = m_materialInverse.at(frontMaterial);
+            if (m_materialInverse.count(frontMaterial) > 0) key.first = m_materialInverse.at(frontMaterial);
             element.isFrontMaterialInherited = false;
         }
         if (hasBackMaterial) {
-            key.second = m_materialInverse.at(backMaterial);
+            if (m_materialInverse.count(backMaterial) > 0) key.second = m_materialInverse.at(backMaterial);
             element.isBackMaterialInherited = false;
         }
         unitsByMaterial[key].push_back(element);
@@ -455,14 +482,20 @@ ObjectId SketchupReader::processObject(const SketchupObjectDescription& desc) {
 }
 
 bool SketchupReader::getMaterialHasTexture(MaterialId materialId) const {
-    return m_materialTextures.contains(materialId);
+    return m_materialTextures.count(materialId) > 0;
 }
 
 TextureId SketchupReader::getMaterialTexture(MaterialId materialId) const {
-    return m_materialTextures.at(materialId);
+    if (m_materialTextures.count(materialId) > 0) {
+        return m_materialTextures.at(materialId);
+    }
+    return 0;
 }
 
 std::unique_ptr<TextureData> SketchupReader::copyTextureData(TextureId textureId) const {
+    if (m_textureMap.count(textureId) == 0) {
+        return nullptr;
+    }
     const auto& texture = m_textureMap.at(textureId);
     SUImageRepRef image {};
     size_t dataSize {}, bitsPerPixel {};
@@ -486,11 +519,17 @@ std::unique_ptr<TextureData> SketchupReader::copyTextureData(TextureId textureId
 }
 
 int SketchupReader::getTextureWidth(TextureId textureId) const {
-    return m_textureMetaHolder->map.at(textureId).width;
+    if (m_textureMetaHolder->map.count(textureId) > 0) {
+        return m_textureMetaHolder->map.at(textureId).width;
+    }
+    return 0;
 }
 
 int SketchupReader::getTextureHeight(TextureId textureId) const {
-    return m_textureMetaHolder->map.at(textureId).height;
+    if (m_textureMetaHolder->map.count(textureId) > 0) {
+        return m_textureMetaHolder->map.at(textureId).height;
+    }
+    return 0;
 }
 
 unsigned SketchupReader::getTagCount() const {
@@ -502,15 +541,18 @@ TagId SketchupReader::getTag(int index) const {
 }
 
 std::string SketchupReader::getTagName(TagId id) const {
-    const auto layerRef = m_tagMap.at(id);
-    SUStringRef nameRef {};
-    SUStringCreate(&nameRef);
-    check(SULayerGetName(layerRef, &nameRef));
-    return convertAndReleaseString(nameRef);
+    if (m_tagMap.count(id) > 0) {
+        const auto layerRef = m_tagMap.at(id);
+        SUStringRef nameRef {};
+        SUStringCreate(&nameRef);
+        check(SULayerGetName(layerRef, &nameRef));
+        return convertAndReleaseString(nameRef);
+    }
+    return "";
 }
 
 unsigned SketchupReader::getTagObjectCount(TagId id) const {
-    if (m_tagObjects.contains(id)) {
+    if (m_tagObjects.count(id) > 0) {
         return m_tagObjects.at(id).size();
     } else {
         return 0;
@@ -535,7 +577,7 @@ void SketchupReader::pushChildren(
     SULayerRef layerRef {};
     check(SUDrawingElementGetLayer(drawingRef, &layerRef));
     if (isValidLayer(layerRef)) {
-        tagIdOpt = m_tagInverse.at(layerRef);
+        if (m_tagInverse.count(layerRef) > 0) tagIdOpt = m_tagInverse.at(layerRef);
     }
 
     // TODO: reuse definition - Mesh 단위 추가
@@ -555,7 +597,7 @@ void SketchupReader::pushChildren(
     SUMaterialRef groupMaterial {};
     auto result = SUDrawingElementGetMaterial(el, &groupMaterial);
     if (result == SU_ERROR_NONE) {
-        inheritedMaterialOpt = m_materialInverse.at(groupMaterial);
+        if (m_materialInverse.count(groupMaterial) > 0) inheritedMaterialOpt = m_materialInverse.at(groupMaterial);
     }
 
     m_dfsStack.emplace(SketchupObjectDescription {

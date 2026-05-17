@@ -116,4 +116,22 @@ CameraState& Engine::currentCameraStateMut() {
     return m_sceneManager.activeSceneMut().cameraStateMut();
 }
 
+std::optional<glm::vec3> Engine::getObjectWorldCenter(ObjectId objectId) const {
+    glm::vec3 totalCenter(0.0f);
+    int unitCount = 0;
+
+    for (const auto& unit : m_renderModel->units()) {
+        if (unit->objectId() == objectId) {
+            totalCenter += unit->worldSpaceCenter();
+            unitCount++;
+        }
+    }
+
+    if (unitCount > 0) {
+        return totalCenter / static_cast<float>(unitCount);
+    }
+
+    return std::nullopt;
+}
+
 }
